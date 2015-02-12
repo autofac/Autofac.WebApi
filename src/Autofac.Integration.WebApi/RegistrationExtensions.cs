@@ -47,7 +47,8 @@ namespace Autofac.Integration.WebApi
     public static class RegistrationExtensions
     {
         /// <summary>
-        /// Register types that implement <see cref="IHttpController"/> in the provided assemblies.
+        /// Register types that implement <see cref="IHttpController"/> and
+        /// <see cref="Type.Name"/> has "Controller" suffix in the provided assemblies.
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="controllerAssemblies">Assemblies to scan for controllers.</param>
