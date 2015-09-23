@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autofac.Integration.WebApi", "src\Autofac.Integration.WebApi\Autofac.Integration.WebApi.csproj", "{8437DAE1-0F24-44A9-A187-B34F52858A58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autofac.Tests.Integration.WebApi", "tests\Autofac.Tests.Integration.WebApi\Autofac.Tests.Integration.WebApi.csproj", "{AD8D8B7A-184E-428D-AD9C-BE1CEA8225A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autofac.Integration.WebApi.Test", "test\Autofac.Integration.WebApi.Test\Autofac.Integration.WebApi.Test.csproj", "{AD8D8B7A-184E-428D-AD9C-BE1CEA8225A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
