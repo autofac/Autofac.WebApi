@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Security;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using System.Net.Http;
@@ -38,7 +37,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter for the specified metadata for each controller request.
     /// </summary>
-    [SecurityCritical]
     [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
     internal class ActionFilterWrapper : ActionFilterAttribute, IAutofacActionFilter, IFilterWrapper
     {
@@ -60,7 +58,6 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public virtual string MetadataKey
         {
-            [SecurityCritical]
             get { return AutofacWebApiFilterProvider.ActionFilterMetadataKey; }
         }
 
@@ -71,7 +68,6 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="actionContext" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
             if (actionContext == null)
@@ -94,7 +90,6 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="actionExecutedContext" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
             if (actionExecutedContext == null)
@@ -112,7 +107,7 @@ namespace Autofac.Integration.WebApi
 
         bool FilterMatchesMetadata(Meta<Lazy<IAutofacActionFilter>> filter)
         {
-            var metadata = filter.Metadata.ContainsKey(MetadataKey) 
+            var metadata = filter.Metadata.ContainsKey(MetadataKey)
                 ? filter.Metadata[MetadataKey] as FilterMetadata : null;
 
             return metadata != null

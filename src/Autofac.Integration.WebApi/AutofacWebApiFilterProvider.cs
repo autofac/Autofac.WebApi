@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -39,7 +38,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// A filter provider for performing property injection on filter attributes.
     /// </summary>
-    [SecurityCritical]
     public class AutofacWebApiFilterProvider : IFilterProvider
     {
         class FilterContext
@@ -82,7 +80,6 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="configuration" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
         public IEnumerable<FilterInfo> GetFilters(HttpConfiguration configuration, HttpActionDescriptor actionDescriptor)
         {
             if (configuration == null)

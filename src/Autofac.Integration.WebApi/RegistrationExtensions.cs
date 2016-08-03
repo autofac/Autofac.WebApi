@@ -29,7 +29,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
 using System.Reflection;
-using System.Security;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -43,7 +42,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
     /// </summary>
-    [SecurityCritical]
     public static class RegistrationExtensions
     {
         /// <summary>
@@ -60,7 +58,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Share one instance of the component within the context of a 
+        /// Share one instance of the component within the context of a
         /// single <see cref="ApiController"/> request.
         /// </summary>
         /// <typeparam name="TLimit">Registration limit type.</typeparam>

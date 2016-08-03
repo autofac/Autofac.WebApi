@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
-using System.Security;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using Autofac.Features.Metadata;
@@ -38,7 +37,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter for the specified metadata for each controller request.
     /// </summary>
-    [SecurityCritical]
     [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
     internal class AuthorizationFilterWrapper : AuthorizationFilterAttribute, IAutofacAuthorizationFilter, IFilterWrapper
     {
@@ -60,7 +58,6 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public virtual string MetadataKey
         {
-            [SecurityCritical]
             get { return AutofacWebApiFilterProvider.AuthorizationFilterMetadataKey; }
         }
 
@@ -71,7 +68,6 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="actionContext" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
         public override void OnAuthorization(HttpActionContext actionContext)
         {
             if (actionContext == null)

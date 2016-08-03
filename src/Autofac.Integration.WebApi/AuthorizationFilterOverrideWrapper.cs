@@ -24,7 +24,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Security;
 using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
@@ -32,7 +31,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter override for the specified metadata for each controller request.
     /// </summary>
-    [SecurityCritical]
     internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
     {
         /// <summary>
@@ -48,7 +46,6 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public override string MetadataKey
         {
-            [SecurityCritical]
             get { return AutofacWebApiFilterProvider.AuthorizationFilterOverrideMetadataKey; }
         }
 
@@ -57,7 +54,6 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public Type FiltersToOverride
         {
-            [SecurityCritical]
             get { return typeof(IAuthorizationFilter); }
         }
     }

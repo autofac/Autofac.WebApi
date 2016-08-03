@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
@@ -38,7 +37,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter for the specified metadata for each controller request.
     /// </summary>
-    [SecurityCritical]
     internal class AuthenticationFilterWrapper : IAuthenticationFilter, IAutofacAuthenticationFilter, IFilterWrapper
     {
         readonly FilterMetadata _filterMetadata;
@@ -59,11 +57,9 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public virtual string MetadataKey
         {
-            [SecurityCritical]
             get { return AutofacWebApiFilterProvider.AuthenticationFilterMetadataKey; }
         }
 
-        [SecurityCritical]
         public void OnAuthenticate(HttpAuthenticationContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
@@ -77,7 +73,6 @@ namespace Autofac.Integration.WebApi
                 filter.Value.Value.OnAuthenticate(context);
         }
 
-        [SecurityCritical]
         public void OnChallenge(HttpAuthenticationChallengeContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
@@ -93,18 +88,15 @@ namespace Autofac.Integration.WebApi
 
         bool IFilter.AllowMultiple
         {
-            [SecurityCritical]
             get { return true; }
         }
 
-        [SecurityCritical]
         Task IAuthenticationFilter.AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
             OnAuthenticate(context);
             return Task.FromResult(0);
         }
 
-        [SecurityCritical]
         Task IAuthenticationFilter.ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
             OnChallenge(context);
