@@ -294,10 +294,13 @@ namespace Autofac.Integration.WebApi
 
         static bool FilterMatchesAction(FilterContext filterContext, MethodInfo methodInfo, string metadataKey, FilterMetadata metadata)
         {
+            // Issue #10: Comparing MethodInfo.MethodHandle rather than just MethodInfo equality
+            // because MethodInfo equality fails on a derived controller if the base class method
+            // isn't marked virtual... but MethodHandle correctly compares regardless.
             return metadata.ControllerType != null
                    && metadata.ControllerType.IsAssignableFrom(filterContext.ControllerType)
                    && metadata.FilterScope == FilterScope.Action
-                   && metadata.MethodInfo.GetBaseDefinition() == methodInfo.GetBaseDefinition()
+                   && metadata.MethodInfo.GetBaseDefinition().MethodHandle == methodInfo.GetBaseDefinition().MethodHandle
                    && !MatchingFilterAdded(filterContext.AddedFilters[metadataKey], metadata);
         }
     }
