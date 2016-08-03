@@ -159,6 +159,7 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="builder" /> or <paramref name="modelBinderAssemblies" /> is <see langword="null" />.
         /// </exception>
+        [Obsolete("Use the AsModelBinderForTypes() registration extension to register model binders and be sure to RegisterWebApiModelBinderProvider() in your container if you do. This method doesn't connect the model binders to the Autofac binder provider. It will be removed in a future version.")]
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
             RegisterWebApiModelBinders(this ContainerBuilder builder, params Assembly[] modelBinderAssemblies)
         {

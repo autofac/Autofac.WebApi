@@ -102,22 +102,6 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
-        public void RegisterWebApiModelBindersThrowsExceptionForNullBuilder()
-        {
-            var exception = Assert.Throws<ArgumentNullException>(
-                () => Autofac.Integration.WebApi.RegistrationExtensions.RegisterWebApiModelBinders(null, Assembly.GetExecutingAssembly()));
-            Assert.Equal("builder", exception.ParamName);
-        }
-
-        [Fact]
-        public void RegisterWebApiModelBindersThrowsExceptionForNullAssemblies()
-        {
-            var exception = Assert.Throws<ArgumentNullException>(
-                () => new ContainerBuilder().RegisterWebApiModelBinders(null));
-            Assert.Equal("modelBinderAssemblies", exception.ParamName);
-        }
-
-        [Fact]
         public void AsModelBinderForTypesThrowsExceptionWhenAllTypesNullInList()
         {
             var builder = new ContainerBuilder();
