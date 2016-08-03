@@ -100,13 +100,15 @@ namespace Autofac.Integration.WebApi
         [SecurityCritical]
         Task IAuthenticationFilter.AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
-            return Task.Run(() => OnAuthenticate(context), cancellationToken);
+            OnAuthenticate(context);
+            return Task.FromResult(0);
         }
 
         [SecurityCritical]
         Task IAuthenticationFilter.ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
-            return Task.Run(() => OnChallenge(context), cancellationToken);
+            OnChallenge(context);
+            return Task.FromResult(0);
         }
 
         bool FilterMatchesMetadata(Meta<Lazy<IAutofacAuthenticationFilter>> filter)
