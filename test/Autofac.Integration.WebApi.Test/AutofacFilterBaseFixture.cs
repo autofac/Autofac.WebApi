@@ -151,7 +151,7 @@ namespace Autofac.Integration.WebApi.Test
         static ReflectedHttpActionDescriptor BuildActionDescriptorForGetMethod(Type controllerType)
         {
             var controllerDescriptor = new HttpControllerDescriptor { ControllerType = controllerType };
-            var methodInfo = typeof(TestController).GetMethod("Get");
+            var methodInfo = controllerType.GetMethod("Get");
             return new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
         }
 
