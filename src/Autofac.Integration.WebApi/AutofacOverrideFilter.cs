@@ -24,7 +24,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Security;
 using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
@@ -32,7 +31,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Allows other filters to be overriden at the control and action level.
     /// </summary>
-    [SecurityCritical]
     internal class AutofacOverrideFilter : IOverrideFilter
     {
         public AutofacOverrideFilter(Type filtersToOverride)
@@ -42,14 +40,12 @@ namespace Autofac.Integration.WebApi
 
         public bool AllowMultiple
         {
-            [SecurityCritical]
             get { return false; }
         }
 
         public Type FiltersToOverride
         {
-            [SecurityCritical]
-            get; 
+            get;
             private set;
         }
     }

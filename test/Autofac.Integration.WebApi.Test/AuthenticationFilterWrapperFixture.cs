@@ -19,7 +19,7 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
-        public void WrapperResolvesAuthenticationFilterFromDependencyScope()
+        public async void WrapperResolvesAuthenticationFilterFromDependencyScope()
         {
             var builder = new ContainerBuilder();
             builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
@@ -48,7 +48,7 @@ namespace Autofac.Integration.WebApi.Test
             };
             var wrapper = new AuthenticationFilterWrapper(metadata);
 
-            wrapper.OnAuthenticate(context);
+            await wrapper.AuthenticateAsync(context, new CancellationToken());
             Assert.Equal(1, activationCount);
         }
     }

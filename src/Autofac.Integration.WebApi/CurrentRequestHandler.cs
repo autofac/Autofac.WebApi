@@ -24,17 +24,15 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Net.Http;
-using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Autofac.Integration.WebApi
 {
     /// <summary>
-    ///     A delegating handler that updates the current dependency scope
-    ///     with the current <see cref="HttpRequestMessage"/>.
+    /// A delegating handler that updates the current dependency scope
+    /// with the current <see cref="HttpRequestMessage"/>.
     /// </summary>
-    [SecurityCritical]
     class CurrentRequestHandler : DelegatingHandler
     {
         /// <summary>
@@ -43,9 +41,8 @@ namespace Autofac.Integration.WebApi
         /// <param name="request">The HTTP request message to send to the server.</param>
         /// <param name="cancellationToken">A cancellation token to cancel operation.</param>
         /// <returns>
-        /// Returns <see cref="T:System.Threading.Tasks.Task`1" />. The task object representing the asynchronous operation.
+        /// Returns <see cref="System.Threading.Tasks.Task{T}" />. The task object representing the asynchronous operation.
         /// </returns>
-        [SecuritySafeCritical]
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             UpdateScopeWithHttpRequestMessage(request);

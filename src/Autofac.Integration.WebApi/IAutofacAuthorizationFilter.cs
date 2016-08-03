@@ -23,7 +23,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Security;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 
 namespace Autofac.Integration.WebApi
@@ -31,13 +32,13 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// An authorization filter that will be created for each controller request.
     /// </summary>
-    [SecurityCritical]
     public interface IAutofacAuthorizationFilter
     {
         /// <summary>
         /// Called when a process requests authorization.
         /// </summary>
         /// <param name="actionContext">The context for the action.</param>
-        void OnAuthorization(HttpActionContext actionContext);
+        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+        Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken);
     }
 }

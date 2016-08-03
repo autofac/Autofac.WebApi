@@ -27,10 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Security;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-using System.Net.Http;
 using Autofac.Features.Metadata;
 
 namespace Autofac.Integration.WebApi
@@ -38,11 +39,10 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter for the specified metadata for each controller request.
     /// </summary>
-    [SecurityCritical]
     [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
     internal class ActionFilterWrapper : ActionFilterAttribute, IAutofacActionFilter, IFilterWrapper
     {
-        readonly FilterMetadata _filterMetadata;
+        private readonly FilterMetadata _filterMetadata;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionFilterWrapper"/> class.
@@ -50,9 +50,12 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The filter metadata.</param>
         public ActionFilterWrapper(FilterMetadata filterMetadata)
         {
-            if (filterMetadata == null) throw new ArgumentNullException("filterMetadata");
+            if (filterMetadata == null)
+            {
+                throw new ArgumentNullException(nameof(filterMetadata));
+            }
 
-            _filterMetadata = filterMetadata;
+            this._filterMetadata = filterMetadata;
         }
 
         /// <summary>
@@ -60,65 +63,70 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public virtual string MetadataKey
         {
-            [SecurityCritical]
             get { return AutofacWebApiFilterProvider.ActionFilterMetadataKey; }
-        }
-
-        /// <summary>
-        /// Occurs before the action method is invoked.
-        /// </summary>
-        /// <param name="actionContext">The context for the action.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if <paramref name="actionContext" /> is <see langword="null" />.
-        /// </exception>
-        [SecurityCritical]
-        public override void OnActionExecuting(HttpActionContext actionContext)
-        {
-            if (actionContext == null)
-            {
-                throw new ArgumentNullException("actionContext");
-            }
-            var dependencyScope = actionContext.Request.GetDependencyScope();
-            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
-
-            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
-
-            foreach (var filter in filters.Where(FilterMatchesMetadata))
-                filter.Value.Value.OnActionExecuting(actionContext);
         }
 
         /// <summary>
         /// Occurs after the action method is invoked.
         /// </summary>
         /// <param name="actionExecutedContext">The context for the action.</param>
+        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="actionExecutedContext" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
-        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        public override async Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
             if (actionExecutedContext == null)
             {
-                throw new ArgumentNullException("actionExecutedContext");
+                throw new ArgumentNullException(nameof(actionExecutedContext));
             }
+
             var dependencyScope = actionExecutedContext.Request.GetDependencyScope();
             var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
 
-            foreach (var filter in filters.Where(FilterMatchesMetadata))
-                filter.Value.Value.OnActionExecuted(actionExecutedContext);
+            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            {
+                await filter.Value.Value.OnActionExecutedAsync(actionExecutedContext, cancellationToken);
+            }
         }
 
-        bool FilterMatchesMetadata(Meta<Lazy<IAutofacActionFilter>> filter)
+        /// <summary>
+        /// Occurs before the action method is invoked.
+        /// </summary>
+        /// <param name="actionContext">The context for the action.</param>
+        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown if <paramref name="actionContext" /> is <see langword="null" />.
+        /// </exception>
+        public override async Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
-            var metadata = filter.Metadata.ContainsKey(MetadataKey) 
-                ? filter.Metadata[MetadataKey] as FilterMetadata : null;
+            if (actionContext == null)
+            {
+                throw new ArgumentNullException(nameof(actionContext));
+            }
+
+            var dependencyScope = actionContext.Request.GetDependencyScope();
+            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+
+            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
+
+            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            {
+                await filter.Value.Value.OnActionExecutingAsync(actionContext, cancellationToken);
+            }
+        }
+
+        private bool FilterMatchesMetadata(Meta<Lazy<IAutofacActionFilter>> filter)
+        {
+            var metadata = filter.Metadata.ContainsKey(this.MetadataKey)
+                ? filter.Metadata[this.MetadataKey] as FilterMetadata : null;
 
             return metadata != null
-                && metadata.ControllerType == _filterMetadata.ControllerType
-                && metadata.FilterScope == _filterMetadata.FilterScope
-                && metadata.MethodInfo == _filterMetadata.MethodInfo;
+                && metadata.ControllerType == this._filterMetadata.ControllerType
+                && metadata.FilterScope == this._filterMetadata.FilterScope
+                && metadata.MethodInfo == this._filterMetadata.MethodInfo;
         }
     }
 }

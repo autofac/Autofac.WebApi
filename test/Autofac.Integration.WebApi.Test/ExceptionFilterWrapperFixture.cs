@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -18,7 +19,7 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
-        public void WrapperResolvesExceptionFilterFromDependencyScope()
+        public async void WrapperResolvesExceptionFilterFromDependencyScope()
         {
             var builder = new ContainerBuilder();
             builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
@@ -47,7 +48,7 @@ namespace Autofac.Integration.WebApi.Test
             };
             var wrapper = new ExceptionFilterWrapper(metadata);
 
-            wrapper.OnException(actionExecutedContext);
+            await wrapper.OnExceptionAsync(actionExecutedContext, new CancellationToken());
             Assert.Equal(1, activationCount);
         }
     }

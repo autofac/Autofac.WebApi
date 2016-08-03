@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Autofac.Features.Metadata;
@@ -36,7 +35,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Autofac implementation of the <see cref="ModelBinderProvider"/> class.
     /// </summary>
-    [SecurityCritical]
     public class AutofacWebApiModelBinderProvider : ModelBinderProvider
     {
         /// <summary>
@@ -53,7 +51,6 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="configuration" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
         public override IModelBinder GetBinder(HttpConfiguration configuration, Type modelType)
         {
             if (configuration == null)

@@ -29,7 +29,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
 using System.Reflection;
-using System.Security;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -43,7 +42,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
     /// </summary>
-    [SecurityCritical]
     public static class RegistrationExtensions
     {
         /// <summary>
@@ -60,7 +58,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Share one instance of the component within the context of a 
+        /// Share one instance of the component within the context of a
         /// single <see cref="ApiController"/> request.
         /// </summary>
         /// <typeparam name="TLimit">Registration limit type.</typeparam>
@@ -161,6 +159,7 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="builder" /> or <paramref name="modelBinderAssemblies" /> is <see langword="null" />.
         /// </exception>
+        [Obsolete("Use the AsModelBinderForTypes() registration extension to register model binders and be sure to RegisterWebApiModelBinderProvider() in your container if you do. This method doesn't connect the model binders to the Autofac binder provider. It will be removed in a future version.")]
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
             RegisterWebApiModelBinders(this ContainerBuilder builder, params Assembly[] modelBinderAssemblies)
         {

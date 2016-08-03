@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http.Formatting;
-using System.Security;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
@@ -43,7 +42,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Configures the controller descriptor with per-controller services from the container.
     /// </summary>
-    [SecurityCritical]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed class AutofacControllerConfigurationAttribute : Attribute, IControllerConfiguration
     {
@@ -55,14 +53,13 @@ namespace Autofac.Integration.WebApi
         /// Callback invoked to set per-controller overrides for this controllerDescriptor.
         /// </summary>
         /// <param name="controllerSettings">The controller settings to initialize.</param>
-        /// <param name="controllerDescriptor">The controller descriptor. Note that the 
-        /// <see cref="T:System.Web.Http.Controllers.HttpControllerDescriptor"/> can be 
-        /// associated with the derived controller type given that <see cref="T:System.Web.Http.Controllers.IControllerConfiguration"/> 
+        /// <param name="controllerDescriptor">The controller descriptor. Note that the
+        /// <see cref="T:System.Web.Http.Controllers.HttpControllerDescriptor"/> can be
+        /// associated with the derived controller type given that <see cref="T:System.Web.Http.Controllers.IControllerConfiguration"/>
         /// is inherited.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="controllerSettings" /> or <paramref name="controllerDescriptor" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
         public void Initialize(HttpControllerSettings controllerSettings, HttpControllerDescriptor controllerDescriptor)
         {
             if (controllerSettings == null)

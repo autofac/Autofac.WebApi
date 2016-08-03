@@ -23,8 +23,6 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Security;
-
 namespace Autofac.Integration.WebApi
 {
     /// <summary>
@@ -35,6 +33,6 @@ namespace Autofac.Integration.WebApi
         /// <summary>
         /// Gets the metadata key used to retrieve the filter metadata.
         /// </summary>
-        string MetadataKey { [SecurityCritical]get; }
+        string MetadataKey { get; }
     }
 }

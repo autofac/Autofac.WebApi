@@ -23,7 +23,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Security;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
@@ -31,13 +32,13 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// An exception filter that will be created for each controller request.
     /// </summary>
-    [SecurityCritical]
     public interface IAutofacExceptionFilter
     {
         /// <summary>
         /// Called when an exception is thrown.
         /// </summary>
         /// <param name="actionExecutedContext">The context for the action.</param>
-        void OnException(HttpActionExecutedContext actionExecutedContext);
+        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+        Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken);
     }
 }

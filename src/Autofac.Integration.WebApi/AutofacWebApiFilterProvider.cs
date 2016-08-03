@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -39,7 +38,6 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// A filter provider for performing property injection on filter attributes.
     /// </summary>
-    [SecurityCritical]
     public class AutofacWebApiFilterProvider : IFilterProvider
     {
         class FilterContext
@@ -82,7 +80,6 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="configuration" /> is <see langword="null" />.
         /// </exception>
-        [SecurityCritical]
         public IEnumerable<FilterInfo> GetFilters(HttpConfiguration configuration, HttpActionDescriptor actionDescriptor)
         {
             if (configuration == null)
@@ -297,10 +294,13 @@ namespace Autofac.Integration.WebApi
 
         static bool FilterMatchesAction(FilterContext filterContext, MethodInfo methodInfo, string metadataKey, FilterMetadata metadata)
         {
+            // Issue #10: Comparing MethodInfo.MethodHandle rather than just MethodInfo equality
+            // because MethodInfo equality fails on a derived controller if the base class method
+            // isn't marked virtual... but MethodHandle correctly compares regardless.
             return metadata.ControllerType != null
                    && metadata.ControllerType.IsAssignableFrom(filterContext.ControllerType)
                    && metadata.FilterScope == FilterScope.Action
-                   && metadata.MethodInfo.GetBaseDefinition() == methodInfo.GetBaseDefinition()
+                   && metadata.MethodInfo.GetBaseDefinition().MethodHandle == methodInfo.GetBaseDefinition().MethodHandle
                    && !MatchingFilterAdded(filterContext.AddedFilters[metadataKey], metadata);
         }
     }
