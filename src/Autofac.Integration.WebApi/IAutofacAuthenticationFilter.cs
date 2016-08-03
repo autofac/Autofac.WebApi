@@ -23,6 +23,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
@@ -36,12 +38,14 @@ namespace Autofac.Integration.WebApi
         /// Called when a request requires authentication.
         /// </summary>
         /// <param name="context">The context for the authentication.</param>
-        void OnAuthenticate(HttpAuthenticationContext context);
+        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+        Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken);
 
         /// <summary>
         /// Called when an authentication challenge is required.
         /// </summary>
         /// <param name="context">The context for the authentication challenge.</param>
-        void OnChallenge(HttpAuthenticationChallengeContext context);
+        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+        Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken);
     }
 }

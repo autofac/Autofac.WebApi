@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -18,7 +19,7 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
-        public void WrapperResolvesActionFilterFromDependencyScope()
+        public async void WrapperResolvesActionFilterFromDependencyScope()
         {
             var builder = new ContainerBuilder();
             builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
@@ -48,10 +49,10 @@ namespace Autofac.Integration.WebApi.Test
             };
             var wrapper = new ActionFilterWrapper(metadata);
 
-            wrapper.OnActionExecuting(httpActionContext);
+            await wrapper.OnActionExecutingAsync(httpActionContext, new CancellationToken());
             Assert.Equal(1, activationCount);
 
-            wrapper.OnActionExecuted(httpActionExecutedContext);
+            await wrapper.OnActionExecutedAsync(httpActionExecutedContext, new CancellationToken());
             Assert.Equal(1, activationCount);
         }
 

@@ -39,7 +39,7 @@ namespace Autofac.Integration.WebApi
     /// </summary>
     internal class AuthenticationFilterWrapper : IAuthenticationFilter, IAutofacAuthenticationFilter, IFilterWrapper
     {
-        readonly FilterMetadata _filterMetadata;
+        private readonly FilterMetadata _filterMetadata;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationFilterWrapper"/> class.
@@ -47,9 +47,12 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The filter metadata.</param>
         public AuthenticationFilterWrapper(FilterMetadata filterMetadata)
         {
-            if (filterMetadata == null) throw new ArgumentNullException("filterMetadata");
+            if (filterMetadata == null)
+            {
+                throw new ArgumentNullException(nameof(filterMetadata));
+            }
 
-            _filterMetadata = filterMetadata;
+            this._filterMetadata = filterMetadata;
         }
 
         /// <summary>
@@ -60,58 +63,56 @@ namespace Autofac.Integration.WebApi
             get { return AutofacWebApiFilterProvider.AuthenticationFilterMetadataKey; }
         }
 
-        public void OnAuthenticate(HttpAuthenticationContext context)
-        {
-            if (context == null) throw new ArgumentNullException("context");
-
-            var dependencyScope = context.Request.GetDependencyScope();
-            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
-
-            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
-
-            foreach (var filter in filters.Where(FilterMatchesMetadata))
-                filter.Value.Value.OnAuthenticate(context);
-        }
-
-        public void OnChallenge(HttpAuthenticationChallengeContext context)
-        {
-            if (context == null) throw new ArgumentNullException("context");
-
-            var dependencyScope = context.Request.GetDependencyScope();
-            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
-
-            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
-
-            foreach (var filter in filters.Where(FilterMatchesMetadata))
-                filter.Value.Value.OnChallenge(context);
-        }
-
         bool IFilter.AllowMultiple
         {
             get { return true; }
         }
 
-        Task IAuthenticationFilter.AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
+        public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
-            OnAuthenticate(context);
-            return Task.FromResult(0);
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var dependencyScope = context.Request.GetDependencyScope();
+            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+
+            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
+
+            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            {
+                await filter.Value.Value.AuthenticateAsync(context, cancellationToken);
+            }
         }
 
-        Task IAuthenticationFilter.ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
+        public async Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
-            OnChallenge(context);
-            return Task.FromResult(0);
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var dependencyScope = context.Request.GetDependencyScope();
+            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+
+            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
+
+            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            {
+                await filter.Value.Value.ChallengeAsync(context, cancellationToken);
+            }
         }
 
-        bool FilterMatchesMetadata(Meta<Lazy<IAutofacAuthenticationFilter>> filter)
+        private bool FilterMatchesMetadata(Meta<Lazy<IAutofacAuthenticationFilter>> filter)
         {
-            var metadata = filter.Metadata.ContainsKey(MetadataKey)
-                ? filter.Metadata[MetadataKey] as FilterMetadata : null;
+            var metadata = filter.Metadata.ContainsKey(this.MetadataKey)
+                ? filter.Metadata[this.MetadataKey] as FilterMetadata : null;
 
             return metadata != null
-                   && metadata.ControllerType == _filterMetadata.ControllerType
-                   && metadata.FilterScope == _filterMetadata.FilterScope
-                   && metadata.MethodInfo == _filterMetadata.MethodInfo;
+                   && metadata.ControllerType == this._filterMetadata.ControllerType
+                   && metadata.FilterScope == this._filterMetadata.FilterScope
+                   && metadata.MethodInfo == this._filterMetadata.MethodInfo;
         }
     }
 }

@@ -135,12 +135,14 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnActionExecuting(HttpActionContext actionContext)
+        public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
@@ -153,12 +155,14 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnActionExecuting(HttpActionContext actionContext)
+        public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
@@ -171,12 +175,14 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnAuthenticate(HttpAuthenticationContext context)
+        public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnChallenge(HttpAuthenticationChallengeContext context)
+        public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
@@ -189,12 +195,14 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnAuthenticate(HttpAuthenticationContext context)
+        public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnChallenge(HttpAuthenticationChallengeContext context)
+        public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
@@ -207,8 +215,9 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnAuthorization(HttpActionContext actionContext)
+        public Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
@@ -221,8 +230,9 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnAuthorization(HttpActionContext actionContext)
+        public Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
@@ -235,8 +245,9 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnException(HttpActionExecutedContext actionExecutedContext)
+        public Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
@@ -249,35 +260,42 @@ namespace Autofac.Integration.WebApi.Test
             Logger = logger;
         }
 
-        public void OnException(HttpActionExecutedContext actionExecutedContext)
+        public Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 
     public class TestCombinationFilter : IAutofacActionFilter, IAutofacAuthenticationFilter, IAutofacAuthorizationFilter, IAutofacExceptionFilter
     {
-        public void OnActionExecuting(HttpActionContext actionContext)
+        public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnAuthorization(HttpActionContext actionContext)
+        public Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnException(HttpActionExecutedContext actionExecutedContext)
+        public Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnAuthenticate(HttpAuthenticationContext context)
+        public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
 
-        public void OnChallenge(HttpAuthenticationChallengeContext context)
+        public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
+            return Task.FromResult(0);
         }
     }
 }
