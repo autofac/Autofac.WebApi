@@ -9,6 +9,7 @@
 *.userprefs
 project.lock.json
 .vs/
+.cr/
 [Ii]ndex.dat
 [Ss]torage.dat
 
