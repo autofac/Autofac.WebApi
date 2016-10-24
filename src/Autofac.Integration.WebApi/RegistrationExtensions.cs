@@ -45,7 +45,8 @@ namespace Autofac.Integration.WebApi
     public static class RegistrationExtensions
     {
         /// <summary>
-        /// Register types that implement <see cref="IHttpController"/> in the provided assemblies.
+        /// Register types in the provided assemblies that implement <see cref="IHttpController"/> and
+        /// match the default type name suffix of "Controller".
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="controllerAssemblies">Assemblies to scan for controllers.</param>
@@ -53,8 +54,22 @@ namespace Autofac.Integration.WebApi
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
             RegisterApiControllers(this ContainerBuilder builder, params Assembly[] controllerAssemblies)
         {
+            return RegisterApiControllers(builder, "Controller", controllerAssemblies);
+        }
+
+        /// <summary>
+        /// Register types in the provided assemblies that implement <see cref="IHttpController"/> and
+        /// match the provided type name suffix.
+        /// </summary>
+        /// <param name="builder">The container builder.</param>
+        /// <param name="controllerSuffix">The type name suffix of the controllers.</param>
+        /// <param name="controllerAssemblies">Assemblies to scan for controllers.</param>
+        /// <returns>Registration builder allowing the controller components to be customised.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
+            RegisterApiControllers(this ContainerBuilder builder, string controllerSuffix, params Assembly[] controllerAssemblies)
+        {
             return builder.RegisterAssemblyTypes(controllerAssemblies)
-                .Where(t => typeof(IHttpController).IsAssignableFrom(t) && t.Name.EndsWith("Controller", StringComparison.Ordinal));
+                .Where(t => typeof(IHttpController).IsAssignableFrom(t) && t.Name.EndsWith(controllerSuffix, StringComparison.Ordinal));
         }
 
         /// <summary>

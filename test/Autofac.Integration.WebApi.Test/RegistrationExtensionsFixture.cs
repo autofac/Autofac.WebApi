@@ -47,7 +47,7 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
-        public void RegisterApiControllersIgnoresTypesWithoutControllerSuffix()
+        public void RegisterApiControllersIgnoresTypesWithoutControllerSuffixByDefault()
         {
             var builder = new ContainerBuilder();
 
@@ -55,6 +55,17 @@ namespace Autofac.Integration.WebApi.Test
 
             var container = builder.Build();
             Assert.False(container.IsRegistered<IsAControllerNot>());
+        }
+
+        [Fact]
+        public void RegisterApiControllersAllowsCustomSuffixToSpecified()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterApiControllers("WithSuffix", Assembly.GetExecutingAssembly());
+
+            var container = builder.Build();
+            Assert.True(container.IsRegistered<TestControllerWithSuffix>());
         }
 
         [Fact]

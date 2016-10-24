@@ -64,6 +64,10 @@ namespace Autofac.Integration.WebApi.Test
         }
     }
 
+    public class TestControllerWithSuffix : ApiController
+    {
+    }
+
     public class InterfaceController : IHttpController
     {
         public Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken)
