@@ -86,7 +86,8 @@ namespace Autofac.Integration.WebApi
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
 
-            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            // Issue #16: OnActionExecuted needs to happen in the opposite order of OnActionExecuting.
+            foreach (var filter in filters.Where(this.FilterMatchesMetadata).Reverse())
             {
                 await filter.Value.Value.OnActionExecutedAsync(actionExecutedContext, cancellationToken);
             }
@@ -112,6 +113,7 @@ namespace Autofac.Integration.WebApi
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
 
+            // Issue #16: OnActionExecuted needs to happen in the opposite order of OnActionExecuting.
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
                 await filter.Value.Value.OnActionExecutingAsync(actionContext, cancellationToken);

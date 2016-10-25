@@ -81,6 +81,21 @@ namespace Autofac.Integration.WebApi.Test
         void Log(string value);
     }
 
+    public class DelegatingLogger : ILogger
+    {
+        private readonly Action<string> _onLog;
+
+        public DelegatingLogger(Action<string> onLog)
+        {
+            this._onLog = onLog;
+        }
+
+        public void Log(string value)
+        {
+            this._onLog(value);
+        }
+    }
+
     public class Logger : ILogger, IDisposable
     {
         public void Log(string value)
@@ -141,11 +156,13 @@ namespace Autofac.Integration.WebApi.Test
 
         public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            this.Logger.Log("TestActionFilter.OnActionExecutingAsync");
             return Task.FromResult(0);
         }
 
         public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            this.Logger.Log("TestActionFilter.OnActionExecutedAsync");
             return Task.FromResult(0);
         }
     }
@@ -161,11 +178,13 @@ namespace Autofac.Integration.WebApi.Test
 
         public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            this.Logger.Log("TestActionFilter2.OnActionExecutingAsync");
             return Task.FromResult(0);
         }
 
         public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
+            this.Logger.Log("TestActionFilter2.OnActionExecutedAsync");
             return Task.FromResult(0);
         }
     }
