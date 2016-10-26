@@ -41,6 +41,15 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
+        public void NullConfigurationActionThrowsException()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => new AutofacWebApiDependencyResolver(new ContainerBuilder().Build(), null));
+
+            Assert.Equal("configurationAction", exception.ParamName);
+        }
+
+        [Fact]
         public void GetServiceReturnsNullForUnregisteredService()
         {
             var container = new ContainerBuilder().Build();
@@ -111,6 +120,19 @@ namespace Autofac.Integration.WebApi.Test
             var resolver = new AutofacWebApiDependencyResolver(container);
 
             Assert.NotSame(resolver.BeginScope(), resolver.BeginScope());
+        }
+
+        [Fact]
+        public void BeginScopeUsesConfigurationActionIfAny()
+        {
+            var builder = new ContainerBuilder();
+            builder.Register(c => new object());
+            var container = builder.Build();
+            var resolver = new AutofacWebApiDependencyResolver(container, containerBuilder => containerBuilder.Register(c => new object()));
+            var services = resolver.GetServices(typeof(object));
+            var servicesInScope = resolver.BeginScope().GetServices(typeof(object));
+
+            Assert.NotEqual(services.Count(), servicesInScope.Count());
         }
     }
 }
