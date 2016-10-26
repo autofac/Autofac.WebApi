@@ -38,6 +38,20 @@ namespace Autofac.Integration.WebApi
         private bool _disposed;
         readonly ILifetimeScope _container;
         readonly IDependencyScope _rootDependencyScope;
+        readonly Action<ContainerBuilder> _configurationAction;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AutofacWebApiDependencyResolver"/> class.
+        /// </summary>
+        /// <param name="container">The container that nested lifetime scopes will be create from.</param>
+        /// <param name="configurationAction">A configuration action that will execute during lifetime scope creation.</param>
+        public AutofacWebApiDependencyResolver(ILifetimeScope container, Action<ContainerBuilder> configurationAction)
+            : this(container)
+        {
+            if (configurationAction == null) throw new ArgumentNullException("configurationAction");
+
+            _configurationAction = configurationAction;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AutofacWebApiDependencyResolver"/> class.
@@ -96,7 +110,9 @@ namespace Autofac.Integration.WebApi
         /// </returns>
         public IDependencyScope BeginScope()
         {
-            var lifetimeScope = _container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag);
+            var lifetimeScope = _configurationAction == null
+                                    ? _container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag)
+                                    : _container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag, _configurationAction);
             return new AutofacWebApiDependencyScope(lifetimeScope);
         }
 
