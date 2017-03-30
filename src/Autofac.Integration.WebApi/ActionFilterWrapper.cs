@@ -67,33 +67,6 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Occurs after the action method is invoked.
-        /// </summary>
-        /// <param name="actionExecutedContext">The context for the action.</param>
-        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if <paramref name="actionExecutedContext" /> is <see langword="null" />.
-        /// </exception>
-        public override async Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
-        {
-            if (actionExecutedContext == null)
-            {
-                throw new ArgumentNullException(nameof(actionExecutedContext));
-            }
-
-            var dependencyScope = actionExecutedContext.Request.GetDependencyScope();
-            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
-
-            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
-
-            // Issue #16: OnActionExecuted needs to happen in the opposite order of OnActionExecuting.
-            foreach (var filter in filters.Where(this.FilterMatchesMetadata).Reverse())
-            {
-                await filter.Value.Value.OnActionExecutedAsync(actionExecutedContext, cancellationToken);
-            }
-        }
-
-        /// <summary>
         /// Occurs before the action method is invoked.
         /// </summary>
         /// <param name="actionContext">The context for the action.</param>
@@ -117,6 +90,33 @@ namespace Autofac.Integration.WebApi
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
                 await filter.Value.Value.OnActionExecutingAsync(actionContext, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Occurs after the action method is invoked.
+        /// </summary>
+        /// <param name="actionExecutedContext">The context for the action.</param>
+        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown if <paramref name="actionExecutedContext" /> is <see langword="null" />.
+        /// </exception>
+        public override async Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
+        {
+            if (actionExecutedContext == null)
+            {
+                throw new ArgumentNullException(nameof(actionExecutedContext));
+            }
+
+            var dependencyScope = actionExecutedContext.Request.GetDependencyScope();
+            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+
+            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
+
+            // Issue #16: OnActionExecuted needs to happen in the opposite order of OnActionExecuting.
+            foreach (var filter in filters.Where(this.FilterMatchesMetadata).Reverse())
+            {
+                await filter.Value.Value.OnActionExecutedAsync(actionExecutedContext, cancellationToken);
             }
         }
 
