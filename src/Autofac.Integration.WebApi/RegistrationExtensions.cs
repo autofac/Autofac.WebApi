@@ -145,11 +145,7 @@ namespace Autofac.Integration.WebApi
         {
             if (builder == null) throw new ArgumentNullException("builder");
             if (config == null) throw new ArgumentNullException("config");
-
-            if (!config.MessageHandlers.OfType<CurrentRequestHandler>().Any())
-            {
-                config.MessageHandlers.Add(new CurrentRequestHandler());
-            }
+            config.RegisterHttpRequestMessage();
         }
 
         /// <summary>
