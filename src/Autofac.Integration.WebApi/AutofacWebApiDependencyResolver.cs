@@ -86,7 +86,7 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         /// <param name="serviceType">Type of service to request.</param>
         /// <returns>An instance of the service, or null if the service is not found.</returns>
-        public object GetService(Type serviceType)
+        public virtual object GetService(Type serviceType)
         {
             return _rootDependencyScope.GetService(serviceType);
         }
@@ -96,7 +96,7 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         /// <param name="serviceType">ControllerType of services to request.</param>
         /// <returns>An enumeration (possibly empty) of the service.</returns>
-        public IEnumerable<object> GetServices(Type serviceType)
+        public virtual IEnumerable<object> GetServices(Type serviceType)
         {
             return _rootDependencyScope.GetServices(serviceType);
         }
