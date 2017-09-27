@@ -35,6 +35,8 @@ namespace Autofac.Integration.WebApi
     /// </summary>
     public static class HttpConfigurationExtensions
     {
+        internal static bool IsHttpRequestMessageTrackingEnabled = false;
+
         /// <summary>
         /// Makes the current <see cref="HttpRequestMessage"/> resolvable through the dependency scope.
         /// </summary>
@@ -50,6 +52,8 @@ namespace Autofac.Integration.WebApi
             {
                 config.MessageHandlers.Add(new CurrentRequestHandler());
             }
+
+            IsHttpRequestMessageTrackingEnabled = true;
         }
     }
 }

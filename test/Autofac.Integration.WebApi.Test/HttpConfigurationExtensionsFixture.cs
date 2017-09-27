@@ -59,5 +59,15 @@ namespace Autofac.Integration.WebApi.Test
 
             Assert.Equal("config", exception.ParamName);
         }
+
+        [Fact]
+        public void RegisterHttpRequestMessageTurnsOnHttpRequestMessageTracking()
+        {
+            var config = new HttpConfiguration();
+
+            config.RegisterHttpRequestMessage();
+
+            Assert.True(HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled);
+        }
     }
 }
