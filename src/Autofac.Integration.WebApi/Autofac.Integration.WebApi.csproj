@@ -85,6 +85,7 @@
     <Compile Include="AuthorizationFilterOverrideWrapper.cs" />
     <Compile Include="ExceptionFilterOverrideWrapper.cs" />
     <Compile Include="HttpConfigurationExtensions.cs" />
+    <Compile Include="HttpRequestMessageProvider.cs" />
     <Compile Include="IAutofacAuthenticationFilter.cs" />
     <Compile Include="CurrentRequestHandler.cs" />
     <Compile Include="DependencyResolverExtensions.cs" />

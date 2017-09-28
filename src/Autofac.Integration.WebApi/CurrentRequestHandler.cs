@@ -56,14 +56,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="request">The HTTP request message.</param>
         internal static void UpdateScopeWithHttpRequestMessage(HttpRequestMessage request)
         {
-            var scope = request.GetDependencyScope();
-            var requestScope = scope.GetRequestLifetimeScope();
-            if (requestScope == null) return;
-
-            var registry = requestScope.ComponentRegistry;
-            var builder = new ContainerBuilder();
-            builder.Register(c => request).InstancePerRequest();
-            builder.Update(registry);
+            HttpRequestMessageProvider.Current = request;
         }
     }
 }

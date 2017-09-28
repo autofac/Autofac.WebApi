@@ -24,6 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
@@ -42,14 +43,20 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="config" /> is <see langword="null" />.
         /// </exception>
+        [Obsolete("The HttpRequestMessage must be registered using the RegisterHttpRequestMessage extension method on ContainerBuilder.", true)]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Method marked as obsolete to point to correct method.")]
         public static void RegisterHttpRequestMessage(this HttpConfiguration config)
         {
-            if (config == null) throw new ArgumentNullException(nameof(config));
+        }
 
-            if (!config.MessageHandlers.OfType<CurrentRequestHandler>().Any())
-            {
-                config.MessageHandlers.Add(new CurrentRequestHandler());
-            }
+        internal static void RegisterHttpRequestMessage(this HttpConfiguration config, ContainerBuilder builder)
+        {
+            if (config.MessageHandlers.OfType<CurrentRequestHandler>().Any()) return;
+
+            builder.Register(c => HttpRequestMessageProvider.Current)
+                .InstancePerRequest();
+
+            config.MessageHandlers.Add(new CurrentRequestHandler());
         }
     }
 }

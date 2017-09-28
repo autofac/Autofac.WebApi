@@ -23,8 +23,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Linq;
+using System.Net.Http;
 using System.Web.Http;
 using Xunit;
 
@@ -36,7 +36,8 @@ namespace Autofac.Integration.WebApi.Test
         public void RegisterHttpRequestMessageAddsHandler()
         {
             var config = new HttpConfiguration();
-            config.RegisterHttpRequestMessage();
+
+            config.RegisterHttpRequestMessage(new ContainerBuilder());
 
             Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
         }
@@ -45,19 +46,24 @@ namespace Autofac.Integration.WebApi.Test
         public void RegisterHttpRequestMessageEnsuresHandlerAddedOnlyOnce()
         {
             var config = new HttpConfiguration();
+            var builder = new ContainerBuilder();
 
-            config.RegisterHttpRequestMessage();
-            config.RegisterHttpRequestMessage();
+            config.RegisterHttpRequestMessage(builder);
+            config.RegisterHttpRequestMessage(builder);
 
             Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
         }
 
         [Fact]
-        public void RegisterHttpRequestMessageThrowsGivenNullConfig()
+        public void RegisterHttpRequestMessageAddsRegistration()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => HttpConfigurationExtensions.RegisterHttpRequestMessage(null));
+            var config = new HttpConfiguration();
+            var builder = new ContainerBuilder();
 
-            Assert.Equal("config", exception.ParamName);
+            config.RegisterHttpRequestMessage(builder);
+
+            var container = builder.Build();
+            Assert.True(container.IsRegistered<HttpRequestMessage>());
         }
     }
 }

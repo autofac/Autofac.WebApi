@@ -143,9 +143,10 @@ namespace Autofac.Integration.WebApi
         /// <param name="config">The HTTP server configuration.</param>
         public static void RegisterHttpRequestMessage(this ContainerBuilder builder, HttpConfiguration config)
         {
-            if (builder == null) throw new ArgumentNullException("builder");
-            if (config == null) throw new ArgumentNullException("config");
-            config.RegisterHttpRequestMessage();
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            config.RegisterHttpRequestMessage(builder);
         }
 
         /// <summary>
