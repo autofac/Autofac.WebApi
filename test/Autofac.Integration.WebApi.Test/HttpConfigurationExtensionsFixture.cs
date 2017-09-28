@@ -31,84 +31,84 @@ using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
 {
-	public class HttpConfigurationExtensionsFixture
-	{
-		[Fact]
-		public void RegisterHttpRequestMessageAddsHandler()
-		{
-			var config = new HttpConfiguration();
-			config.RegisterHttpRequestMessage();
-
-			Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
-		}
-
-		[Fact]
-		public void RegisterHttpRequestMessageEnsuresHandlerAddedOnlyOnce()
-		{
-			var config = new HttpConfiguration();
-
-			config.RegisterHttpRequestMessage();
-			config.RegisterHttpRequestMessage();
-
-			Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
-		}
-
-		[Fact]
-		public void RegisterHttpRequestMessageThrowsGivenNullConfig()
-		{
-			var exception = Assert.Throws<ArgumentNullException>(() => HttpConfigurationExtensions.RegisterHttpRequestMessage(null));
-
-			Assert.Equal("config", exception.ParamName);
-		}
-
-		[Fact]
-		public void RegisterHttpRequestMessageTurnsOnHttpRequestMessageTracking()
-		{
-			var config = new HttpConfiguration();
-
-			config.RegisterHttpRequestMessage();
-
-			Assert.True(HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled);
-		}
-
-	    [Fact]
-	    public void GetHttpRequestMessageThrowsWhenComponentContextIsNull()
-	    {
-	        const IComponentContext nullContext = null;
-
-	        var exception = Assert.Throws<ArgumentNullException>(() => nullContext.GetHttpRequestMessage());
-
-            Assert.Equal("componentContext", exception.ParamName);
-	    }
-
-	    [Fact]
-	    public void GetHttpRequestMessageThrowsWhenIsHttpRequestMessageTrackingIsNotEnabled()
-	    {
-	        HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled = false;
-
-	        var componentContext = new TestComponentContext();
-
-	        Assert.Throws<InvalidOperationException>(() => componentContext.GetHttpRequestMessage());
-	    }
-
-	    [Fact]
-	    public void GetHttpRequestMessageReturnsExpectedHttpRequestMessageWhenIsHttpRequestMessageTrackingIsEnabled()
-	    {
-            // Arrange
-	        var config = new HttpConfiguration();
+    public class HttpConfigurationExtensionsFixture
+    {
+        [Fact]
+        public void RegisterHttpRequestMessageAddsHandler()
+        {
+            var config = new HttpConfiguration();
             config.RegisterHttpRequestMessage();
 
-	        var httpRequestMessage = new HttpRequestMessage();
-	        AutofacHttpRequestMessageProvider.Current = httpRequestMessage;
+            Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
+        }
+
+        [Fact]
+        public void RegisterHttpRequestMessageEnsuresHandlerAddedOnlyOnce()
+        {
+            var config = new HttpConfiguration();
+
+            config.RegisterHttpRequestMessage();
+            config.RegisterHttpRequestMessage();
+
+            Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
+        }
+
+        [Fact]
+        public void RegisterHttpRequestMessageThrowsGivenNullConfig()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(() => HttpConfigurationExtensions.RegisterHttpRequestMessage(null));
+
+            Assert.Equal("config", exception.ParamName);
+        }
+
+        [Fact]
+        public void RegisterHttpRequestMessageTurnsOnHttpRequestMessageTracking()
+        {
+            var config = new HttpConfiguration();
+
+            config.RegisterHttpRequestMessage();
+
+            Assert.True(HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled);
+        }
+
+        [Fact]
+        public void GetHttpRequestMessageThrowsWhenComponentContextIsNull()
+        {
+            const IComponentContext nullContext = null;
+
+            var exception = Assert.Throws<ArgumentNullException>(() => nullContext.GetHttpRequestMessage());
+
+            Assert.Equal("componentContext", exception.ParamName);
+        }
+
+        [Fact]
+        public void GetHttpRequestMessageThrowsWhenIsHttpRequestMessageTrackingIsNotEnabled()
+        {
+            HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled = false;
+
+            var componentContext = new TestComponentContext();
+
+            Assert.Throws<InvalidOperationException>(() => componentContext.GetHttpRequestMessage());
+        }
+
+        [Fact]
+        public void GetHttpRequestMessageReturnsExpectedHttpRequestMessageWhenIsHttpRequestMessageTrackingIsEnabled()
+        {
+            // Arrange
+            var config = new HttpConfiguration();
+            config.RegisterHttpRequestMessage();
+
+            var httpRequestMessage = new HttpRequestMessage();
+            AutofacHttpRequestMessageProvider.Current = httpRequestMessage;
 
             var componentContext = new TestComponentContext();
 
             // Act
-	        var result = componentContext.GetHttpRequestMessage();
+            var result = componentContext.GetHttpRequestMessage();
 
             // Assert
             Assert.Same(httpRequestMessage, result);
-	    }
+        }
 
     }
 }
