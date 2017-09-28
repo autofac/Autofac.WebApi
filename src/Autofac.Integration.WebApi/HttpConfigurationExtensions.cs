@@ -55,5 +55,30 @@ namespace Autofac.Integration.WebApi
 
             IsHttpRequestMessageTrackingEnabled = true;
         }
+
+        /// <summary>
+        /// Returns the current <see cref="HttpRequestMessage"/> from <see cref="AutofacHttpRequestMessageProvider.Current"/>.
+        /// </summary>
+        /// <param name="componentContext">The Autofac <see cref="IComponentContext"/></param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="componentContext"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">Thrown if <see cref="HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled"/> is
+        /// <see langword="false" />
+        /// </exception>
+        /// <returns></returns>
+        public static HttpRequestMessage GetHttpRequestMessage(this IComponentContext componentContext)
+        {
+            if (componentContext == null) throw new ArgumentNullException(nameof(componentContext));
+
+            if (!IsHttpRequestMessageTrackingEnabled)
+            {
+                throw new InvalidOperationException(
+                    "Cannot resolve the current HttpRequestMessage. " +
+                    "Please make sure containerBuilder.RegisterHttpRequestMessage" +
+                    "(GlobalConfiguration.Configuration) is called during startup");
+            }
+
+            return AutofacHttpRequestMessageProvider.Current;
+        }
     }
 }

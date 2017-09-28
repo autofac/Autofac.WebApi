@@ -32,6 +32,7 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using System.Web.Http.ModelBinding;
+using Autofac.Core;
 
 namespace Autofac.Integration.WebApi.Test
 {
@@ -320,5 +321,15 @@ namespace Autofac.Integration.WebApi.Test
         {
             return Task.FromResult(0);
         }
+    }
+
+    public class TestComponentContext : IComponentContext
+    {
+        public object ResolveComponent(IComponentRegistration registration, IEnumerable<Parameter> parameters)
+        {
+            return null;
+        }
+
+        public IComponentRegistry ComponentRegistry { get; } = null;
     }
 }

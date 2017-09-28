@@ -25,6 +25,7 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Web.Http;
 using Xunit;
 
@@ -77,5 +78,43 @@ namespace Autofac.Integration.WebApi.Test
 
 			Assert.True(HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled);
 		}
-	}
+
+	    [Fact]
+	    public void GetHttpRequestMessageThrowsWhenComponentContextIsNull()
+	    {
+	        const IComponentContext nullContext = null;
+
+	        var exception = Assert.Throws<ArgumentNullException>(() => nullContext.GetHttpRequestMessage());
+
+            Assert.Equal("componentContext", exception.ParamName);
+	    }
+
+	    [Fact]
+	    public void GetHttpRequestMessageThrowsWhenIsHttpRequestMessageTrackingIsNotEnabled()
+	    {
+	        var componentContext = new TestComponentContext();
+
+	        Assert.Throws<InvalidOperationException>(() => componentContext.GetHttpRequestMessage());
+	    }
+
+	    [Fact]
+	    public void GetHttpRequestMessageReturnsExpectedHttpRequestMessageWhenIsHttpRequestMessageTrackingIsEnabled()
+	    {
+            // Arrange
+	        var config = new HttpConfiguration();
+            config.RegisterHttpRequestMessage();
+
+	        var httpRequestMessage = new HttpRequestMessage();
+	        AutofacHttpRequestMessageProvider.Current = httpRequestMessage;
+
+            var componentContext = new TestComponentContext();
+
+            // Act
+	        var result = componentContext.GetHttpRequestMessage();
+
+            // Assert
+            Assert.Same(httpRequestMessage, result);
+	    }
+
+    }
 }
