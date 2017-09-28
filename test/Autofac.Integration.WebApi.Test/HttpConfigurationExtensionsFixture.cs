@@ -30,44 +30,52 @@ using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
 {
-    public class HttpConfigurationExtensionsFixture
-    {
-        [Fact]
-        public void RegisterHttpRequestMessageAddsHandler()
-        {
-            var config = new HttpConfiguration();
-            config.RegisterHttpRequestMessage();
+	public class HttpConfigurationExtensionsFixture
+	{
+		[Fact]
+		public void RegisterHttpRequestMessageAddsHandler()
+		{
+			var config = new HttpConfiguration();
+			config.RegisterHttpRequestMessage();
 
-            Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
-        }
+			Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
+		}
 
-        [Fact]
-        public void RegisterHttpRequestMessageEnsuresHandlerAddedOnlyOnce()
-        {
-            var config = new HttpConfiguration();
+		[Fact]
+		public void RegisterHttpRequestMessageEnsuresHandlerAddedOnlyOnce()
+		{
+			var config = new HttpConfiguration();
 
-            config.RegisterHttpRequestMessage();
-            config.RegisterHttpRequestMessage();
+			config.RegisterHttpRequestMessage();
+			config.RegisterHttpRequestMessage();
 
-            Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
-        }
+			Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
+		}
 
-        [Fact]
-        public void RegisterHttpRequestMessageThrowsGivenNullConfig()
-        {
-            var exception = Assert.Throws<ArgumentNullException>(() => HttpConfigurationExtensions.RegisterHttpRequestMessage(null));
+		[Fact]
+		public void RegisterHttpRequestMessageThrowsGivenNullConfig()
+		{
+			var exception = Assert.Throws<ArgumentNullException>(() => HttpConfigurationExtensions.RegisterHttpRequestMessage(null));
 
-            Assert.Equal("config", exception.ParamName);
-        }
+			Assert.Equal("config", exception.ParamName);
+		}
 
-        [Fact]
-        public void RegisterHttpRequestMessageTurnsOnHttpRequestMessageTracking()
-        {
-            var config = new HttpConfiguration();
+	    [Fact]
+	    public void IsHttpRequestMessageTrackingEnabledReturnsFalseInitially()
+	    {
+	        var result = HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled;
 
-            config.RegisterHttpRequestMessage();
+            Assert.False(result);
+	    }
 
-            Assert.True(HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled);
-        }
-    }
+		[Fact]
+		public void RegisterHttpRequestMessageTurnsOnHttpRequestMessageTracking()
+		{
+			var config = new HttpConfiguration();
+
+			config.RegisterHttpRequestMessage();
+
+			Assert.True(HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled);
+		}
+	}
 }
