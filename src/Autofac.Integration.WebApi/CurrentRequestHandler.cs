@@ -30,8 +30,8 @@ using System.Threading.Tasks;
 namespace Autofac.Integration.WebApi
 {
     /// <summary>
-    /// A delegating handler that updates the current dependency scope
-    /// with the current <see cref="HttpRequestMessage"/>.
+    /// A delegating handler that sets the current <see cref="HttpRequestMessage"/> to 
+    /// <see cref="AutofacHttpRequestMessageProvider.Current"/>.
     /// </summary>
     class CurrentRequestHandler : DelegatingHandler
     {
@@ -51,19 +51,12 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Updates the current dependency scope with current HTTP request message.
+        /// Sets the current HTTP request message to <see cref="AutofacHttpRequestMessageProvider.Current"/>.
         /// </summary>
         /// <param name="request">The HTTP request message.</param>
         internal static void UpdateScopeWithHttpRequestMessage(HttpRequestMessage request)
         {
-            var scope = request.GetDependencyScope();
-            var requestScope = scope.GetRequestLifetimeScope();
-            if (requestScope == null) return;
-
-            var registry = requestScope.ComponentRegistry;
-            var builder = new ContainerBuilder();
-            builder.Register(c => request).InstancePerRequest();
-            builder.Update(registry);
+            AutofacHttpRequestMessageProvider.Current = request;
         }
     }
 }

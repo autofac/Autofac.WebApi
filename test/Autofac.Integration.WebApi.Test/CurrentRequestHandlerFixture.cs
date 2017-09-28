@@ -1,6 +1,4 @@
 ﻿using System.Net.Http;
-using System.Web.Http.Hosting;
-using Autofac.Core.Lifetime;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -8,16 +6,17 @@ namespace Autofac.Integration.WebApi.Test
     public class CurrentRequestHandlerFixture
     {
         [Fact]
-        public void HandlerUpdatesDependencyScopeWithHttpRequestMessage()
+        public void HandlerSetsHttpRequestMessageToProvider()
         {
+            // Arrange
             var request = new HttpRequestMessage();
-            var lifetimeScope = new ContainerBuilder().Build().BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag);
-            var scope = new AutofacWebApiDependencyScope(lifetimeScope);
-            request.Properties.Add(HttpPropertyKeys.DependencyScope, scope);
 
+            // Act
             CurrentRequestHandler.UpdateScopeWithHttpRequestMessage(request);
+            var result = AutofacHttpRequestMessageProvider.Current;
 
-            Assert.Equal(request, scope.GetService(typeof(HttpRequestMessage)));
+            // Assert
+            Assert.Equal(request, result);
         }
     }
 }

@@ -61,14 +61,6 @@ namespace Autofac.Integration.WebApi.Test
 			Assert.Equal("config", exception.ParamName);
 		}
 
-	    [Fact]
-	    public void IsHttpRequestMessageTrackingEnabledReturnsFalseInitially()
-	    {
-	        var result = HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled;
-
-            Assert.False(result);
-	    }
-
 		[Fact]
 		public void RegisterHttpRequestMessageTurnsOnHttpRequestMessageTracking()
 		{
@@ -92,6 +84,8 @@ namespace Autofac.Integration.WebApi.Test
 	    [Fact]
 	    public void GetHttpRequestMessageThrowsWhenIsHttpRequestMessageTrackingIsNotEnabled()
 	    {
+	        HttpConfigurationExtensions.IsHttpRequestMessageTrackingEnabled = false;
+
 	        var componentContext = new TestComponentContext();
 
 	        Assert.Throws<InvalidOperationException>(() => componentContext.GetHttpRequestMessage());
