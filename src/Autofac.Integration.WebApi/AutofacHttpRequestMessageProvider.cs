@@ -23,12 +23,39 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Net.Http;
+using System.Runtime.Remoting.Messaging;
 
 namespace Autofac.Integration.WebApi
 {
     internal static class AutofacHttpRequestMessageProvider
     {
-        internal static HttpRequestMessage Current { get; set; }
+        private static readonly string _key = Guid.NewGuid().ToString("N").Substring(0, 12);
+
+        internal static HttpRequestMessage Current
+        {
+            get
+            {
+                var wrapper = (HttpRequestMessageWrapper)CallContext.LogicalGetData(_key);
+                return wrapper?.Message;
+            }
+            set
+            {
+                var wrapper = value == null ? null : new HttpRequestMessageWrapper(value);
+                CallContext.LogicalSetData(_key, wrapper);
+            }
+        }
+
+        [Serializable]
+        internal sealed class HttpRequestMessageWrapper : MarshalByRefObject
+        {
+            [NonSerialized] internal readonly HttpRequestMessage Message;
+
+            internal HttpRequestMessageWrapper(HttpRequestMessage message)
+            {
+                Message = message;
+            }
+        }
     }
 }

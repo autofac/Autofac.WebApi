@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="ActionFilterFixture.cs" />
     <Compile Include="ActionFilterWrapperFixture.cs" />
+    <Compile Include="AutofacHttpRequestMessageProviderFixture.cs" />
     <Compile Include="AutofacWebApiDependencyResolverFixture.cs" />
     <Compile Include="AutofacWebApiFilterProviderFixture.cs" />
     <Compile Include="AutofacWebApiModelBinderProviderFixture.cs" />
