@@ -89,7 +89,10 @@ namespace Autofac.Integration.WebApi
             // Issue #16: OnActionExecuted needs to happen in the opposite order of OnActionExecuting.
             foreach (var filter in filters.Where(this.FilterMatchesMetadata).Reverse())
             {
-                await filter.Value.Value.OnActionExecutedAsync(actionExecutedContext, cancellationToken);
+                if (actionExecutedContext.Response == null)
+                {
+                    await filter.Value.Value.OnActionExecutedAsync(actionExecutedContext, cancellationToken);
+                }
             }
         }
 
@@ -116,7 +119,10 @@ namespace Autofac.Integration.WebApi
             // Issue #16: OnActionExecuted needs to happen in the opposite order of OnActionExecuting.
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.OnActionExecutingAsync(actionContext, cancellationToken);
+                if (actionContext.Response == null)
+                {
+                    await filter.Value.Value.OnActionExecutingAsync(actionContext, cancellationToken);
+                }
             }
         }
 
