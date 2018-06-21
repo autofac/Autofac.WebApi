@@ -146,8 +146,8 @@ namespace Autofac.Integration.WebApi.Test
             attribute.Initialize(settings, descriptor);
 
             Assert.Equal(6, settings.Formatters.Count);
-            Assert.True(settings.Formatters.Contains(formatter1));
-            Assert.True(settings.Formatters.Contains(formatter2));
+            Assert.Contains(formatter1, settings.Formatters);
+            Assert.Contains(formatter2, settings.Formatters);
         }
 
         [Fact]
@@ -167,8 +167,8 @@ namespace Autofac.Integration.WebApi.Test
             attribute.Initialize(settings, descriptor);
 
             Assert.Equal(2, settings.Formatters.Count);
-            Assert.True(settings.Formatters.Contains(formatter1));
-            Assert.True(settings.Formatters.Contains(formatter2));
+            Assert.Contains(formatter1, settings.Formatters);
+            Assert.Contains(formatter2, settings.Formatters);
         }
 
         [Fact]
@@ -190,8 +190,8 @@ namespace Autofac.Integration.WebApi.Test
             var services = settings.Services.GetServices(typeof(ModelBinderProvider)).ToArray();
 
             Assert.Equal(2, services.Count());
-            Assert.True(services.Contains(provider1));
-            Assert.True(services.Contains(provider2));
+            Assert.Contains(provider1, services);
+            Assert.Contains(provider2, services);
         }
 
         [Fact]
@@ -285,8 +285,8 @@ namespace Autofac.Integration.WebApi.Test
 
             attribute.Initialize(settings, descriptor);
 
-            Assert.True(serviceLocator(settings.Services).Contains(service));
-            Assert.False(serviceLocator(configuration.Services).Contains(service));
+            Assert.Contains(service, serviceLocator(settings.Services));
+            Assert.DoesNotContain(service, serviceLocator(configuration.Services));
         }
     }
 }

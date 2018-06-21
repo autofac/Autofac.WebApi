@@ -81,7 +81,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var services = resolver.GetServices(typeof(object));
 
-            Assert.Equal(0, services.Count());
+            Assert.Empty(services);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var services = resolver.GetServices(typeof(object));
 
-            Assert.Equal(1, services.Count());
+            Assert.Single(services);
         }
 
         [Fact]

@@ -39,7 +39,7 @@ namespace Autofac.Integration.WebApi.Test
 
             config.RegisterHttpRequestMessage(new ContainerBuilder());
 
-            Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
+            Assert.Single(config.MessageHandlers.OfType<CurrentRequestHandler>());
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace Autofac.Integration.WebApi.Test
             config.RegisterHttpRequestMessage(builder);
             config.RegisterHttpRequestMessage(builder);
 
-            Assert.Equal(1, config.MessageHandlers.OfType<CurrentRequestHandler>().Count());
+            Assert.Single(config.MessageHandlers.OfType<CurrentRequestHandler>());
         }
 
         [Fact]

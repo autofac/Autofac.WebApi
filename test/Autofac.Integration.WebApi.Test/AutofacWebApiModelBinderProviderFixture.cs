@@ -22,7 +22,7 @@ namespace Autofac.Integration.WebApi.Test
         {
             var container = BuildContainer();
             var modelBinders = container.Resolve<IEnumerable<IModelBinder>>();
-            Assert.Equal(1, modelBinders.Count());
+            Assert.Single(modelBinders);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Autofac.Integration.WebApi.Test
             var container = builder.Build();
 
             var modelBinders = container.Resolve<IEnumerable<IModelBinder>>().ToList();
-            Assert.Equal(1, modelBinders.Count());
+            Assert.Single(modelBinders);
             Assert.IsType<TestModelBinder>(modelBinders.First());
 
             var provider = container.Resolve<ModelBinderProvider>();

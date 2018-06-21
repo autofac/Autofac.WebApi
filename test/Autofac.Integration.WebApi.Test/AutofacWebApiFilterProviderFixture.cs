@@ -104,10 +104,10 @@ namespace Autofac.Integration.WebApi.Test
             var filterInfos = provider.GetFilters(configuration, actionDescriptor).ToArray();
             var filters = filterInfos.Select(info => info.Instance).ToArray();
 
-            Assert.Equal(1, filters.OfType<AuthenticationFilterWrapper>().Count());
-            Assert.Equal(1, filters.OfType<AuthorizationFilterWrapper>().Count());
-            Assert.Equal(1, filters.OfType<ExceptionFilterWrapper>().Count());
-            Assert.Equal(1, filters.OfType<ActionFilterWrapper>().Count());
+            Assert.Single(filters.OfType<AuthenticationFilterWrapper>());
+            Assert.Single(filters.OfType<AuthorizationFilterWrapper>());
+            Assert.Single(filters.OfType<ExceptionFilterWrapper>());
+            Assert.Single(filters.OfType<ActionFilterWrapper>());
         }
 
         static ReflectedHttpActionDescriptor BuildActionDescriptorForGetMethod()

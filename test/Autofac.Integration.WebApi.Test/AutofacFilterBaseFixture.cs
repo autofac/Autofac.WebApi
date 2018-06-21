@@ -193,7 +193,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var wrapperType = GetWrapperType();
             var filters = filterInfos.Select(info => info.Instance).Where(i => i.GetType() == wrapperType).ToArray();
-            Assert.Equal(1, filters.Length);
+            Assert.Single(filters);
             Assert.IsType(wrapperType, filters[0]);
         }
 
@@ -230,7 +230,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var wrapperType = GetOverrideWrapperType();
             var filters = filterInfos.Select(info => info.Instance).Where(i => i.GetType() == wrapperType).ToArray();
-            Assert.Equal(1, filters.Length);
+            Assert.Single(filters);
             Assert.IsType(wrapperType, filters[0]);
         }
     }
