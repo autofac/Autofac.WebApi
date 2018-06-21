@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
+using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -54,7 +55,7 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Null(provider.GetBinder(new HttpConfiguration(), typeof(TestModel1)));
         }
 
-        static IContainer BuildContainer()
+        private static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
 

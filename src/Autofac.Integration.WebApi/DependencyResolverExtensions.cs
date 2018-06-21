@@ -35,6 +35,9 @@ namespace Autofac.Integration.WebApi
         /// <summary>
         /// Gets the root lifetime scope from the Autofac dependency resolver.
         /// </summary>
+        /// <param name="dependencyResolver">
+        /// The dependency resolver from which the root lifetime scope should be retrieved.
+        /// </param>
         public static ILifetimeScope GetRootLifetimeScope(this IDependencyResolver dependencyResolver)
         {
             var resolver = dependencyResolver as AutofacWebApiDependencyResolver;
@@ -44,6 +47,9 @@ namespace Autofac.Integration.WebApi
         /// <summary>
         /// Gets the request lifetime scope from the Autofac dependency scope.
         /// </summary>
+        /// <param name="dependencyScope">
+        /// The dependency scope from which the request lifetime scope should be retrieved.
+        /// </param>
         public static ILifetimeScope GetRequestLifetimeScope(this IDependencyScope dependencyScope)
         {
             var scope = dependencyScope as AutofacWebApiDependencyScope;

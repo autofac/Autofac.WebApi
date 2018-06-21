@@ -40,32 +40,39 @@ namespace Autofac.Integration.WebApi
     /// </summary>
     public class AutofacWebApiFilterProvider : IFilterProvider
     {
-        class FilterContext
+        private class FilterContext
         {
             public ILifetimeScope LifetimeScope { get; set; }
+
             public Type ControllerType { get; set; }
+
             public List<FilterInfo> Filters { get; set; }
+
             public Dictionary<string, List<FilterMetadata>> AddedFilters { get; set; }
         }
 
-        readonly ILifetimeScope _rootLifetimeScope;
-        readonly ActionDescriptorFilterProvider _filterProvider = new ActionDescriptorFilterProvider();
+        private readonly ILifetimeScope _rootLifetimeScope;
+        private readonly ActionDescriptorFilterProvider _filterProvider = new ActionDescriptorFilterProvider();
 
-        internal static string ActionFilterMetadataKey = "AutofacWebApiActionFilter";
-        internal static string ActionFilterOverrideMetadataKey = "AutofacWebApiActionFilterOverride";
+        internal const string ActionFilterMetadataKey = "AutofacWebApiActionFilter";
+        internal const string ActionFilterOverrideMetadataKey = "AutofacWebApiActionFilterOverride";
 
-        internal static string AuthorizationFilterMetadataKey = "AutofacWebApiAuthorizationFilter";
-        internal static string AuthorizationFilterOverrideMetadataKey = "AutofacWebApiAuthorizationFilterOverride";
+        internal const string AuthorizationFilterMetadataKey = "AutofacWebApiAuthorizationFilter";
+        internal const string AuthorizationFilterOverrideMetadataKey = "AutofacWebApiAuthorizationFilterOverride";
 
-        internal static string AuthenticationFilterMetadataKey = "AutofacWebApiAuthenticationFilter";
-        internal static string AuthenticationFilterOverrideMetadataKey = "AutofacWebApiAuthenticationFilterOverride";
+        internal const string AuthenticationFilterMetadataKey = "AutofacWebApiAuthenticationFilter";
+        internal const string AuthenticationFilterOverrideMetadataKey = "AutofacWebApiAuthenticationFilterOverride";
 
-        internal static string ExceptionFilterMetadataKey = "AutofacWebApiExceptionFilter";
-        internal static string ExceptionFilterOverrideMetadataKey = "AutofacWebApiExceptionFilterOverride";
+        internal const string ExceptionFilterMetadataKey = "AutofacWebApiExceptionFilter";
+        internal const string ExceptionFilterOverrideMetadataKey = "AutofacWebApiExceptionFilterOverride";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AutofacWebApiFilterProvider"/> class.
         /// </summary>
+        /// <param name="lifetimeScope">
+        /// The lifetime scope from which dependencies should be resolved. Generally
+        /// this is the application-level container/root scope.
+        /// </param>
         public AutofacWebApiFilterProvider(ILifetimeScope lifetimeScope)
         {
             _rootLifetimeScope = lifetimeScope;
@@ -84,8 +91,9 @@ namespace Autofac.Integration.WebApi
         {
             if (configuration == null)
             {
-                throw new ArgumentNullException("configuration");
+                throw new ArgumentNullException(nameof(configuration));
             }
+
             var filters = _filterProvider.GetFilters(configuration, actionDescriptor).ToList();
 
             foreach (var filterInfo in filters)
@@ -105,17 +113,14 @@ namespace Autofac.Integration.WebApi
                     Filters = filters,
                     AddedFilters = new Dictionary<string, List<FilterMetadata>>
                     {
-                        {ActionFilterMetadataKey, new List<FilterMetadata>()},
-                        {ActionFilterOverrideMetadataKey, new List<FilterMetadata>()},
-
-                        {AuthenticationFilterMetadataKey, new List<FilterMetadata>()},
-                        {AuthenticationFilterOverrideMetadataKey, new List<FilterMetadata>()},
-
-                        {AuthorizationFilterMetadataKey, new List<FilterMetadata>()},
-                        {AuthorizationFilterOverrideMetadataKey, new List<FilterMetadata>()},
-
-                        {ExceptionFilterMetadataKey, new List<FilterMetadata>()},
-                        {ExceptionFilterOverrideMetadataKey, new List<FilterMetadata>()}
+                        { ActionFilterMetadataKey, new List<FilterMetadata>() },
+                        { ActionFilterOverrideMetadataKey, new List<FilterMetadata>() },
+                        { AuthenticationFilterMetadataKey, new List<FilterMetadata>() },
+                        { AuthenticationFilterOverrideMetadataKey, new List<FilterMetadata>() },
+                        { AuthorizationFilterMetadataKey, new List<FilterMetadata>() },
+                        { AuthorizationFilterOverrideMetadataKey, new List<FilterMetadata>() },
+                        { ExceptionFilterMetadataKey, new List<FilterMetadata>() },
+                        { ExceptionFilterOverrideMetadataKey, new List<FilterMetadata>() }
                     }
                 };
 
@@ -141,7 +146,7 @@ namespace Autofac.Integration.WebApi
             return filters;
         }
 
-        static void ResolveControllerScopedNoopFilterOverrides(FilterContext filterContext)
+        private static void ResolveControllerScopedNoopFilterOverrides(FilterContext filterContext)
         {
             ResolveControllerScopedOverrideFilter(filterContext, ActionFilterOverrideMetadataKey);
             ResolveControllerScopedOverrideFilter(filterContext, AuthenticationFilterOverrideMetadataKey);
@@ -149,7 +154,7 @@ namespace Autofac.Integration.WebApi
             ResolveControllerScopedOverrideFilter(filterContext, ExceptionFilterOverrideMetadataKey);
         }
 
-        static void ResolveActionScopedNoopFilterOverrides(FilterContext filterContext, ReflectedHttpActionDescriptor descriptor)
+        private static void ResolveActionScopedNoopFilterOverrides(FilterContext filterContext, ReflectedHttpActionDescriptor descriptor)
         {
             ResolveActionScopedOverrideFilter(filterContext, descriptor.MethodInfo, ActionFilterOverrideMetadataKey);
             ResolveActionScopedOverrideFilter(filterContext, descriptor.MethodInfo, AuthenticationFilterOverrideMetadataKey);
@@ -157,7 +162,7 @@ namespace Autofac.Integration.WebApi
             ResolveActionScopedOverrideFilter(filterContext, descriptor.MethodInfo, ExceptionFilterOverrideMetadataKey);
         }
 
-        static void ResolveControllerScopedFilterOverrides(FilterContext filterContext)
+        private static void ResolveControllerScopedFilterOverrides(FilterContext filterContext)
         {
             ResolveControllerScopedFilter<IAutofacActionFilter, ActionFilterOverrideWrapper>(
                 filterContext, m => new ActionFilterOverrideWrapper(m), ActionFilterOverrideMetadataKey);
@@ -169,22 +174,28 @@ namespace Autofac.Integration.WebApi
                 filterContext, m => new ExceptionFilterOverrideWrapper(m), ExceptionFilterOverrideMetadataKey);
         }
 
-        static void ResolveActionScopedFilterOverrides(FilterContext filterContext, ReflectedHttpActionDescriptor descriptor)
+        private static void ResolveActionScopedFilterOverrides(FilterContext filterContext, ReflectedHttpActionDescriptor descriptor)
         {
             ResolveActionScopedFilter<IAutofacActionFilter, ActionFilterOverrideWrapper>(
                 filterContext, descriptor.MethodInfo, m => new ActionFilterOverrideWrapper(m), ActionFilterOverrideMetadataKey);
             ResolveActionScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterOverrideWrapper>(
-                filterContext, descriptor.MethodInfo, m => new AuthenticationFilterOverrideWrapper(m),
+                filterContext,
+                descriptor.MethodInfo,
+                m => new AuthenticationFilterOverrideWrapper(m),
                 AuthenticationFilterOverrideMetadataKey);
             ResolveActionScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterOverrideWrapper>(
-                filterContext, descriptor.MethodInfo, m => new AuthorizationFilterOverrideWrapper(m),
+                filterContext,
+                descriptor.MethodInfo,
+                m => new AuthorizationFilterOverrideWrapper(m),
                 AuthorizationFilterOverrideMetadataKey);
             ResolveActionScopedFilter<IAutofacExceptionFilter, ExceptionFilterOverrideWrapper>(
-                filterContext, descriptor.MethodInfo, m => new ExceptionFilterOverrideWrapper(m),
+                filterContext,
+                descriptor.MethodInfo,
+                m => new ExceptionFilterOverrideWrapper(m),
                 ExceptionFilterOverrideMetadataKey);
         }
 
-        static void ResolveControllerScopedFilters(FilterContext filterContext)
+        private static void ResolveControllerScopedFilters(FilterContext filterContext)
         {
             ResolveControllerScopedFilter<IAutofacActionFilter, ActionFilterWrapper>(
                 filterContext, m => new ActionFilterWrapper(m), ActionFilterMetadataKey);
@@ -196,7 +207,7 @@ namespace Autofac.Integration.WebApi
                 filterContext, m => new ExceptionFilterWrapper(m), ExceptionFilterMetadataKey);
         }
 
-        static void ResolveActionScopedFilters(FilterContext filterContext, ReflectedHttpActionDescriptor descriptor)
+        private static void ResolveActionScopedFilters(FilterContext filterContext, ReflectedHttpActionDescriptor descriptor)
         {
             ResolveActionScopedFilter<IAutofacActionFilter, ActionFilterWrapper>(
                 filterContext, descriptor.MethodInfo, m => new ActionFilterWrapper(m), ActionFilterMetadataKey);
@@ -208,7 +219,7 @@ namespace Autofac.Integration.WebApi
                 filterContext, descriptor.MethodInfo, m => new ExceptionFilterWrapper(m), ExceptionFilterMetadataKey);
         }
 
-        static void ResolveControllerScopedFilter<TFilter, TWrapper>(
+        private static void ResolveControllerScopedFilter<TFilter, TWrapper>(
             FilterContext filterContext, Func<FilterMetadata, TWrapper> wrapperFactory, string metadataKey)
             where TFilter : class
             where TWrapper : IFilter
@@ -227,7 +238,7 @@ namespace Autofac.Integration.WebApi
             }
         }
 
-        static void ResolveActionScopedFilter<TFilter, TWrapper>(
+        private static void ResolveActionScopedFilter<TFilter, TWrapper>(
             FilterContext filterContext, MethodInfo methodInfo, Func<FilterMetadata, TWrapper> wrapperFactory, string metadataKey)
             where TFilter : class
             where TWrapper : IFilter
@@ -246,7 +257,7 @@ namespace Autofac.Integration.WebApi
             }
         }
 
-        static void ResolveControllerScopedOverrideFilter(FilterContext filterContext, string metadataKey)
+        private static void ResolveControllerScopedOverrideFilter(FilterContext filterContext, string metadataKey)
         {
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<IOverrideFilter>>>();
 
@@ -261,7 +272,7 @@ namespace Autofac.Integration.WebApi
             }
         }
 
-        static void ResolveActionScopedOverrideFilter(FilterContext filterContext, MethodInfo methodInfo, string metadataKey)
+        private static void ResolveActionScopedOverrideFilter(FilterContext filterContext, MethodInfo methodInfo, string metadataKey)
         {
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<IOverrideFilter>>>();
 
@@ -276,14 +287,14 @@ namespace Autofac.Integration.WebApi
             }
         }
 
-        static bool MatchingFilterAdded(IEnumerable<FilterMetadata> filters, FilterMetadata metadata)
+        private static bool MatchingFilterAdded(IEnumerable<FilterMetadata> filters, FilterMetadata metadata)
         {
             return filters.Any(filter => filter.ControllerType == metadata.ControllerType
                 && filter.FilterScope == metadata.FilterScope
                 && filter.MethodInfo == metadata.MethodInfo);
         }
 
-        static bool FilterMatchesController(FilterContext filterContext, string metadataKey, FilterMetadata metadata)
+        private static bool FilterMatchesController(FilterContext filterContext, string metadataKey, FilterMetadata metadata)
         {
             return metadata.ControllerType != null
                    && metadata.ControllerType.IsAssignableFrom(filterContext.ControllerType)
@@ -292,7 +303,7 @@ namespace Autofac.Integration.WebApi
                    && !MatchingFilterAdded(filterContext.AddedFilters[metadataKey], metadata);
         }
 
-        static bool FilterMatchesAction(FilterContext filterContext, MethodInfo methodInfo, string metadataKey, FilterMetadata metadata)
+        private static bool FilterMatchesAction(FilterContext filterContext, MethodInfo methodInfo, string metadataKey, FilterMetadata metadata)
         {
             // Issue #10: Comparing MethodInfo.MethodHandle rather than just MethodInfo equality
             // because MethodInfo equality fails on a derived controller if the base class method

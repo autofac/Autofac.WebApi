@@ -25,8 +25,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Http.Dependencies;
 using System.Linq;
+using System.Web.Http.Dependencies;
 
 namespace Autofac.Integration.WebApi
 {
@@ -37,7 +37,7 @@ namespace Autofac.Integration.WebApi
     {
         private bool _disposed;
 
-        readonly ILifetimeScope _lifetimeScope;
+        private readonly ILifetimeScope _lifetimeScope;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AutofacWebApiDependencyScope"/> class.
@@ -45,7 +45,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="lifetimeScope">The lifetime scope to resolve services from.</param>
         public AutofacWebApiDependencyScope(ILifetimeScope lifetimeScope)
         {
-            if (lifetimeScope == null) throw new ArgumentNullException("lifetimeScope");
+            if (lifetimeScope == null) throw new ArgumentNullException(nameof(lifetimeScope));
 
             _lifetimeScope = lifetimeScope;
         }
@@ -100,7 +100,14 @@ namespace Autofac.Integration.WebApi
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// <see langword="true" /> to release both managed and unmanaged resources;
+        /// <see langword="false" /> to release only unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
@@ -111,6 +118,7 @@ namespace Autofac.Integration.WebApi
                         _lifetimeScope.Dispose();
                     }
                 }
+
                 _disposed = true;
             }
         }

@@ -5,6 +5,7 @@ using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.ModelBinding;
+using Autofac.Integration.WebApi.Test.TestTypes;
 using Moq;
 using Xunit;
 
@@ -55,7 +56,6 @@ namespace Autofac.Integration.WebApi.Test
 
             Assert.Equal(1, callCount);
         }
-
 
         [Fact]
         public void PerControllerServiceDoesNotOverrideDefault()
@@ -254,7 +254,7 @@ namespace Autofac.Integration.WebApi.Test
             AssertControllerServicesReplaced(services => services.GetValueProviderFactories());
         }
 
-        static void AssertControllerServiceReplaced<TLimit>(Func<ServicesContainer, TLimit> serviceLocator)
+        private static void AssertControllerServiceReplaced<TLimit>(Func<ServicesContainer, TLimit> serviceLocator)
             where TLimit : class
         {
             var builder = new ContainerBuilder();
@@ -271,7 +271,7 @@ namespace Autofac.Integration.WebApi.Test
             Assert.NotSame(service, serviceLocator(configuration.Services));
         }
 
-        static void AssertControllerServicesReplaced<TLimit>(Func<ServicesContainer, IEnumerable<TLimit>> serviceLocator)
+        private static void AssertControllerServicesReplaced<TLimit>(Func<ServicesContainer, IEnumerable<TLimit>> serviceLocator)
             where TLimit : class
         {
             var builder = new ContainerBuilder();

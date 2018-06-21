@@ -45,17 +45,17 @@ namespace Autofac.Integration.WebApi
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed class AutofacControllerConfigurationAttribute : Attribute, IControllerConfiguration
     {
-        const string InitializedKey = "InjectControllerServicesAttributeInitialized";
+        private const string InitializedKey = "InjectControllerServicesAttributeInitialized";
 
-        internal static readonly string ClearServiceListKey = "ClearServiceList";
+        internal const string ClearServiceListKey = "ClearServiceList";
 
         /// <summary>
         /// Callback invoked to set per-controller overrides for this controllerDescriptor.
         /// </summary>
         /// <param name="controllerSettings">The controller settings to initialize.</param>
         /// <param name="controllerDescriptor">The controller descriptor. Note that the
-        /// <see cref="T:System.Web.Http.Controllers.HttpControllerDescriptor"/> can be
-        /// associated with the derived controller type given that <see cref="T:System.Web.Http.Controllers.IControllerConfiguration"/>
+        /// <see cref="System.Web.Http.Controllers.HttpControllerDescriptor"/> can be
+        /// associated with the derived controller type given that <see cref="System.Web.Http.Controllers.IControllerConfiguration"/>
         /// is inherited.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="controllerSettings" /> or <paramref name="controllerDescriptor" /> is <see langword="null" />.
@@ -64,20 +64,27 @@ namespace Autofac.Integration.WebApi
         {
             if (controllerSettings == null)
             {
-                throw new ArgumentNullException("controllerSettings");
+                throw new ArgumentNullException(nameof(controllerSettings));
             }
+
             if (controllerDescriptor == null)
             {
-                throw new ArgumentNullException("controllerDescriptor");
+                throw new ArgumentNullException(nameof(controllerDescriptor));
             }
+
             if (controllerDescriptor.Configuration == null) return;
             if (!controllerDescriptor.Properties.TryAdd(InitializedKey, null)) return;
 
             var container = controllerDescriptor.Configuration.DependencyResolver.GetRootLifetimeScope();
             if (container == null)
+            {
                 throw new InvalidOperationException(
-                    string.Format(CultureInfo.CurrentCulture, AutofacControllerConfigurationAttributeResources.DependencyResolverMissing,
-                        typeof(AutofacWebApiDependencyResolver).Name, typeof(AutofacControllerConfigurationAttribute).Name));
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        AutofacControllerConfigurationAttributeResources.DependencyResolverMissing,
+                        typeof(AutofacWebApiDependencyResolver).Name,
+                        typeof(AutofacControllerConfigurationAttribute).Name));
+            }
 
             var controllerServices = controllerSettings.Services;
             var serviceKey = new ControllerTypeKey(controllerDescriptor.ControllerType);
@@ -97,7 +104,8 @@ namespace Autofac.Integration.WebApi
             UpdateControllerFormatters(controllerSettings.Formatters, container, serviceKey);
         }
 
-        static void UpdateControllerService<T>(ServicesContainer services, IComponentContext container, ControllerTypeKey serviceKey) where T : class
+        private static void UpdateControllerService<T>(ServicesContainer services, IComponentContext container, ControllerTypeKey serviceKey)
+            where T : class
         {
             var instance = container.ResolveOptionalKeyed<Meta<T>>(serviceKey);
             var baseControllerType = serviceKey.ControllerType.BaseType;
@@ -112,7 +120,8 @@ namespace Autofac.Integration.WebApi
                 services.Replace(typeof(T), instance.Value);
         }
 
-        static void UpdateControllerServices<T>(ServicesContainer services, IComponentContext container, ControllerTypeKey serviceKey) where T : class
+        private static void UpdateControllerServices<T>(ServicesContainer services, IComponentContext container, ControllerTypeKey serviceKey)
+            where T : class
         {
             var resolvedInstances = container.ResolveOptionalKeyed<IEnumerable<Meta<T>>>(serviceKey).ToArray();
 
@@ -123,7 +132,7 @@ namespace Autofac.Integration.WebApi
                 services.Add(typeof(T), instance.Value);
         }
 
-        static void UpdateControllerFormatters(ICollection<MediaTypeFormatter> collection, IComponentContext container, ControllerTypeKey serviceKey)
+        private static void UpdateControllerFormatters(ICollection<MediaTypeFormatter> collection, IComponentContext container, ControllerTypeKey serviceKey)
         {
             var formatters = container.ResolveOptionalKeyed<IEnumerable<Meta<MediaTypeFormatter>>>(serviceKey).ToArray();
 
@@ -134,7 +143,7 @@ namespace Autofac.Integration.WebApi
                 collection.Add(formatter.Value);
         }
 
-        static bool ClearExistingServices(IDictionary<string, object> metadata)
+        private static bool ClearExistingServices(IDictionary<string, object> metadata)
         {
             return metadata.ContainsKey(ClearServiceListKey) && (bool)metadata[ClearServiceListKey];
         }

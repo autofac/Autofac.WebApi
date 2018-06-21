@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // http://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -24,39 +24,29 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using System.Web.Http.ModelBinding;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi.Test.TestTypes
 {
-    /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class ActionFilterOverrideWrapper : ActionFilterWrapper, IOverrideFilter
+    public class TestModelBinder : IModelBinder
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ActionFilterOverrideWrapper"/> class.
-        /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public ActionFilterOverrideWrapper(FilterMetadata filterMetadata)
-            : base(filterMetadata)
+        public Dependency Dependency { get; private set; }
+
+        public TestModelBinder(Dependency dependency)
         {
+            Dependency = dependency;
         }
 
-        /// <summary>
-        /// Gets the metadata key used to retrieve the filter metadata.
-        /// </summary>
-        public override string MetadataKey
+        public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
         {
-            get { return AutofacWebApiFilterProvider.ActionFilterOverrideMetadataKey; }
-        }
-
-        /// <summary>
-        /// Gets the filters to override.
-        /// </summary>
-        public Type FiltersToOverride
-        {
-            get { return typeof(IActionFilter); }
+            return true;
         }
     }
 }

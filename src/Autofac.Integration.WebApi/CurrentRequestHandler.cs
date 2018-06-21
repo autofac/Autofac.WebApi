@@ -33,7 +33,7 @@ namespace Autofac.Integration.WebApi
     /// A delegating handler that updates the current dependency scope
     /// with the current <see cref="HttpRequestMessage"/>.
     /// </summary>
-    class CurrentRequestHandler : DelegatingHandler
+    internal class CurrentRequestHandler : DelegatingHandler
     {
         /// <summary>
         /// Sends an HTTP request to the inner handler to send to the server as an asynchronous operation.

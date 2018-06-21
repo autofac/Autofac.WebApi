@@ -43,17 +43,17 @@ namespace Autofac.Integration.WebApi
         /// <param name="controllerType">Type of the controller.</param>
         public ControllerTypeKey(Type controllerType)
         {
-            if (controllerType == null) throw new ArgumentNullException("controllerType");
+            if (controllerType == null) throw new ArgumentNullException(nameof(controllerType));
 
             ControllerType = controllerType;
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
+        /// Determines whether the specified <see cref="System.Object" /> is equal to the current <see cref="System.Object" />.
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">The key to which the current key is being compared.</param>
         /// <returns>
-        /// true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.
+        /// true if the specified <see cref="System.Object" /> is equal to the current <see cref="System.Object" />; otherwise, false.
         /// </returns>
         public bool Equals(ControllerTypeKey other)
         {
@@ -61,13 +61,13 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="System.Object"/>.
         /// </summary>
-        /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>.</param>
+        /// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="System.Object"/>.</param>
         /// <returns>
-        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// true if the specified <see cref="System.Object"/> is equal to the current <see cref="System.Object"/>; otherwise, false.
         /// </returns>
-        /// <exception cref="T:System.NullReferenceException">The <paramref name="obj"/> parameter is null.</exception>
+        /// <exception cref="System.NullReferenceException">The <paramref name="obj"/> parameter is null.</exception>
         public override bool Equals(object obj)
         {
             return Equals(obj as ControllerTypeKey);
@@ -77,7 +77,7 @@ namespace Autofac.Integration.WebApi
         /// Serves as a hash function for a particular type.
         /// </summary>
         /// <returns>
-        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// A hash code for the current <see cref="System.Object"/>.
         /// </returns>
         public override int GetHashCode()
         {

@@ -40,7 +40,7 @@ namespace Autofac.Integration.WebApi
         /// <summary>
         /// Metadata key for the supported model types.
         /// </summary>
-        internal static readonly string MetadataKey = "SupportedModelTypes";
+        internal const string MetadataKey = "SupportedModelTypes";
 
         /// <summary>
         /// Find a binder for the given type.
@@ -55,8 +55,9 @@ namespace Autofac.Integration.WebApi
         {
             if (configuration == null)
             {
-                throw new ArgumentNullException("configuration");
+                throw new ArgumentNullException(nameof(configuration));
             }
+
             var modelBinders = configuration.DependencyResolver
                 .GetServices(typeof(Meta<Lazy<IModelBinder>>))
                 .Cast<Meta<Lazy<IModelBinder>>>();

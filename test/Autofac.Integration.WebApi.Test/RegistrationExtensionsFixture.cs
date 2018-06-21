@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Autofac.Builder;
+using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -228,9 +229,6 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Single(config.MessageHandlers.OfType<CurrentRequestHandler>());
         }
 
-
-        // Action filters
-
         [Fact]
         public void AsActionFilterForRequiresActionSelector()
         {
@@ -250,8 +248,6 @@ namespace Autofac.Integration.WebApi.Test
 
             Assert.Equal("registration", exception.ParamName);
         }
-
-        // Authorization filter
 
         [Fact]
         public void AsAuthorizationFilterForRequiresActionSelector()
@@ -273,8 +269,6 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Equal("registration", exception.ParamName);
         }
 
-        // Exception filters
-
         [Fact]
         public void AsExceptionFilterForRequiresActionSelector()
         {
@@ -294,8 +288,6 @@ namespace Autofac.Integration.WebApi.Test
 
             Assert.Equal("registration", exception.ParamName);
         }
-
-        // Authentication filters
 
         [Fact]
         public void AsAuthenticationFilterForRequiresActionSelector()
@@ -317,8 +309,6 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Equal("registration", exception.ParamName);
         }
 
-        // Action filter override
-
         [Fact]
         public void OverrideActionFilterForRequiresActionSelector()
         {
@@ -327,8 +317,6 @@ namespace Autofac.Integration.WebApi.Test
                 () => builder.OverrideWebApiActionFilterFor<TestController>(null));
             Assert.Equal("actionSelector", exception.ParamName);
         }
-
-        // Authorization filter override
 
         [Fact]
         public void OverrideAuthorizationFilterForRequiresActionSelector()
@@ -339,8 +327,6 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Equal("actionSelector", exception.ParamName);
         }
 
-        // Exception filter override
-
         [Fact]
         public void OverrideExceptionFilterForRequiresActionSelector()
         {
@@ -349,8 +335,6 @@ namespace Autofac.Integration.WebApi.Test
                 () => builder.OverrideWebApiExceptionFilterFor<TestController>(null));
             Assert.Equal("actionSelector", exception.ParamName);
         }
-
-        // Authentication filter override
 
         [Fact]
         public void OverrideAuthenticationFilterForRequiresActionSelector()

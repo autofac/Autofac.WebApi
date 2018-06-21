@@ -24,6 +24,8 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 
@@ -31,7 +33,7 @@ namespace Autofac.Integration.WebApi
 {
     internal static class HttpRequestMessageProvider
     {
-        private static readonly string Key = Guid.NewGuid().ToString("N").Substring(0, 12);
+        private static readonly string Key = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture).Substring(0, 12);
 
         internal static HttpRequestMessage Current
         {
@@ -40,6 +42,7 @@ namespace Autofac.Integration.WebApi
                 var wrapper = (HttpRequestMessageWrapper)CallContext.LogicalGetData(Key);
                 return wrapper?.Message;
             }
+
             set
             {
                 var wrapper = value == null ? null : new HttpRequestMessageWrapper(value);
@@ -50,7 +53,9 @@ namespace Autofac.Integration.WebApi
         [Serializable]
         private sealed class HttpRequestMessageWrapper : MarshalByRefObject
         {
-            [NonSerialized] internal readonly HttpRequestMessage Message;
+            [NonSerialized]
+            [SuppressMessage("SA1401", "SA1401", Justification = "Field is only used during testing.")]
+            internal readonly HttpRequestMessage Message;
 
             internal HttpRequestMessageWrapper(HttpRequestMessage message)
             {

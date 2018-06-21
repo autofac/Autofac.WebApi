@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,12 +9,17 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Autofac.Integration.WebApi.Test</RootNamespace>
     <AssemblyName>Autofac.Integration.WebApi.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NoWarn>$(NoWarn);CS1591;SA1602;SA1611</NoWarn>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedAllSources>true</EmbedAllSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Features>IOperation</Features>
+    <CodeAnalysisRuleSet>../../build/Analyzers.ruleset</CodeAnalysisRuleSet>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Autofac.Integration.WebApi.Test.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +38,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Autofac.Integration.WebApi.Test.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -77,7 +84,29 @@
     <Compile Include="HttpRequestMessageProviderFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationExtensionsFixture.cs" />
-    <Compile Include="TestTypes.cs" />
+    <Compile Include="TestTypes\CustomActionFilterAttribute.cs" />
+    <Compile Include="TestTypes\DelegatingLogger.cs" />
+    <Compile Include="TestTypes\Dependency.cs" />
+    <Compile Include="TestTypes\ILogger.cs" />
+    <Compile Include="TestTypes\InterfaceController.cs" />
+    <Compile Include="TestTypes\IsAControllerNot.cs" />
+    <Compile Include="TestTypes\Logger.cs" />
+    <Compile Include="TestTypes\TestActionFilter.cs" />
+    <Compile Include="TestTypes\TestActionFilter2.cs" />
+    <Compile Include="TestTypes\TestAuthenticationFilter.cs" />
+    <Compile Include="TestTypes\TestAuthenticationFilter2.cs" />
+    <Compile Include="TestTypes\TestAuthorizationFilter.cs" />
+    <Compile Include="TestTypes\TestAuthorizationFilter2.cs" />
+    <Compile Include="TestTypes\TestCombinationFilter.cs" />
+    <Compile Include="TestTypes\TestController.cs" />
+    <Compile Include="TestTypes\TestControllerA.cs" />
+    <Compile Include="TestTypes\TestControllerB.cs" />
+    <Compile Include="TestTypes\TestControllerWithSuffix.cs" />
+    <Compile Include="TestTypes\TestExceptionFilter.cs" />
+    <Compile Include="TestTypes\TestExceptionFilter2.cs" />
+    <Compile Include="TestTypes\TestModel1.cs" />
+    <Compile Include="TestTypes\TestModel2.cs" />
+    <Compile Include="TestTypes\TestModelBinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Autofac.Integration.WebApi\Autofac.Integration.WebApi.csproj">
@@ -98,11 +127,19 @@
     <PackageReference Include="Microsoft.AspNet.WebApi.Core">
       <Version>5.2.0</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>2.6.1</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Moq">
       <Version>4.8.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>5.0.8</Version>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers">
+      <Version>1.1.0-beta008</Version>
+      <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="xunit">
       <Version>2.3.1</Version>

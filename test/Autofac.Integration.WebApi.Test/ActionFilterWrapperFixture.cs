@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using System.Web.Http.Hosting;
+using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -53,10 +54,10 @@ namespace Autofac.Integration.WebApi.Test
             };
             var wrapper = new ActionFilterWrapper(metadata);
 
-            await wrapper.OnActionExecutingAsync(actionContext, new CancellationToken());
+            await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
             Assert.Equal(1, activationCount);
 
-            await wrapper.OnActionExecutedAsync(httpActionExecutedContext, new CancellationToken());
+            await wrapper.OnActionExecutedAsync(httpActionExecutedContext, CancellationToken.None);
             Assert.Equal(1, activationCount);
         }
 
@@ -93,8 +94,8 @@ namespace Autofac.Integration.WebApi.Test
             };
             var wrapper = new ActionFilterWrapper(metadata);
 
-            await wrapper.OnActionExecutingAsync(actionContext, new CancellationToken());
-            await wrapper.OnActionExecutedAsync(httpActionExecutedContext, new CancellationToken());
+            await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
+            await wrapper.OnActionExecutedAsync(httpActionExecutedContext, CancellationToken.None);
             Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[0]);
             Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[1]);
             Assert.Equal("TestActionFilter.OnActionExecutedAsync", order[2]);

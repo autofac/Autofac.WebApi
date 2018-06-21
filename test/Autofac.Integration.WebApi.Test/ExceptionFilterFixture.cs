@@ -2,6 +2,7 @@
 using System.Web.Http.Filters;
 using Autofac.Builder;
 using Autofac.Integration.WebApi;
+using Autofac.Integration.WebApi.Test.TestTypes;
 
 namespace Autofac.Integration.WebApi.Test
 {

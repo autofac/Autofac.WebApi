@@ -5,6 +5,7 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using System.Web.Http.Hosting;
+using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -47,7 +48,7 @@ namespace Autofac.Integration.WebApi.Test
             };
             var wrapper = new AuthorizationFilterWrapper(metadata);
 
-            await wrapper.OnAuthorizationAsync(actionContext, new CancellationToken());
+            await wrapper.OnAuthorizationAsync(actionContext, CancellationToken.None);
             Assert.Equal(1, activationCount);
         }
     }

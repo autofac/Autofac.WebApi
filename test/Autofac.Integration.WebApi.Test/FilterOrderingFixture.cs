@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -166,23 +167,39 @@ namespace Autofac.Integration.WebApi.Test
             }
         }
 
-        public class A { }
+        private class A
+        {
+        }
 
-        public class B { }
+        private class B
+        {
+        }
 
-        public class C { }
+        private class C
+        {
+        }
 
-        public class D { }
+        private class D
+        {
+        }
 
-        public class E { }
+        private class E
+        {
+        }
 
-        public class F { }
+        private class F
+        {
+        }
 
-        public class G { }
+        private class G
+        {
+        }
 
-        public class H { }
+        private class H
+        {
+        }
 
-        public class OrderTestActionFilter<T> : IAutofacActionFilter
+        private class OrderTestActionFilter<T> : IAutofacActionFilter
         {
             private readonly Action<Type> _record;
 
@@ -203,7 +220,7 @@ namespace Autofac.Integration.WebApi.Test
             }
         }
 
-        public class OrderTestAuthenticationFilter<T> : IAutofacAuthenticationFilter
+        private class OrderTestAuthenticationFilter<T> : IAutofacAuthenticationFilter
         {
             private readonly Action<Type> _record;
 
@@ -224,7 +241,7 @@ namespace Autofac.Integration.WebApi.Test
             }
         }
 
-        public class OrderTestAuthorizationFilter<T> : IAutofacAuthorizationFilter
+        private class OrderTestAuthorizationFilter<T> : IAutofacAuthorizationFilter
         {
             private readonly Action<Type> _record;
 
@@ -240,7 +257,7 @@ namespace Autofac.Integration.WebApi.Test
             }
         }
 
-        public class OrderTestExceptionFilter<T> : IAutofacExceptionFilter
+        private class OrderTestExceptionFilter<T> : IAutofacExceptionFilter
         {
             private readonly Action<Type> _record;
 

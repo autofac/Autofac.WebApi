@@ -31,13 +31,15 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter override for the specified metadata for each controller request.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     internal sealed class ExceptionFilterOverrideWrapper : ExceptionFilterWrapper, IOverrideFilter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionFilterOverrideWrapper"/> class.
         /// </summary>
         /// <param name="filterMetadata">The filter metadata.</param>
-        public ExceptionFilterOverrideWrapper(FilterMetadata filterMetadata) : base(filterMetadata)
+        public ExceptionFilterOverrideWrapper(FilterMetadata filterMetadata)
+            : base(filterMetadata)
         {
         }
 

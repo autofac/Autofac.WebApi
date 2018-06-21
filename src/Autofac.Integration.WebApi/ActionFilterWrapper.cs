@@ -40,6 +40,7 @@ namespace Autofac.Integration.WebApi
     /// Resolves a filter for the specified metadata for each controller request.
     /// </summary>
     [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     internal class ActionFilterWrapper : ActionFilterAttribute, IAutofacActionFilter, IFilterWrapper
     {
         private readonly FilterMetadata _filterMetadata;

@@ -37,7 +37,8 @@ namespace Autofac.Integration.WebApi
         /// Initializes a new instance of the <see cref="AuthenticationFilterOverrideWrapper"/> class.
         /// </summary>
         /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthenticationFilterOverrideWrapper(FilterMetadata filterMetadata) : base(filterMetadata)
+        public AuthenticationFilterOverrideWrapper(FilterMetadata filterMetadata)
+            : base(filterMetadata)
         {
         }
 

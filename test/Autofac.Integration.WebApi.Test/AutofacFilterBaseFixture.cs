@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Autofac.Builder;
+using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -143,19 +144,19 @@ namespace Autofac.Integration.WebApi.Test
 
         protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureControllerOverrideRegistration();
 
-        static ReflectedHttpActionDescriptor BuildActionDescriptorForGetMethod()
+        private static ReflectedHttpActionDescriptor BuildActionDescriptorForGetMethod()
         {
             return BuildActionDescriptorForGetMethod(typeof(TestController));
         }
 
-        static ReflectedHttpActionDescriptor BuildActionDescriptorForGetMethod(Type controllerType)
+        private static ReflectedHttpActionDescriptor BuildActionDescriptorForGetMethod(Type controllerType)
         {
             var controllerDescriptor = new HttpControllerDescriptor { ControllerType = controllerType };
             var methodInfo = controllerType.GetMethod("Get");
             return new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
         }
 
-        void AssertSingleFilter<TController>(
+        private void AssertSingleFilter<TController>(
             Func<IComponentContext, TFilter1> registration,
             Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> configure)
         {
@@ -174,7 +175,7 @@ namespace Autofac.Integration.WebApi.Test
             Assert.IsType(wrapperType, filter);
         }
 
-        void AssertMultipleFilters(
+        private void AssertMultipleFilters(
             Func<IComponentContext, TFilter1> registration1,
             Func<IComponentContext, TFilter2> registration2,
             Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> configure1,
@@ -197,7 +198,7 @@ namespace Autofac.Integration.WebApi.Test
             Assert.IsType(wrapperType, filters[0]);
         }
 
-        static void AssertOverrideFilter<TController>(Action<ContainerBuilder> registration)
+        private static void AssertOverrideFilter<TController>(Action<ContainerBuilder> registration)
         {
             var builder = new ContainerBuilder();
             registration(builder);
@@ -214,7 +215,7 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Equal(typeof(TFilterType), filter.FiltersToOverride);
         }
 
-        void AssertOverrideFilter<TController>(
+        private void AssertOverrideFilter<TController>(
             Func<IComponentContext, TFilter1> registration,
             Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> configure)
         {

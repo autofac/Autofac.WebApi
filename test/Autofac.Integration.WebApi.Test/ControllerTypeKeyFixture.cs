@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Autofac.Integration.WebApi.Test.TestTypes;
+using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
 {

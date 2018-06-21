@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright © 2012 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // http://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -24,33 +24,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.ComponentModel;
-using System.Reflection;
-using System.Web.Http.Filters;
+using System.Web.Http;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi.Test.TestTypes
 {
-    /// <summary>
-    /// Metadata interface for filter registrations.
-    /// </summary>
-    internal class FilterMetadata
+    public class IsAControllerNot : ApiController
     {
-        /// <summary>
-        /// Gets or sets the type of the controller.
-        /// </summary>
-        [DefaultValue(null)]
-        public Type ControllerType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the filter scope.
-        /// </summary>
-        [DefaultValue(FilterScope.Global)]
-        public FilterScope FilterScope { get; set; }
-
-        /// <summary>
-        /// Gets or sets the method info.
-        /// </summary>
-        [DefaultValue(null)]
-        public MethodInfo MethodInfo { get; set; }
     }
 }

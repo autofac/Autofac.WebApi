@@ -36,9 +36,9 @@ namespace Autofac.Integration.WebApi
     public class AutofacWebApiDependencyResolver : IDependencyResolver
     {
         private bool _disposed;
-        readonly ILifetimeScope _container;
-        readonly IDependencyScope _rootDependencyScope;
-        readonly Action<ContainerBuilder> _configurationAction;
+        private readonly ILifetimeScope _container;
+        private readonly IDependencyScope _rootDependencyScope;
+        private readonly Action<ContainerBuilder> _configurationAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AutofacWebApiDependencyResolver"/> class.
@@ -48,7 +48,7 @@ namespace Autofac.Integration.WebApi
         public AutofacWebApiDependencyResolver(ILifetimeScope container, Action<ContainerBuilder> configurationAction)
             : this(container)
         {
-            if (configurationAction == null) throw new ArgumentNullException("configurationAction");
+            if (configurationAction == null) throw new ArgumentNullException(nameof(configurationAction));
 
             _configurationAction = configurationAction;
         }
@@ -59,7 +59,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="container">The container that nested lifetime scopes will be create from.</param>
         public AutofacWebApiDependencyResolver(ILifetimeScope container)
         {
-            if (container == null) throw new ArgumentNullException("container");
+            if (container == null) throw new ArgumentNullException(nameof(container));
 
             _container = container;
             _rootDependencyScope = new AutofacWebApiDependencyScope(container);
@@ -125,7 +125,14 @@ namespace Autofac.Integration.WebApi
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// <see langword="true" /> to release both managed and unmanaged resources;
+        /// <see langword="false" /> to release only unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
@@ -136,6 +143,7 @@ namespace Autofac.Integration.WebApi
                         _rootDependencyScope.Dispose();
                     }
                 }
+
                 _disposed = true;
             }
         }
