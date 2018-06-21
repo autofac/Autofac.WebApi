@@ -4,6 +4,10 @@ environment:
 
 version: $(package_semantic_version).{build}
 
+skip_tags: true
+
+image: Visual Studio 2017
+
 assembly_info:
   patch: true
   file: '**\AssemblyInfo.*'
