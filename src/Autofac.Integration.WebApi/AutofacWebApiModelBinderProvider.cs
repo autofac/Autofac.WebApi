@@ -66,7 +66,7 @@ namespace Autofac.Integration.WebApi
             {
                 if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject))
                 {
-                    if (((List<Type>) metadataAsObject).Contains(modelType))
+                    if (((List<Type>)metadataAsObject).Contains(modelType))
                     {
                         return binder.Value.Value;
                     }
