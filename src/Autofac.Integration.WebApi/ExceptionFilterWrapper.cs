@@ -94,8 +94,9 @@ namespace Autofac.Integration.WebApi
 
         private bool FilterMatchesMetadata(Meta<Lazy<IAutofacExceptionFilter>> filter)
         {
-            var metadata = filter.Metadata.ContainsKey(this.MetadataKey)
-                ? filter.Metadata[this.MetadataKey] as FilterMetadata : null;
+            var metadata = filter.Metadata.TryGetValue(this.MetadataKey, out var metadataAsObject)
+                ? metadataAsObject as FilterMetadata
+                : null;
 
             return metadata != null
                 && metadata.ControllerType == this._filterMetadata.ControllerType
