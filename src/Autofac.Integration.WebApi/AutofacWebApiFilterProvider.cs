@@ -226,15 +226,20 @@ namespace Autofac.Integration.WebApi
         {
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<Lazy<TFilter>>>>();
 
-            foreach (var filter in filters.Where(a => a.Metadata.ContainsKey(metadataKey) && a.Metadata[metadataKey] is FilterMetadata))
+            foreach (var filter in filters)
             {
-                var metadata = (FilterMetadata)filter.Metadata[metadataKey];
+                var metadata = filter.Metadata.TryGetValue(metadataKey, out var metadataAsObject)
+                    ? metadataAsObject as FilterMetadata
+                    : null;
 
-                if (!FilterMatchesController(filterContext, metadataKey, metadata)) continue;
+                if (metadata != null)
+                {
+                    if (!FilterMatchesController(filterContext, metadataKey, metadata)) continue;
 
-                var wrapper = wrapperFactory(metadata);
-                filterContext.Filters.Add(new FilterInfo(wrapper, metadata.FilterScope));
-                filterContext.AddedFilters[metadataKey].Add(metadata);
+                    var wrapper = wrapperFactory(metadata);
+                    filterContext.Filters.Add(new FilterInfo(wrapper, metadata.FilterScope));
+                    filterContext.AddedFilters[metadataKey].Add(metadata);
+                }
             }
         }
 
@@ -245,15 +250,20 @@ namespace Autofac.Integration.WebApi
         {
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<Lazy<TFilter>>>>();
 
-            foreach (var filter in filters.Where(a => a.Metadata.ContainsKey(metadataKey) && a.Metadata[metadataKey] is FilterMetadata))
+            foreach (var filter in filters)
             {
-                var metadata = (FilterMetadata)filter.Metadata[metadataKey];
+                var metadata = filter.Metadata.TryGetValue(metadataKey, out var metadataAsObject)
+                    ? metadataAsObject as FilterMetadata
+                    : null;
 
-                if (!FilterMatchesAction(filterContext, methodInfo, metadataKey, metadata)) continue;
+                if (metadata != null)
+                {
+                    if (!FilterMatchesAction(filterContext, methodInfo, metadataKey, metadata)) continue;
 
-                var wrapper = wrapperFactory(metadata);
-                filterContext.Filters.Add(new FilterInfo(wrapper, metadata.FilterScope));
-                filterContext.AddedFilters[metadataKey].Add(metadata);
+                    var wrapper = wrapperFactory(metadata);
+                    filterContext.Filters.Add(new FilterInfo(wrapper, metadata.FilterScope));
+                    filterContext.AddedFilters[metadataKey].Add(metadata);
+                }
             }
         }
 
@@ -261,14 +271,19 @@ namespace Autofac.Integration.WebApi
         {
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<IOverrideFilter>>>();
 
-            foreach (var filter in filters.Where(a => a.Metadata.ContainsKey(metadataKey) && a.Metadata[metadataKey] is FilterMetadata))
+            foreach (var filter in filters)
             {
-                var metadata = (FilterMetadata)filter.Metadata[metadataKey];
+                var metadata = filter.Metadata.TryGetValue(metadataKey, out var metadataAsObject)
+                    ? metadataAsObject as FilterMetadata
+                    : null;
 
-                if (!FilterMatchesController(filterContext, metadataKey, metadata)) continue;
+                if (metadata != null)
+                {
+                    if (!FilterMatchesController(filterContext, metadataKey, metadata)) continue;
 
-                filterContext.Filters.Add(new FilterInfo(filter.Value, metadata.FilterScope));
-                filterContext.AddedFilters[metadataKey].Add(metadata);
+                    filterContext.Filters.Add(new FilterInfo(filter.Value, metadata.FilterScope));
+                    filterContext.AddedFilters[metadataKey].Add(metadata);
+                }
             }
         }
 
@@ -276,14 +291,19 @@ namespace Autofac.Integration.WebApi
         {
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<IOverrideFilter>>>();
 
-            foreach (var filter in filters.Where(a => a.Metadata.ContainsKey(metadataKey) && a.Metadata[metadataKey] is FilterMetadata))
+            foreach (var filter in filters)
             {
-                var metadata = (FilterMetadata)filter.Metadata[metadataKey];
+                var metadata = filter.Metadata.TryGetValue(metadataKey, out var metadataAsObject)
+                    ? metadataAsObject as FilterMetadata
+                    : null;
 
-                if (!FilterMatchesAction(filterContext, methodInfo, metadataKey, metadata)) continue;
+                if (metadata != null)
+                {
+                    if (!FilterMatchesAction(filterContext, methodInfo, metadataKey, metadata)) continue;
 
-                filterContext.Filters.Add(new FilterInfo(filter.Value, metadata.FilterScope));
-                filterContext.AddedFilters[metadataKey].Add(metadata);
+                    filterContext.Filters.Add(new FilterInfo(filter.Value, metadata.FilterScope));
+                    filterContext.AddedFilters[metadataKey].Add(metadata);
+                }
             }
         }
 

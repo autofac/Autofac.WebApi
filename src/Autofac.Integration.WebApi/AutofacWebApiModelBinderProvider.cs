@@ -62,10 +62,18 @@ namespace Autofac.Integration.WebApi
                 .GetServices(typeof(Meta<Lazy<IModelBinder>>))
                 .Cast<Meta<Lazy<IModelBinder>>>();
 
-            var modelBinder = modelBinders
-                .Where(binder => binder.Metadata.ContainsKey(MetadataKey))
-                .FirstOrDefault(binder => ((List<Type>)binder.Metadata[MetadataKey]).Contains(modelType));
-            return (modelBinder != null) ? modelBinder.Value.Value : null;
+            foreach (var binder in modelBinders)
+            {
+                if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject))
+                {
+                    if (((List<Type>) metadataAsObject).Contains(modelType))
+                    {
+                        return binder.Value.Value;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
