@@ -91,6 +91,8 @@
     <Compile Include="TestTypes\InterfaceController.cs" />
     <Compile Include="TestTypes\IsAControllerNot.cs" />
     <Compile Include="TestTypes\Logger.cs" />
+    <Compile Include="TestTypes\TestActionFilter3.cs" />
+    <Compile Include="TestTypes\TestActionFilterWithResponse.cs" />
     <Compile Include="TestTypes\TestActionFilter.cs" />
     <Compile Include="TestTypes\TestActionFilter2.cs" />
     <Compile Include="TestTypes\TestAuthenticationFilter.cs" />

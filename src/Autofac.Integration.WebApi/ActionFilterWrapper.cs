@@ -114,10 +114,54 @@ namespace Autofac.Integration.WebApi
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacActionFilter>>>>();
 
+            // Need to know the set of filters that we've executed so far, so
+            // we can go back through them.
+            var executedFilters = new List<IAutofacActionFilter>();
+
             // Issue #16: OnActionExecuted needs to happen in the opposite order of OnActionExecuting.
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
                 await filter.Value.Value.OnActionExecutingAsync(actionContext, cancellationToken);
+
+                // Issue #30: If an actionfilter sets a response, it should prevent the others from running
+                //            their own OnActionExecuting methods, and call OnActionExecuted on already-run
+                //            filters.
+                //            The OnActionExecutedAsync method of the wrapper will never fire if there
+                //            is a response set, so we must call the OnActionExecutedAsync of prior filters
+                //            ourselves.
+                if (actionContext.Response != null)
+                {
+                    await ExecuteManualOnActionExecutedAsync(executedFilters.AsEnumerable().Reverse(), actionContext, cancellationToken);
+                    break;
+                }
+
+                executedFilters.Add(filter.Value.Value);
+            }
+        }
+
+        /// <summary>
+        /// Method to manually invoke OnActionExecutedAsync outside of the filter wrapper's own
+        /// OnActionExecuted async method.
+        /// </summary>
+        private async Task ExecuteManualOnActionExecutedAsync(
+            IEnumerable<IAutofacActionFilter> filters,
+            HttpActionContext actionContext,
+            CancellationToken cancellationToken)
+        {
+            HttpActionExecutedContext localExecutedContext = null;
+
+            foreach (var alreadyRanFilter in filters)
+            {
+                if (localExecutedContext == null)
+                {
+                    localExecutedContext = new HttpActionExecutedContext
+                    {
+                        ActionContext = actionContext,
+                        Response = actionContext.Response
+                    };
+                }
+
+                await alreadyRanFilter.OnActionExecutedAsync(localExecutedContext, cancellationToken);
             }
         }
 
