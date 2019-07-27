@@ -316,7 +316,6 @@ namespace Autofac.Integration.WebApi
             return AsFilterFor<IAutofacActionFilter>(registration, AutofacFilterCategory.ActionFilter, predicate, filterScope);
         }
 
-
         /// <summary>
         /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> override for the specified controller action.
         /// </summary>
@@ -382,7 +381,7 @@ namespace Autofac.Integration.WebApi
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
             AsWebApiActionFilterOverrideWhere(
-                this IRegistrationBuilder<object, IConcreteActivatorData,SingleRegistrationStyle> registration,
+                this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
                 Func<ILifetimeScope, HttpActionDescriptor, bool> predicate,
                 FilterScope filterScope = FilterScope.Action)
         {
@@ -812,7 +811,6 @@ namespace Autofac.Integration.WebApi
         {
             return AsFilterFor<IAuthenticationFilter>(registration, AutofacFilterCategory.AuthenticationFilterOverride, predicate, filterScope);
         }
-
 
         /// <summary>
         /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller action.
