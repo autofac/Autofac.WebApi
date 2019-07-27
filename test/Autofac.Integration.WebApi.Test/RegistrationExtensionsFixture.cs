@@ -28,6 +28,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using System.Web.Http.ModelBinding;
 using Autofac.Builder;
@@ -270,7 +271,7 @@ namespace Autofac.Integration.WebApi.Test
             var exception = Assert.Throws<InvalidEnumArgumentException>(
                 () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiActionFilterWhere(descriptor => true, FilterScope.Global));
 
-            Assert.Equal("scope", exception.ParamName);
+            Assert.Equal("filterScope", exception.ParamName);
         }
 
         [Fact]
@@ -289,7 +290,7 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             var exception = Assert.Throws<ArgumentNullException>(
-                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiActionFilterWhere(null));
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiActionFilterWhere((Func<ILifetimeScope, HttpActionDescriptor, bool>)null));
             Assert.Equal("predicate", exception.ParamName);
         }
 
@@ -318,7 +319,8 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             var exception = Assert.Throws<ArgumentNullException>(
-                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiAuthorizationFilterWhere(null));
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>()))
+                             .AsWebApiAuthorizationFilterWhere((Func<ILifetimeScope, HttpActionDescriptor, bool>)null));
             Assert.Equal("predicate", exception.ParamName);
         }
 
@@ -336,7 +338,8 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             var exception = Assert.Throws<ArgumentNullException>(
-                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiExceptionFilterWhere(null));
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>()))
+                             .AsWebApiExceptionFilterWhere((Func<ILifetimeScope, HttpActionDescriptor, bool>)null));
             Assert.Equal("predicate", exception.ParamName);
         }
 
@@ -365,7 +368,8 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             var exception = Assert.Throws<ArgumentNullException>(
-                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiAuthorizationFilterWhere(null));
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>()))
+                             .AsWebApiAuthorizationFilterWhere((Func<ILifetimeScope, HttpActionDescriptor, bool>)null));
             Assert.Equal("predicate", exception.ParamName);
         }
 

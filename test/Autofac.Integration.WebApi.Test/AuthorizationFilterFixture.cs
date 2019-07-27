@@ -40,7 +40,7 @@ namespace Autofac.Integration.WebApi.Test
                          .AsWebApiAuthorizationFilterFor<TestControllerB>();
         }
 
-        protected override Action<IRegistrationBuilder<TestAuthorizationFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstPredicateRegistration(Func<HttpActionDescriptor, bool> predicate)
+        protected override Action<IRegistrationBuilder<TestAuthorizationFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstPredicateRegistration(Func<ILifetimeScope, HttpActionDescriptor, bool> predicate)
         {
             return r => r.AsWebApiAuthorizationFilterWhere(predicate);
         }

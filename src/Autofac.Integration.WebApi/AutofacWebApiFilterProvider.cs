@@ -111,61 +111,74 @@ namespace Autofac.Integration.WebApi
                 };
 
                 // Controller scoped override filters (NOOP kind).
-                ResolveScopedNoopFilterOverrides(filterContext, FilterScope.Controller, actionDescriptor);
+                ResolveScopedNoopFilterOverrides(filterContext, FilterScope.Controller, lifetimeScope, actionDescriptor);
 
                 // Action scoped override filters (NOOP kind).
-                ResolveScopedNoopFilterOverrides(filterContext, FilterScope.Action, actionDescriptor);
+                ResolveScopedNoopFilterOverrides(filterContext, FilterScope.Action, lifetimeScope, actionDescriptor);
 
                 // Controller scoped override filters.
-                ResolveAllScopedFilterOverrides(filterContext, FilterScope.Controller, actionDescriptor);
+                ResolveAllScopedFilterOverrides(filterContext, FilterScope.Controller, lifetimeScope, actionDescriptor);
 
                 // Action scoped override filters.
-                ResolveAllScopedFilterOverrides(filterContext, FilterScope.Action, actionDescriptor);
+                ResolveAllScopedFilterOverrides(filterContext, FilterScope.Action, lifetimeScope, actionDescriptor);
 
                 // Controller scoped filters.
-                ResolveAllScopedFilters(filterContext, FilterScope.Controller, actionDescriptor);
+                ResolveAllScopedFilters(filterContext, FilterScope.Controller, lifetimeScope, actionDescriptor);
 
                 // Action scoped filters.
-                ResolveAllScopedFilters(filterContext, FilterScope.Action, actionDescriptor);
+                ResolveAllScopedFilters(filterContext, FilterScope.Action, lifetimeScope, actionDescriptor);
             }
 
             return filters;
         }
 
-        private static void ResolveScopedNoopFilterOverrides(FilterContext filterContext, FilterScope scope, HttpActionDescriptor descriptor)
+        private static void ResolveScopedNoopFilterOverrides(
+            FilterContext filterContext,
+            FilterScope scope,
+            ILifetimeScope lifeTimeScope,
+            HttpActionDescriptor descriptor)
         {
-            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.ActionFilterOverride, descriptor);
-            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.AuthenticationFilterOverride, descriptor);
-            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.AuthorizationFilterOverride, descriptor);
-            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.ExceptionFilterOverride, descriptor);
+            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.ActionFilterOverride, lifeTimeScope, descriptor);
+            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.AuthenticationFilterOverride, lifeTimeScope, descriptor);
+            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.AuthorizationFilterOverride, lifeTimeScope, descriptor);
+            ResolveScopedOverrideFilter(filterContext, scope, AutofacFilterCategory.ExceptionFilterOverride, lifeTimeScope, descriptor);
         }
 
-        private static void ResolveAllScopedFilterOverrides(FilterContext filterContext, FilterScope scope, HttpActionDescriptor descriptor)
+        private static void ResolveAllScopedFilterOverrides(
+            FilterContext filterContext,
+            FilterScope scope,
+            ILifetimeScope lifeTimeScope,
+            HttpActionDescriptor descriptor)
         {
             ResolveScopedFilter<IAutofacActionFilter, ActionFilterOverrideWrapper>(
-                filterContext, scope, descriptor, hs => new ActionFilterOverrideWrapper(hs), AutofacFilterCategory.ActionFilterOverride);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new ActionFilterOverrideWrapper(hs), AutofacFilterCategory.ActionFilterOverride);
             ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterOverrideWrapper>(
-                filterContext, scope, descriptor, hs => new AuthenticationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthenticationFilterOverride);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthenticationFilterOverride);
             ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterOverrideWrapper>(
-                filterContext, scope, descriptor, hs => new AuthorizationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthorizationFilterOverride);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthorizationFilterOverride);
             ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterOverrideWrapper>(
-                filterContext, scope, descriptor, hs => new ExceptionFilterOverrideWrapper(hs), AutofacFilterCategory.ExceptionFilterOverride);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterOverrideWrapper(hs), AutofacFilterCategory.ExceptionFilterOverride);
         }
 
-        private static void ResolveAllScopedFilters(FilterContext filterContext, FilterScope scope, HttpActionDescriptor descriptor)
+        private static void ResolveAllScopedFilters(FilterContext filterContext, FilterScope scope, ILifetimeScope lifeTimeScope, HttpActionDescriptor descriptor)
         {
             ResolveScopedFilter<IAutofacActionFilter, ActionFilterWrapper>(
-                filterContext, scope, descriptor, hs => new ActionFilterWrapper(hs), AutofacFilterCategory.ActionFilter);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new ActionFilterWrapper(hs), AutofacFilterCategory.ActionFilter);
             ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterWrapper>(
-                filterContext, scope, descriptor, hs => new AuthenticationFilterWrapper(hs), AutofacFilterCategory.AuthenticationFilter);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterWrapper(hs), AutofacFilterCategory.AuthenticationFilter);
             ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterWrapper>(
-                filterContext, scope, descriptor, hs => new AuthorizationFilterWrapper(hs), AutofacFilterCategory.AuthorizationFilter);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterWrapper(hs), AutofacFilterCategory.AuthorizationFilter);
             ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterWrapper>(
-                filterContext, scope, descriptor, hs => new ExceptionFilterWrapper(hs), AutofacFilterCategory.ExceptionFilter);
+                filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterWrapper(hs), AutofacFilterCategory.ExceptionFilter);
         }
 
         private static void ResolveScopedFilter<TFilter, TWrapper>(
-            FilterContext filterContext, FilterScope scope, HttpActionDescriptor descriptor, Func<HashSet<FilterMetadata>, TWrapper> wrapperFactory, AutofacFilterCategory filterCategory)
+            FilterContext filterContext,
+            FilterScope scope,
+            ILifetimeScope lifeTimeScope,
+            HttpActionDescriptor descriptor,
+            Func<HashSet<FilterMetadata>, TWrapper> wrapperFactory,
+            AutofacFilterCategory filterCategory)
             where TFilter : class
             where TWrapper : class, IFilter
         {
@@ -187,12 +200,12 @@ namespace Autofac.Integration.WebApi
                     // The HashSet makes sure the same filter doesn't go in twice.
                     foreach (var filterRegistration in metadata.PredicateSet)
                     {
-                        if (FilterMatches(scope, filterCategory, descriptor, filterRegistration))
+                        if (FilterMatches(scope, filterCategory, lifeTimeScope, descriptor, filterRegistration))
                         {
                             if (metadataSet == null)
                             {
                                 // Don't define a hash set if something has already been registered (should just be the IOverrideFilters).
-                                if (!MatchingFilterAlreadyAdded(filterContext, filterCategory, descriptor, filterRegistration))
+                                if (!MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, filterRegistration))
                                 {
                                     metadataSet = new HashSet<FilterMetadata>();
                                     metadataSet.Add(metadata);
@@ -216,7 +229,12 @@ namespace Autofac.Integration.WebApi
             }
         }
 
-        private static void ResolveScopedOverrideFilter(FilterContext filterContext, FilterScope scope, AutofacFilterCategory filterCategory, HttpActionDescriptor descriptor)
+        private static void ResolveScopedOverrideFilter(
+            FilterContext filterContext,
+            FilterScope scope,
+            AutofacFilterCategory filterCategory,
+            ILifetimeScope lifeTimeScope,
+            HttpActionDescriptor descriptor)
         {
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<IOverrideFilter>>>();
 
@@ -230,7 +248,7 @@ namespace Autofac.Integration.WebApi
                 {
                     foreach (var filterRegistration in metadata.PredicateSet)
                     {
-                        if (FilterMatchesAndNotAlreadyAdded(filterContext, scope, filterCategory, filterRegistration, descriptor))
+                        if (FilterMatchesAndNotAlreadyAdded(filterContext, scope, filterCategory, lifeTimeScope, filterRegistration, descriptor))
                         {
                             filterContext.Filters.Add(new FilterInfo(filter.Value, scope));
                             filterContext.AddedFilters[filterCategory].Add(filterRegistration);
@@ -240,32 +258,35 @@ namespace Autofac.Integration.WebApi
             }
         }
 
-        private static bool MatchingFilterAlreadyAdded(FilterContext filterContext, AutofacFilterCategory filterCategory, HttpActionDescriptor descriptor, FilterPredicateMetadata metadata)
+        private static bool MatchingFilterAlreadyAdded(FilterContext filterContext, AutofacFilterCategory filterCategory, ILifetimeScope lifeTimeScope, HttpActionDescriptor descriptor, FilterPredicateMetadata metadata)
         {
             var filters = filterContext.AddedFilters[filterCategory];
             return filters.Any(filter => filter.Scope == metadata.Scope &&
-                                         filter.Predicate(descriptor));
+                                         filter.Predicate(lifeTimeScope, descriptor));
         }
 
         private static bool FilterMatches(
             FilterScope scope,
             AutofacFilterCategory filterCategory,
+            ILifetimeScope lifeTimeScope,
             HttpActionDescriptor descriptor,
             FilterPredicateMetadata metadata)
         {
             return metadata.FilterCategory == filterCategory &&
                    metadata.Scope == scope &&
-                   metadata.Predicate(descriptor);
+                   metadata.Predicate(lifeTimeScope, descriptor);
         }
 
         private static bool FilterMatchesAndNotAlreadyAdded(
             FilterContext filterContext,
             FilterScope scope,
             AutofacFilterCategory filterCategory,
+            ILifetimeScope lifeTimeScope,
             FilterPredicateMetadata metadata,
             HttpActionDescriptor descriptor)
         {
-            return FilterMatches(scope, filterCategory, descriptor, metadata) && !MatchingFilterAlreadyAdded(filterContext, filterCategory, descriptor, metadata);
+            return FilterMatches(scope, filterCategory, lifeTimeScope, descriptor, metadata) &&
+                   !MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, metadata);
         }
     }
 }

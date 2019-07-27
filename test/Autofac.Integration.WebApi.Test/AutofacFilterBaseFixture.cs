@@ -162,7 +162,7 @@ namespace Autofac.Integration.WebApi.Test
         {
             AssertSingleFilter<TestControllerA>(
                 GetFirstRegistration(),
-                ConfigureFirstPredicateRegistration(descriptor => descriptor.ControllerDescriptor.ControllerType == typeof(TestControllerA)));
+                ConfigureFirstPredicateRegistration((scope, descriptor) => descriptor.ControllerDescriptor.ControllerType == typeof(TestControllerA)));
         }
 
         [Fact]
@@ -171,7 +171,7 @@ namespace Autofac.Integration.WebApi.Test
             AssertMultipleFilters(
                 GetFirstRegistration(),
                 GetSecondRegistration(),
-                ConfigureFirstPredicateRegistration(descriptor => descriptor.ControllerDescriptor.ControllerType == typeof(TestController)),
+                ConfigureFirstPredicateRegistration((scope, descriptor) => descriptor.ControllerDescriptor.ControllerType == typeof(TestController)),
                 ConfigureSecondPredicateRegistration(descriptor => descriptor.ControllerDescriptor.ControllerType == typeof(TestController)));
         }
 
@@ -180,7 +180,20 @@ namespace Autofac.Integration.WebApi.Test
         {
             AssertNoFilter<TestControllerB>(
                 GetFirstRegistration(),
-                ConfigureFirstPredicateRegistration(descriptor => descriptor.ControllerDescriptor.ControllerType == typeof(TestControllerA)));
+                ConfigureFirstPredicateRegistration((scope, descriptor) => descriptor.ControllerDescriptor.ControllerType == typeof(TestControllerA)));
+        }
+
+        [Fact]
+        public void CanUseLifetimeScopeInPredicate()
+        {
+            AssertNoFilter<TestControllerB>(
+                GetFirstRegistration(),
+                ConfigureFirstPredicateRegistration((scope, descriptor) =>
+                {
+                    Assert.NotNull(scope.Resolve<ILogger>());
+
+                    return descriptor.ControllerDescriptor.ControllerType == typeof(TestControllerA);
+                }));
         }
 
         protected abstract Func<IComponentContext, TFilter1> GetFirstRegistration();
@@ -195,7 +208,7 @@ namespace Autofac.Integration.WebApi.Test
 
         protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstChainedControllersRegistration();
 
-        protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstPredicateRegistration(Func<HttpActionDescriptor, bool> predicate);
+        protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstPredicateRegistration(Func<ILifetimeScope, HttpActionDescriptor, bool> predicate);
 
         protected abstract Action<IRegistrationBuilder<TFilter2, SimpleActivatorData, SingleRegistrationStyle>> ConfigureSecondControllerRegistration();
 

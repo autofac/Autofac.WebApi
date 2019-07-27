@@ -40,7 +40,7 @@ namespace Autofac.Integration.WebApi.Test
                          .AsWebApiExceptionFilterFor<TestControllerB>();
         }
 
-        protected override Action<IRegistrationBuilder<TestExceptionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstPredicateRegistration(Func<HttpActionDescriptor, bool> predicate)
+        protected override Action<IRegistrationBuilder<TestExceptionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstPredicateRegistration(Func<ILifetimeScope, HttpActionDescriptor, bool> predicate)
         {
             return r => r.AsWebApiExceptionFilterWhere(predicate);
         }

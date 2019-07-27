@@ -38,7 +38,7 @@ namespace Autofac.Integration.WebApi
         /// Gets or sets the callback that determines if a filter matches the action descriptor.
         /// Returns true/false to include the filter or not.
         /// </summary>
-        public Func<HttpActionDescriptor, bool> Predicate { get; set; }
+        public Func<ILifetimeScope, HttpActionDescriptor, bool> Predicate { get; set; }
 
         /// <summary>
         /// Gets or sets the scope of the filter.
