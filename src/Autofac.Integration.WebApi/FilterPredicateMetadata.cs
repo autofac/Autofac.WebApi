@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright © 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -24,32 +24,33 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
 {
     /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
+    /// Metadata block for an individual filter predicate.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
+    internal class FilterPredicateMetadata
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapper"/> class.
+        /// Gets or sets the callback that determines if a filter matches the action descriptor.
+        /// Returns true/false to include the filter or not.
         /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthorizationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
-            : base(filterMetadata)
-        {
-        }
+        public Func<HttpActionDescriptor, bool> Predicate { get; set; }
 
         /// <summary>
-        /// Gets the filters to override.
+        /// Gets or sets the scope of the filter.
         /// </summary>
-        public Type FiltersToOverride
-        {
-            get { return typeof(IAuthorizationFilter); }
-        }
+        /// <remarks>
+        /// We need the scope of this filter registration so we can create the FilterInfo later.
+        /// </remarks>
+        public FilterScope Scope { get; set; }
+
+        /// <summary>
+        /// Gets or sets the filter category, used to group filters and control execution order.
+        /// </summary>
+        public AutofacFilterCategory FilterCategory { get; set; }
     }
 }

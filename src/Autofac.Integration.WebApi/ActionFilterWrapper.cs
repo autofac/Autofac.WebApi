@@ -41,30 +41,22 @@ namespace Autofac.Integration.WebApi
     /// </summary>
     [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal class ActionFilterWrapper : ActionFilterAttribute, IAutofacActionFilter, IFilterWrapper
+    internal class ActionFilterWrapper : ActionFilterAttribute, IAutofacActionFilter
     {
-        private readonly FilterMetadata _filterMetadata;
+        private readonly HashSet<FilterMetadata> _allFilters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionFilterWrapper"/> class.
         /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public ActionFilterWrapper(FilterMetadata filterMetadata)
+        /// <param name="filterMetadata">The collection of filter metadata blocks that this wrapper should run.</param>
+        public ActionFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
             if (filterMetadata == null)
             {
                 throw new ArgumentNullException(nameof(filterMetadata));
             }
 
-            this._filterMetadata = filterMetadata;
-        }
-
-        /// <summary>
-        /// Gets the metadata key used to retrieve the filter metadata.
-        /// </summary>
-        public virtual string MetadataKey
-        {
-            get { return AutofacWebApiFilterProvider.ActionFilterMetadataKey; }
+            _allFilters = filterMetadata;
         }
 
         /// <summary>
@@ -167,14 +159,11 @@ namespace Autofac.Integration.WebApi
 
         private bool FilterMatchesMetadata(Meta<Lazy<IAutofacActionFilter>> filter)
         {
-            var metadata = filter.Metadata.TryGetValue(this.MetadataKey, out var metadataAsObject)
+            var metadata = filter.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var metadataAsObject)
                 ? metadataAsObject as FilterMetadata
                 : null;
 
-            return metadata != null
-                && metadata.ControllerType == this._filterMetadata.ControllerType
-                && metadata.FilterScope == this._filterMetadata.FilterScope
-                && metadata.MethodInfo == this._filterMetadata.MethodInfo;
+            return _allFilters.Contains(metadata);
         }
     }
 }

@@ -28,7 +28,8 @@ namespace Autofac.Integration.WebApi.Test
             builder.Register<IAutofacAuthorizationFilter>(c => new TestAuthorizationFilter(c.Resolve<ILogger>()))
                 .AsWebApiAuthorizationFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
-                .OnActivated(e => activationCount++);
+                .OnActivated(e => activationCount++)
+                .GetMetadata(out var filterMetadata);
             var container = builder.Build();
 
             var resolver = new AutofacWebApiDependencyResolver(container);
@@ -40,13 +41,8 @@ namespace Autofac.Integration.WebApi.Test
             var methodInfo = typeof(TestController).GetMethod("Get");
             var actionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
             var actionContext = new HttpActionContext(contollerContext, actionDescriptor);
-            var metadata = new FilterMetadata
-            {
-                ControllerType = typeof(TestController),
-                FilterScope = FilterScope.Action,
-                MethodInfo = methodInfo
-            };
-            var wrapper = new AuthorizationFilterWrapper(metadata);
+
+            var wrapper = new AuthorizationFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
             await wrapper.OnAuthorizationAsync(actionContext, CancellationToken.None);
             Assert.Equal(1, activationCount);

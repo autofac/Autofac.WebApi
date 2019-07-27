@@ -1,4 +1,5 @@
-﻿using System.Web.Http.Filters;
+﻿using System.Collections.Generic;
+using System.Web.Http.Filters;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -6,16 +7,9 @@ namespace Autofac.Integration.WebApi.Test
     public class ExceptionFilterOverrideWrapperFixture
     {
         [Fact]
-        public void MetadataKeyReturnsOverrideValue()
-        {
-            var wrapper = new ExceptionFilterOverrideWrapper(new FilterMetadata());
-            Assert.Equal(AutofacWebApiFilterProvider.ExceptionFilterOverrideMetadataKey, wrapper.MetadataKey);
-        }
-
-        [Fact]
         public void FiltersToOverrideReturnsCorrectType()
         {
-            var wrapper = new ExceptionFilterOverrideWrapper(new FilterMetadata());
+            var wrapper = new ExceptionFilterOverrideWrapper(new HashSet<FilterMetadata>());
             Assert.Equal(typeof(IExceptionFilter), wrapper.FiltersToOverride);
         }
     }

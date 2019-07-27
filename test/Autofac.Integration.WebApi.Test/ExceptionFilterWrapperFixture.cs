@@ -28,7 +28,8 @@ namespace Autofac.Integration.WebApi.Test
             builder.Register<IAutofacExceptionFilter>(c => new TestExceptionFilter(c.Resolve<ILogger>()))
                 .AsWebApiExceptionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
-                .OnActivated(e => activationCount++);
+                .OnActivated(e => activationCount++)
+                .GetMetadata(out var filterMetadata);
             var container = builder.Build();
 
             var resolver = new AutofacWebApiDependencyResolver(container);
@@ -41,13 +42,7 @@ namespace Autofac.Integration.WebApi.Test
             var actionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
             var actionContext = new HttpActionContext(contollerContext, actionDescriptor);
             var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-            var metadata = new FilterMetadata
-            {
-                ControllerType = typeof(TestController),
-                FilterScope = FilterScope.Action,
-                MethodInfo = methodInfo
-            };
-            var wrapper = new ExceptionFilterWrapper(metadata);
+            var wrapper = new ExceptionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
             await wrapper.OnExceptionAsync(actionExecutedContext, CancellationToken.None);
             Assert.Equal(1, activationCount);

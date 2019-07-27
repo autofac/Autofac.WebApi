@@ -22,22 +22,17 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
-        public void ReturnsCorrectMetadataKey()
-        {
-            var wrapper = new ActionFilterWrapper(new FilterMetadata());
-            Assert.Equal(AutofacWebApiFilterProvider.ActionFilterMetadataKey, wrapper.MetadataKey);
-        }
-
-        [Fact]
         public async void WrapperResolvesActionFilterFromDependencyScope()
         {
             var builder = new ContainerBuilder();
             builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
             var activationCount = 0;
             builder.Register<IAutofacActionFilter>(c => new TestActionFilter(c.Resolve<ILogger>()))
-                .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest()
-                .OnActivated(e => activationCount++);
+                   .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                   .InstancePerRequest()
+                   .OnActivated(e => activationCount++)
+                   .GetMetadata(out var filterMetadata);
+
             var container = builder.Build();
 
             var resolver = new AutofacWebApiDependencyResolver(container);
@@ -46,13 +41,8 @@ namespace Autofac.Integration.WebApi.Test
             var actionDescriptor = CreateActionDescriptor(methodInfo);
             var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
             var httpActionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-            var metadata = new FilterMetadata
-            {
-                ControllerType = typeof(TestController),
-                FilterScope = FilterScope.Action,
-                MethodInfo = methodInfo
-            };
-            var wrapper = new ActionFilterWrapper(metadata);
+
+            var wrapper = new ActionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
             await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
             Assert.Equal(1, activationCount);
@@ -73,10 +63,12 @@ namespace Autofac.Integration.WebApi.Test
                 .SingleInstance();
             builder.RegisterType<TestActionFilter>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest();
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter1Meta);
             builder.RegisterType<TestActionFilter2>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest();
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter2Meta);
 
             var container = builder.Build();
 
@@ -86,13 +78,11 @@ namespace Autofac.Integration.WebApi.Test
             var actionDescriptor = CreateActionDescriptor(methodInfo);
             var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
             var httpActionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-            var metadata = new FilterMetadata
+            var wrapper = new ActionFilterWrapper(new HashSet<FilterMetadata>
             {
-                ControllerType = typeof(TestController),
-                FilterScope = FilterScope.Action,
-                MethodInfo = methodInfo
-            };
-            var wrapper = new ActionFilterWrapper(metadata);
+                testFilter1Meta,
+                testFilter2Meta
+            });
 
             await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
             await wrapper.OnActionExecutedAsync(httpActionExecutedContext, CancellationToken.None);
@@ -121,16 +111,20 @@ namespace Autofac.Integration.WebApi.Test
                 .SingleInstance();
             builder.RegisterType<TestActionFilter>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest();
+                .InstancePerRequest()
+                .GetMetadata(out var testActionFilterMetadata);
             builder.RegisterType<TestActionFilterWithResponse>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest();
+                .InstancePerRequest()
+                .GetMetadata(out var testActionFilterWithResponseMetadata);
             builder.RegisterType<TestActionFilter2>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest();
+                .InstancePerRequest()
+                .GetMetadata(out var testActionFilter2Metadata);
             builder.RegisterType<TestActionFilter3>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest();
+                .InstancePerRequest()
+                .GetMetadata(out var testActionFilter3Metadata);
 
             var container = builder.Build();
 
@@ -139,14 +133,14 @@ namespace Autofac.Integration.WebApi.Test
             var methodInfo = typeof(TestController).GetMethod("Get");
             var actionDescriptor = CreateActionDescriptor(methodInfo);
             var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
-            var httpActionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-            var metadata = new FilterMetadata
+
+            var wrapper = new ActionFilterWrapper(new HashSet<FilterMetadata>
             {
-                ControllerType = typeof(TestController),
-                FilterScope = FilterScope.Action,
-                MethodInfo = methodInfo
-            };
-            var wrapper = new ActionFilterWrapper(metadata);
+                testActionFilterMetadata,
+                testActionFilterWithResponseMetadata,
+                testActionFilter2Metadata,
+                testActionFilter3Metadata
+            });
 
             await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
 

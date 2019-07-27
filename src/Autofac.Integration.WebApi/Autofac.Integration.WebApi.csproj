@@ -54,6 +54,7 @@
     <Compile Include="ActionFilterWrapper.cs" />
     <Compile Include="AuthorizationFilterWrapper.cs" />
     <Compile Include="ActionFilterOverrideWrapper.cs" />
+    <Compile Include="AutofacFilterCategory.cs" />
     <Compile Include="AutofacOverrideFilter.cs" />
     <Compile Include="AutofacWebApiDependencyResolver.cs" />
     <Compile Include="AutofacWebApiDependencyScope.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="AuthenticationFilterOverrideWrapper.cs" />
     <Compile Include="AuthorizationFilterOverrideWrapper.cs" />
     <Compile Include="ExceptionFilterOverrideWrapper.cs" />
+    <Compile Include="FilterPredicateMetadata.cs" />
     <Compile Include="HttpConfigurationExtensions.cs" />
     <Compile Include="HttpRequestMessageProvider.cs" />
     <Compile Include="IAutofacAuthenticationFilter.cs" />
@@ -80,7 +82,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AutofacControllerConfigurationAttributeResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="IFilterWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationExtensions.cs" />
     <Compile Include="RegistrationExtensionsResources.Designer.cs">

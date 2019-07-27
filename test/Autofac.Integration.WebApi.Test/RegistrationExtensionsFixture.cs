@@ -24,9 +24,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
+using System.Web.Http.Filters;
 using System.Web.Http.ModelBinding;
 using Autofac.Builder;
 using Autofac.Integration.WebApi.Test.TestTypes;
@@ -250,6 +252,48 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
+        public void AsActionFilterForPredicateMustBeActionFilter()
+        {
+            var builder = new ContainerBuilder();
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterInstance(new object()).AsWebApiActionFilterWhere(descriptor => true));
+
+            Assert.Equal("registration", exception.ParamName);
+        }
+
+        [Fact]
+        public void AsActionFilterForPredicateNoGlobalScope()
+        {
+            var builder = new ContainerBuilder();
+
+            var exception = Assert.Throws<InvalidEnumArgumentException>(
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiActionFilterWhere(descriptor => true, FilterScope.Global));
+
+            Assert.Equal("scope", exception.ParamName);
+        }
+
+        [Fact]
+        public void AsActionFilterForAllControllersMustBeActionFilter()
+        {
+            var builder = new ContainerBuilder();
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterInstance(new object()).AsWebApiActionFilterForAllControllers());
+
+            Assert.Equal("registration", exception.ParamName);
+        }
+
+        [Fact]
+        public void AsActionFilterWhereRequiresPredicate()
+        {
+            var builder = new ContainerBuilder();
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiActionFilterWhere(null));
+            Assert.Equal("predicate", exception.ParamName);
+        }
+
+        [Fact]
         public void AsAuthorizationFilterForRequiresActionSelector()
         {
             var builder = new ContainerBuilder();
@@ -270,12 +314,30 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
+        public void AsAuthorizationFilterWhereRequiresPredicate()
+        {
+            var builder = new ContainerBuilder();
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiAuthorizationFilterWhere(null));
+            Assert.Equal("predicate", exception.ParamName);
+        }
+
+        [Fact]
         public void AsExceptionFilterForRequiresActionSelector()
         {
             var builder = new ContainerBuilder();
             var exception = Assert.Throws<ArgumentNullException>(
                 () => builder.Register(c => new TestExceptionFilter(c.Resolve<ILogger>())).AsWebApiExceptionFilterFor<TestController>(null));
             Assert.Equal("actionSelector", exception.ParamName);
+        }
+
+        [Fact]
+        public void AsExceptionFilterWhereRequiresPredicate()
+        {
+            var builder = new ContainerBuilder();
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiExceptionFilterWhere(null));
+            Assert.Equal("predicate", exception.ParamName);
         }
 
         [Fact]
@@ -296,6 +358,15 @@ namespace Autofac.Integration.WebApi.Test
             var exception = Assert.Throws<ArgumentNullException>(
                 () => builder.Register(c => new TestAuthenticationFilter(c.Resolve<ILogger>())).AsWebApiAuthenticationFilterFor<TestController>(null));
             Assert.Equal("actionSelector", exception.ParamName);
+        }
+
+        [Fact]
+        public void AsAuthenticationFilterWhereRequiresPredicate()
+        {
+            var builder = new ContainerBuilder();
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiAuthorizationFilterWhere(null));
+            Assert.Equal("predicate", exception.ParamName);
         }
 
         [Fact]

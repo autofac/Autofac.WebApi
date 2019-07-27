@@ -94,16 +94,16 @@ namespace Autofac.Integration.WebApi.Test
             var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
             var token = new CancellationTokenSource().Token;
 
+            foreach (var fi in filterInfos.Select(f => f.Instance).OfType<IAuthenticationFilter>())
+            {
+                await fi.AuthenticateAsync(authnContext, token);
+            }
+
             // Loop through each type of filter in the order Web API would
             // do it. This will give us the complete list of filters.
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<AuthorizationFilterAttribute>())
             {
                 await fi.OnAuthorizationAsync(actionContext, token);
-            }
-
-            foreach (var fi in filterInfos.Select(f => f.Instance).OfType<IAuthenticationFilter>())
-            {
-                await fi.AuthenticateAsync(authnContext, token);
             }
 
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<ActionFilterAttribute>())
@@ -123,15 +123,6 @@ namespace Autofac.Integration.WebApi.Test
             // - Action scoped filters
             var expectedOrder = new Type[]
             {
-                typeof(OrderTestAuthorizationFilter<D>),
-                typeof(OrderTestAuthorizationFilter<B>),
-                typeof(OrderTestAuthorizationFilter<H>),
-                typeof(OrderTestAuthorizationFilter<F>),
-                typeof(OrderTestAuthorizationFilter<C>),
-                typeof(OrderTestAuthorizationFilter<A>),
-                typeof(OrderTestAuthorizationFilter<G>),
-                typeof(OrderTestAuthorizationFilter<E>),
-
                 typeof(OrderTestAuthenticationFilter<D>),
                 typeof(OrderTestAuthenticationFilter<B>),
                 typeof(OrderTestAuthenticationFilter<H>),
@@ -140,6 +131,15 @@ namespace Autofac.Integration.WebApi.Test
                 typeof(OrderTestAuthenticationFilter<A>),
                 typeof(OrderTestAuthenticationFilter<G>),
                 typeof(OrderTestAuthenticationFilter<E>),
+
+                typeof(OrderTestAuthorizationFilter<D>),
+                typeof(OrderTestAuthorizationFilter<B>),
+                typeof(OrderTestAuthorizationFilter<H>),
+                typeof(OrderTestAuthorizationFilter<F>),
+                typeof(OrderTestAuthorizationFilter<C>),
+                typeof(OrderTestAuthorizationFilter<A>),
+                typeof(OrderTestAuthorizationFilter<G>),
+                typeof(OrderTestAuthorizationFilter<E>),
 
                 typeof(OrderTestActionFilter<D>),
                 typeof(OrderTestActionFilter<B>),
