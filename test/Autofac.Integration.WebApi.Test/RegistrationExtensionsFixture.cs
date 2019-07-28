@@ -283,6 +283,11 @@ namespace Autofac.Integration.WebApi.Test
                 () => builder.RegisterInstance(new object()).AsWebApiActionFilterForAllControllers());
 
             Assert.Equal("registration", exception.ParamName);
+            Assert.StartsWith(
+                "The type 'System.Object' must be assignable to 'Autofac.Integration.WebApi.IAutofacActionFilter'" +
+                " or 'Autofac.Integration.WebApi.IAutofacContinuationActionFilter'.",
+                exception.Message,
+                StringComparison.CurrentCulture);
         }
 
         [Fact]

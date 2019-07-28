@@ -1135,8 +1135,9 @@ namespace Autofac.Integration.WebApi
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
+                    RegistrationExtensionsResources.MustBeAssignableToActionFilterType,
                     limitType.FullName,
+                    typeof(IAutofacActionFilter).FullName,
                     typeof(IAutofacContinuationActionFilter).FullName);
                 throw new ArgumentException(message, nameof(registration));
             }

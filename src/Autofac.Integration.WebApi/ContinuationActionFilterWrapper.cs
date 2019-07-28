@@ -56,15 +56,6 @@ namespace Autofac.Integration.WebApi
             _allFilters = filterMetadata;
         }
 
-        private bool FilterMatchesMetadata(Meta<Lazy<IAutofacContinuationActionFilter>> filter)
-        {
-            var metadata = filter.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var metadataAsObject)
-                ? metadataAsObject as FilterMetadata
-                : null;
-
-            return _allFilters.Contains(metadata);
-        }
-
         public bool AllowMultiple { get; } = true;
 
         public Task<HttpResponseMessage> ExecuteActionFilterAsync(
@@ -84,12 +75,24 @@ namespace Autofac.Integration.WebApi
                 return () => innerFilter.ExecuteActionFilterAsync(actionContext, cancellationToken, next);
             }
 
+            // We go backwards for the beginning of the set of filters, where
+            // the last one invokes the provided continuation, the previous one invokes the last one, and so on,
+            // until there's a callback that invokes the first filter.
             foreach (var filterStage in filters.Reverse().Where(FilterMatchesMetadata))
             {
                 result = ChainContinuation(result, filterStage.Value.Value);
             }
 
             return result();
+        }
+
+        private bool FilterMatchesMetadata(Meta<Lazy<IAutofacContinuationActionFilter>> filter)
+        {
+            var metadata = filter.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var metadataAsObject)
+                ? metadataAsObject as FilterMetadata
+                : null;
+
+            return _allFilters.Contains(metadata);
         }
     }
 }
