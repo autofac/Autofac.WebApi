@@ -51,6 +51,16 @@ namespace Autofac.Integration.WebApi
         AuthenticationFilterOverride,
 
         /// <summary>
+        /// Action filters using the continuation style.
+        /// </summary>
+        ContinuationActionFilter,
+
+        /// <summary>
+        /// Action filter overrides using the continuation style.
+        /// </summary>
+        ContinuationActionFilterOverride,
+
+        /// <summary>
         /// Action filters
         /// </summary>
         ActionFilter,

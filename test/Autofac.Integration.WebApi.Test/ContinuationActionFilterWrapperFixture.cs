@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -12,12 +14,12 @@ using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
 {
-    public class ActionFilterWrapperFixture
+    public class ContinuationActionFilterWrapperFixture
     {
         [Fact]
         public void RequiresFilterMetadata()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new ActionFilterWrapper(null));
+            var exception = Assert.Throws<ArgumentNullException>(() => new ContinuationActionFilterWrapper(null));
             Assert.Equal("filterMetadata", exception.ParamName);
         }
 
@@ -26,6 +28,8 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
+            var configuration = new HttpConfiguration();
+            builder.RegisterWebApiFilterProvider(configuration);
             var activationCount = 0;
             builder.Register<IAutofacActionFilter>(c => new TestActionFilter(c.Resolve<ILogger>()))
                    .AsWebApiActionFilterFor<TestController>(c => c.Get())
@@ -40,14 +44,10 @@ namespace Autofac.Integration.WebApi.Test
             var methodInfo = typeof(TestController).GetMethod("Get");
             var actionDescriptor = CreateActionDescriptor(methodInfo);
             var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
-            var httpActionExecutedContext = new HttpActionExecutedContext(actionContext, null);
 
-            var wrapper = new ActionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
+            var wrapper = new ContinuationActionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-            await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
-            Assert.Equal(1, activationCount);
-
-            await wrapper.OnActionExecutedAsync(httpActionExecutedContext, CancellationToken.None);
+            await wrapper.ExecuteActionFilterAsync(actionContext, CancellationToken.None, () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
             Assert.Equal(1, activationCount);
         }
 
@@ -70,6 +70,10 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter2Meta);
 
+            var configuration = new HttpConfiguration();
+
+            builder.RegisterWebApiFilterProvider(configuration);
+
             var container = builder.Build();
 
             var resolver = new AutofacWebApiDependencyResolver(container);
@@ -77,15 +81,17 @@ namespace Autofac.Integration.WebApi.Test
             var methodInfo = typeof(TestController).GetMethod("Get");
             var actionDescriptor = CreateActionDescriptor(methodInfo);
             var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
-            var httpActionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-            var wrapper = new ActionFilterWrapper(new HashSet<FilterMetadata>
+            var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
             {
                 testFilter1Meta,
                 testFilter2Meta
             });
 
-            await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
-            await wrapper.OnActionExecutedAsync(httpActionExecutedContext, CancellationToken.None);
+            await wrapper.ExecuteActionFilterAsync(
+                actionContext,
+                CancellationToken.None,
+                () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
+
             Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[0]);
             Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[1]);
             Assert.Equal("TestActionFilter.OnActionExecutedAsync", order[2]);
@@ -126,6 +132,10 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerRequest()
                 .GetMetadata(out var testActionFilter3Metadata);
 
+            var configuration = new HttpConfiguration();
+
+            builder.RegisterWebApiFilterProvider(configuration);
+
             var container = builder.Build();
 
             var resolver = new AutofacWebApiDependencyResolver(container);
@@ -134,7 +144,7 @@ namespace Autofac.Integration.WebApi.Test
             var actionDescriptor = CreateActionDescriptor(methodInfo);
             var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
 
-            var wrapper = new ActionFilterWrapper(new HashSet<FilterMetadata>
+            var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
             {
                 testActionFilterMetadata,
                 testActionFilterWithResponseMetadata,
@@ -142,7 +152,10 @@ namespace Autofac.Integration.WebApi.Test
                 testActionFilter3Metadata
             });
 
-            await wrapper.OnActionExecutingAsync(actionContext, CancellationToken.None);
+            await wrapper.ExecuteActionFilterAsync(
+                actionContext,
+                CancellationToken.None,
+                () => throw new Exception("Should never reach here because a filter set the response."));
 
             Assert.Equal("TestActionFilter3.OnActionExecutingAsync", order[0]);
             Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);
@@ -150,6 +163,70 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Equal("TestActionFilter2.OnActionExecutedAsync", order[3]);
             Assert.Equal("TestActionFilter3.OnActionExecutedAsync", order[4]);
             Assert.Equal(5, order.Count);
+        }
+
+
+        [Fact]
+        public void AsyncStatePreservedBetweenFilters()
+        {
+            // Issue #34 - Async/await context lost between filters.
+            var builder = new ContainerBuilder();
+            var order = new List<string>();
+
+            builder.Register(ctx => new DelegatingLogger(s => order.Add(s)))
+                .As<ILogger>()
+                .SingleInstance();
+            // Autofac filters will resolve in reverse order.
+            builder.RegisterType<TestContinuationActionFilter2>()
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter1Meta);
+            builder.RegisterType<TestContinuationActionFilter>()
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter2Meta);
+
+            // Old filters always run after new ones, because they're
+            // adapted.
+            builder.RegisterType<TestOldActionFilterAsyncContextAccess>()
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter3Meta);
+            builder.RegisterType<TestOldActionFilterLocalAsync>()
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter4Meta);
+
+            var configuration = new HttpConfiguration();
+
+            builder.RegisterWebApiFilterProvider(configuration);
+
+            var container = builder.Build();
+
+            var resolver = new AutofacWebApiDependencyResolver(container);
+            var controllerContext = CreateControllerContext(resolver);
+            var methodInfo = typeof(TestController).GetMethod("Get");
+            var actionDescriptor = CreateActionDescriptor(methodInfo);
+            var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
+            var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
+            {
+                testFilter1Meta,
+                testFilter2Meta,
+                testFilter3Meta,
+                testFilter4Meta
+            });
+
+            wrapper.ExecuteActionFilterAsync(
+                actionContext,
+                CancellationToken.None,
+                () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))).Wait();
+
+            Assert.Equal("TestContinuationActionFilter ExecuteActionFilterAsync Before: 123", order[0]);
+            Assert.Equal("TestContinuationActionFilter2 ExecuteActionFilterAsync Before: 123", order[1]);
+            Assert.Equal("TestOldActionFilterAsyncAccess OnActionExecuting: 456", order[2]);
+            Assert.Equal("TestOldActionFilterAsyncAccess2 OnActionExecuted Local Value: localAsync", order[3]);
+            Assert.Equal("TestContinuationActionFilter2 ExecuteActionFilterAsync After: 456", order[4]);
+            Assert.Equal("TestContinuationActionFilter ExecuteActionFilterAsync After: 456", order[5]);
         }
 
         private static HttpActionDescriptor CreateActionDescriptor(MethodInfo methodInfo)

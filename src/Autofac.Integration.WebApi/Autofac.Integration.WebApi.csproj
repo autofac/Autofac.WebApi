@@ -51,9 +51,10 @@
     <CodeAnalysisDictionary Include="..\..\build\CodeAnalysisDictionary.xml">
       <Link>CodeAnalysisDictionary.xml</Link>
     </CodeAnalysisDictionary>
-    <Compile Include="ActionFilterWrapper.cs" />
+    <Compile Include="AutofacActionFilterAdapter.cs" />
+    <Compile Include="ContinuationActionFilterOverrideWrapper.cs" />
+    <Compile Include="ContinuationActionFilterWrapper.cs" />
     <Compile Include="AuthorizationFilterWrapper.cs" />
-    <Compile Include="ActionFilterOverrideWrapper.cs" />
     <Compile Include="AutofacFilterCategory.cs" />
     <Compile Include="AutofacOverrideFilter.cs" />
     <Compile Include="AutofacWebApiDependencyResolver.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="FilterPredicateMetadata.cs" />
     <Compile Include="HttpConfigurationExtensions.cs" />
     <Compile Include="HttpRequestMessageProvider.cs" />
+    <Compile Include="IAutofacContinuationActionFilter.cs" />
     <Compile Include="IAutofacAuthenticationFilter.cs" />
     <Compile Include="CurrentRequestHandler.cs" />
     <Compile Include="DependencyResolverExtensions.cs" />

@@ -150,8 +150,8 @@ namespace Autofac.Integration.WebApi
             ILifetimeScope lifeTimeScope,
             HttpActionDescriptor descriptor)
         {
-            ResolveScopedFilter<IAutofacActionFilter, ActionFilterOverrideWrapper>(
-                filterContext, scope, lifeTimeScope, descriptor, hs => new ActionFilterOverrideWrapper(hs), AutofacFilterCategory.ActionFilterOverride);
+            ResolveScopedFilter<IAutofacContinuationActionFilter, ContinuationActionFilterOverrideWrapper>(
+                filterContext, scope, lifeTimeScope, descriptor, hs => new ContinuationActionFilterOverrideWrapper(hs), AutofacFilterCategory.ActionFilterOverride);
             ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterOverrideWrapper>(
                 filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthenticationFilterOverride);
             ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterOverrideWrapper>(
@@ -162,8 +162,8 @@ namespace Autofac.Integration.WebApi
 
         private static void ResolveAllScopedFilters(FilterContext filterContext, FilterScope scope, ILifetimeScope lifeTimeScope, HttpActionDescriptor descriptor)
         {
-            ResolveScopedFilter<IAutofacActionFilter, ActionFilterWrapper>(
-                filterContext, scope, lifeTimeScope, descriptor, hs => new ActionFilterWrapper(hs), AutofacFilterCategory.ActionFilter);
+            ResolveScopedFilter<IAutofacContinuationActionFilter, ContinuationActionFilterWrapper>(
+                filterContext, scope, lifeTimeScope, descriptor, hs => new ContinuationActionFilterWrapper(hs), AutofacFilterCategory.ActionFilter);
             ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterWrapper>(
                 filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterWrapper(hs), AutofacFilterCategory.AuthenticationFilter);
             ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterWrapper>(

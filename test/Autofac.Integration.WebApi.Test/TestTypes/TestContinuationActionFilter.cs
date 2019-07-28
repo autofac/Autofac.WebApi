@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -24,32 +24,33 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Filters;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http.Controllers;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi.Test.TestTypes
 {
-    /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class ActionFilterOverrideWrapper : ActionFilterWrapper, IOverrideFilter
+    public class TestContinuationActionFilter : IAutofacContinuationActionFilter
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ActionFilterOverrideWrapper"/> class.
-        /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public ActionFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
-            : base(filterMetadata)
+        private readonly ILogger _logger;
+
+        public TestContinuationActionFilter(ILogger logger)
         {
+            _logger = logger;
         }
 
-        /// <summary>
-        /// Gets the filters to override.
-        /// </summary>
-        public Type FiltersToOverride
+        public Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
         {
-            get { return typeof(IActionFilter); }
+            TestAsyncContext.Value = "123";
+
+            _logger.Log("TestContinuationActionFilter ExecuteActionFilterAsync Before: " + TestAsyncContext.Value);
+
+            var result = continuation();
+
+            _logger.Log("TestContinuationActionFilter ExecuteActionFilterAsync After: " + TestAsyncContext.Value);
+
+            return result;
         }
     }
 }

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Autofac.Integration.WebApi.Test</RootNamespace>
     <AssemblyName>Autofac.Integration.WebApi.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NoWarn>$(NoWarn);CS1591;SA1602;SA1611;CA1812</NoWarn>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
@@ -60,7 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionFilterFixture.cs" />
-    <Compile Include="ActionFilterWrapperFixture.cs" />
+    <Compile Include="ContinuationActionFilterWrapperFixture.cs" />
     <Compile Include="AutofacWebApiDependencyResolverFixture.cs" />
     <Compile Include="AutofacWebApiFilterProviderFixture.cs" />
     <Compile Include="AutofacWebApiModelBinderProviderFixture.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="AuthenticationFilterWrapperFixture.cs" />
     <Compile Include="AuthorizationFilterFixture.cs" />
     <Compile Include="AuthenticationFilterFixture.cs" />
-    <Compile Include="ActionFilterOverrideWrapperFixture.cs" />
+    <Compile Include="ContinuationActionFilterOverrideWrapperFixture.cs" />
     <Compile Include="AuthenticationFilterOverrideWrapperFixture.cs" />
     <Compile Include="AuthorizationFilterOverrideWrapperFixture.cs" />
     <Compile Include="ExceptionFilterOverrideWrapperFixture.cs" />
@@ -96,11 +96,14 @@
     <Compile Include="TestTypes\TestActionFilterWithResponse.cs" />
     <Compile Include="TestTypes\TestActionFilter.cs" />
     <Compile Include="TestTypes\TestActionFilter2.cs" />
+    <Compile Include="TestTypes\TestAsyncContext.cs" />
     <Compile Include="TestTypes\TestAuthenticationFilter.cs" />
     <Compile Include="TestTypes\TestAuthenticationFilter2.cs" />
     <Compile Include="TestTypes\TestAuthorizationFilter.cs" />
     <Compile Include="TestTypes\TestAuthorizationFilter2.cs" />
     <Compile Include="TestTypes\TestCombinationFilter.cs" />
+    <Compile Include="TestTypes\TestContinuationActionFilter.cs" />
+    <Compile Include="TestTypes\TestContinuationActionFilter2.cs" />
     <Compile Include="TestTypes\TestController.cs" />
     <Compile Include="TestTypes\TestControllerA.cs" />
     <Compile Include="TestTypes\TestControllerB.cs" />
@@ -110,6 +113,8 @@
     <Compile Include="TestTypes\TestModel1.cs" />
     <Compile Include="TestTypes\TestModel2.cs" />
     <Compile Include="TestTypes\TestModelBinder.cs" />
+    <Compile Include="TestTypes\TestOldActionFilterAsyncContextAccess.cs" />
+    <Compile Include="TestTypes\TestOldActionFilterLocalAsync.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Autofac.Integration.WebApi\Autofac.Integration.WebApi.csproj">

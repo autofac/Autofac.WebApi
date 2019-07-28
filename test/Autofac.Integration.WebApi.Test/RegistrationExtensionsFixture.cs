@@ -127,7 +127,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public void AsModelBinderForTypesThrowsExceptionForEmptyTypeList()
         {
-            var types = new Type[0];
+            var types = Array.Empty<Type>();
             var builder = new ContainerBuilder();
             var registration = builder.RegisterType<TestModelBinder>();
             Assert.Throws<ArgumentException>(() => registration.AsModelBinderForTypes(types));
@@ -292,6 +292,42 @@ namespace Autofac.Integration.WebApi.Test
             var exception = Assert.Throws<ArgumentNullException>(
                 () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>())).AsWebApiActionFilterWhere((Func<ILifetimeScope, HttpActionDescriptor, bool>)null));
             Assert.Equal("predicate", exception.ParamName);
+        }
+
+        [Fact]
+        public void CanRegisterMultipleFilterTypesAgainstSingleService()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(new TestCombinationFilter())
+                .AsWebApiActionFilterFor<TestController>()
+                .AsWebApiAuthenticationFilterFor<TestController>()
+                .AsWebApiAuthorizationFilterFor<TestController>()
+                .AsWebApiExceptionFilterFor<TestController>();
+
+            var configuration = new HttpConfiguration();
+            builder.RegisterWebApiFilterProvider(configuration);
+            var container = builder.Build();
+
+            Assert.NotNull(container.Resolve<IAutofacContinuationActionFilter>());
+            Assert.NotNull(container.Resolve<IAutofacAuthenticationFilter>());
+            Assert.NotNull(container.Resolve<IAutofacAuthorizationFilter>());
+            Assert.NotNull(container.Resolve<IAutofacExceptionFilter>());
+        }
+
+        [Fact]
+        public void AutofacActionFilterIsAdapted()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(new TestCombinationFilter())
+                .AsWebApiActionFilterFor<TestController>();
+
+            var configuration = new HttpConfiguration();
+
+            builder.RegisterWebApiFilterProvider(configuration);
+
+            var container = builder.Build();
+
+            Assert.NotNull(container.Resolve<IAutofacContinuationActionFilter>());
         }
 
         [Fact]
