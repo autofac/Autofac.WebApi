@@ -244,13 +244,13 @@ namespace Autofac.Integration.WebApi
                 .As<IFilterProvider>()
                 .SingleInstance(); // It would be nice to scope this per request.
 
-            // Register the adapter to turn the old IAutofacActionFilters into the new style.
+            // Register the adapter to turn the old IAutofacActionFilters into the new continuation style.
             builder.RegisterAdapter<IAutofacActionFilter, IAutofacContinuationActionFilter>(
                 legacy => new AutofacActionFilterAdapter(legacy));
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> for the specified controller action.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> for the specified controller action.
         /// </summary>
         /// <typeparam name="TController">The type of the controller.</typeparam>
         /// <param name="registration">The registration.</param>
@@ -262,11 +262,11 @@ namespace Autofac.Integration.WebApi
                 Expression<Action<TController>> actionSelector)
                     where TController : IHttpController
         {
-            return AsActionFilterFor<TController>(registration, AutofacFilterCategory.ActionFilter, actionSelector);
+            return AsActionFilterFor(registration, AutofacFilterCategory.ActionFilter, actionSelector);
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> for the specified controller.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> for the specified controller.
         /// </summary>
         /// <typeparam name="TController">The type of the controller.</typeparam>
         /// <param name="registration">The registration.</param>
@@ -279,7 +279,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> for all controllers.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> for all controllers.
         /// </summary>
         /// <param name="registration">The registration.</param>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
@@ -290,7 +290,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/>, based on a predicate that filters which actions it is applied to.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/>, based on a predicate that filters which actions it is applied to.
         /// </summary>
         /// <param name="registration">The registration.</param>
         /// <param name="predicate">A predicate that should return true if this filter should be applied to the specified action.</param>
@@ -306,7 +306,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/>, based on a predicate that filters which actions it is applied to.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/>, based on a predicate that filters which actions it is applied to.
         /// </summary>
         /// <param name="registration">The registration.</param>
         /// <param name="predicate">A predicate that should return true if this filter should be applied to the specified action.</param>
@@ -322,7 +322,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> override for the specified controller action.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> override for the specified controller action.
         /// </summary>
         /// <typeparam name="TController">The type of the controller.</typeparam>
         /// <param name="registration">The registration.</param>
@@ -338,7 +338,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> override for the specified controller.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> override for the specified controller.
         /// </summary>
         /// <typeparam name="TController">The type of the controller.</typeparam>
         /// <param name="registration">The registration.</param>
@@ -351,7 +351,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> override for all controllers.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> override for all controllers.
         /// </summary>
         /// <param name="registration">The registration.</param>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
@@ -362,7 +362,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> override, based on a predicate that filters which actions it is applied to.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> override, based on a predicate that filters which actions it is applied to.
         /// </summary>
         /// <param name="registration">The registration.</param>
         /// <param name="predicate">A predicate that should return true if this filter should be applied to the specified action.</param>
@@ -378,7 +378,7 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
-        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> override, based on a predicate that filters which actions it is applied to.
+        /// Sets the provided registration to act as an <see cref="IAutofacActionFilter"/> or <see cref="IAutofacContinuationActionFilter"/> override, based on a predicate that filters which actions it is applied to.
         /// </summary>
         /// <param name="registration">The registration.</param>
         /// <param name="predicate">A predicate that should return true if this filter should be applied to the specified action.</param>
@@ -936,17 +936,7 @@ namespace Autofac.Integration.WebApi
             if (filterScope != FilterScope.Action && filterScope != FilterScope.Controller)
                 throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
 
-            var limitType = registration.ActivatorData.Activator.LimitType;
-
-            if (!limitType.IsAssignableTo<TFilter>())
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
-                    limitType.FullName,
-                    typeof(TFilter).FullName);
-                throw new ArgumentException(message, nameof(registration));
-            }
+            registration.ValidateFilterType<TFilter>();
 
             // Get the filter metadata set.
             registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
@@ -976,23 +966,7 @@ namespace Autofac.Integration.WebApi
             if (filterScope != FilterScope.Action && filterScope != FilterScope.Controller)
                 throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
 
-            var limitType = registration.ActivatorData.Activator.LimitType;
-
-            bool isLegacyFilterType = false;
-
-            if (limitType.IsAssignableTo<IAutofacActionFilter>())
-            {
-                isLegacyFilterType = true;
-            }
-            else if (!limitType.IsAssignableTo<IAutofacContinuationActionFilter>())
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
-                    limitType.FullName,
-                    typeof(IAutofacContinuationActionFilter).FullName);
-                throw new ArgumentException(message, nameof(registration));
-            }
+            registration.ValidateActionFilterType(out var isLegacyFilterType);
 
             // Get the filter metadata set.
             registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
@@ -1020,17 +994,7 @@ namespace Autofac.Integration.WebApi
         {
             if (registration == null) throw new ArgumentNullException(nameof(registration));
 
-            var limitType = registration.ActivatorData.Activator.LimitType;
-
-            if (!limitType.IsAssignableTo<TFilter>())
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
-                    limitType.FullName,
-                    typeof(TFilter).FullName);
-                throw new ArgumentException(message, nameof(registration));
-            }
+            registration.ValidateFilterType<TFilter>();
 
             // Get the filter metadata set.
             registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
@@ -1053,23 +1017,7 @@ namespace Autofac.Integration.WebApi
         {
             if (registration == null) throw new ArgumentNullException(nameof(registration));
 
-            var limitType = registration.ActivatorData.Activator.LimitType;
-
-            bool isLegacyFilterType = false;
-
-            if (limitType.IsAssignableTo<IAutofacActionFilter>())
-            {
-                isLegacyFilterType = true;
-            }
-            else if (!limitType.IsAssignableTo<IAutofacContinuationActionFilter>())
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
-                    limitType.FullName,
-                    typeof(IAutofacContinuationActionFilter).FullName);
-                throw new ArgumentException(message, nameof(registration));
-            }
+            registration.ValidateActionFilterType(out var isLegacyFilterType);
 
             // Get the filter metadata set.
             registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
@@ -1101,17 +1049,7 @@ namespace Autofac.Integration.WebApi
             if (registration == null) throw new ArgumentNullException(nameof(registration));
             if (actionSelector == null) throw new ArgumentNullException(nameof(actionSelector));
 
-            var limitType = registration.ActivatorData.Activator.LimitType;
-
-            if (!limitType.IsAssignableTo<TFilter>())
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
-                    limitType.FullName,
-                    typeof(TFilter).FullName);
-                throw new ArgumentException(message, nameof(registration));
-            }
+            registration.ValidateFilterType<TFilter>();
 
             // Get the filter metadata set.
             registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
@@ -1141,23 +1079,7 @@ namespace Autofac.Integration.WebApi
             if (registration == null) throw new ArgumentNullException(nameof(registration));
             if (actionSelector == null) throw new ArgumentNullException(nameof(actionSelector));
 
-            var limitType = registration.ActivatorData.Activator.LimitType;
-
-            bool isLegacyFilterType = false;
-
-            if (limitType.IsAssignableTo<IAutofacActionFilter>())
-            {
-                isLegacyFilterType = true;
-            }
-            else if (!limitType.IsAssignableTo<IAutofacContinuationActionFilter>())
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
-                    limitType.FullName,
-                    typeof(IAutofacContinuationActionFilter).FullName);
-                throw new ArgumentException(message, nameof(registration));
-            }
+            registration.ValidateActionFilterType(out var isLegacyFilterType);
 
             // Get the filter metadata set.
             registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
@@ -1180,6 +1102,44 @@ namespace Autofac.Integration.WebApi
             }
 
             return registration.As<IAutofacContinuationActionFilter>();
+        }
+
+        private static void ValidateFilterType<TFilter>(this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration)
+        {
+            var limitType = registration.ActivatorData.Activator.LimitType;
+
+            if (!limitType.IsAssignableTo<TFilter>())
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
+                    limitType.FullName,
+                    typeof(TFilter).FullName);
+                throw new ArgumentException(message, nameof(registration));
+            }
+        }
+
+        private static void ValidateActionFilterType(
+            this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
+            out bool isLegacyFilterType)
+        {
+            var limitType = registration.ActivatorData.Activator.LimitType;
+
+            isLegacyFilterType = false;
+
+            if (limitType.IsAssignableTo<IAutofacActionFilter>())
+            {
+                isLegacyFilterType = true;
+            }
+            else if (!limitType.IsAssignableTo<IAutofacContinuationActionFilter>())
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    RegistrationExtensionsResources.MustBeAssignableToFilterType,
+                    limitType.FullName,
+                    typeof(IAutofacContinuationActionFilter).FullName);
+                throw new ArgumentException(message, nameof(registration));
+            }
         }
 
         private static void AsOverrideFor<TFilter, TController>(ContainerBuilder builder, AutofacFilterCategory filterCategory)

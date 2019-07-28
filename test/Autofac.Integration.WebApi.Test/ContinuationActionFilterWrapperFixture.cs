@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -165,37 +166,35 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Equal(5, order.Count);
         }
 
-
         [Fact]
-        public void AsyncStatePreservedBetweenFilters()
+        public void TransactionScopePreservedBetweenStandardFilters()
         {
             // Issue #34 - Async/await context lost between filters.
             var builder = new ContainerBuilder();
-            var order = new List<string>();
 
-            builder.Register(ctx => new DelegatingLogger(s => order.Add(s)))
-                .As<ILogger>()
-                .SingleInstance();
+            TransactionScope scope = null;
+
             // Autofac filters will resolve in reverse order.
-            builder.RegisterType<TestContinuationActionFilter2>()
+            builder.Register(s => new TestCallbackActionFilter(
+                    () =>
+                        Assert.NotNull(Transaction.Current),
+                    () =>
+                        Assert.NotNull(Transaction.Current)))
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter1Meta);
-            builder.RegisterType<TestContinuationActionFilter>()
+            builder.Register(s => new TestCallbackActionFilter(
+                    () =>
+                        scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled),
+                    () =>
+                    {
+                        Assert.NotNull(Transaction.Current);
+                        scope.Dispose();
+                        Assert.Null(Transaction.Current);
+                    }))
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter2Meta);
-
-            // Old filters always run after new ones, because they're
-            // adapted.
-            builder.RegisterType<TestOldActionFilterAsyncContextAccess>()
-                .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest()
-                .GetMetadata(out var testFilter3Meta);
-            builder.RegisterType<TestOldActionFilterLocalAsync>()
-                .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest()
-                .GetMetadata(out var testFilter4Meta);
 
             var configuration = new HttpConfiguration();
 
@@ -211,22 +210,69 @@ namespace Autofac.Integration.WebApi.Test
             var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
             {
                 testFilter1Meta,
-                testFilter2Meta,
-                testFilter3Meta,
-                testFilter4Meta
+                testFilter2Meta
             });
 
             wrapper.ExecuteActionFilterAsync(
                 actionContext,
                 CancellationToken.None,
-                () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))).Wait();
+                () =>
+                {
+                    Assert.NotNull(Transaction.Current);
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+                }).Wait();
+        }
 
-            Assert.Equal("TestContinuationActionFilter ExecuteActionFilterAsync Before: 123", order[0]);
-            Assert.Equal("TestContinuationActionFilter2 ExecuteActionFilterAsync Before: 123", order[1]);
-            Assert.Equal("TestOldActionFilterAsyncAccess OnActionExecuting: 456", order[2]);
-            Assert.Equal("TestOldActionFilterAsyncAccess2 OnActionExecuted Local Value: localAsync", order[3]);
-            Assert.Equal("TestContinuationActionFilter2 ExecuteActionFilterAsync After: 456", order[4]);
-            Assert.Equal("TestContinuationActionFilter ExecuteActionFilterAsync After: 456", order[5]);
+
+        [Fact]
+        public void TransactionScopePreservedBetweenContinuationFilters()
+        {
+            // Issue #34 - Async/await context lost between filters.
+            var builder = new ContainerBuilder();
+
+            // Autofac filters will resolve in reverse order.
+            builder.Register(s => new TestContinuationActionFilter(
+                    () =>
+                        Assert.NotNull(Transaction.Current),
+                    () =>
+                        Assert.NotNull(Transaction.Current)))
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter1Meta);
+            builder.Register(s => new TestContinuationActionFilterWithTransactionScope(
+                    () =>
+                        Assert.Null(Transaction.Current),
+                    () =>
+                        Assert.Null(Transaction.Current)))
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter2Meta);
+
+            var configuration = new HttpConfiguration();
+
+            builder.RegisterWebApiFilterProvider(configuration);
+
+            var container = builder.Build();
+
+            var resolver = new AutofacWebApiDependencyResolver(container);
+            var controllerContext = CreateControllerContext(resolver);
+            var methodInfo = typeof(TestController).GetMethod("Get");
+            var actionDescriptor = CreateActionDescriptor(methodInfo);
+            var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
+            var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
+            {
+                testFilter1Meta,
+                testFilter2Meta
+            });
+
+            wrapper.ExecuteActionFilterAsync(
+                actionContext,
+                CancellationToken.None,
+                () =>
+                {
+                    Assert.NotNull(Transaction.Current);
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+                }).Wait();
         }
 
         private static HttpActionDescriptor CreateActionDescriptor(MethodInfo methodInfo)

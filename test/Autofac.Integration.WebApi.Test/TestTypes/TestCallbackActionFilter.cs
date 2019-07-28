@@ -23,38 +23,39 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Net;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using System.Web.Http.ModelBinding;
 
 namespace Autofac.Integration.WebApi.Test.TestTypes
 {
-    public class TestOldActionFilterAsyncContextAccess : IAutofacActionFilter
+    public class TestCallbackActionFilter : IAutofacActionFilter
     {
-        private readonly ILogger _logger;
+        private readonly Action _executing;
+        private readonly Action _executed;
 
-        public TestOldActionFilterAsyncContextAccess(ILogger logger)
+        public TestCallbackActionFilter(Action executing, Action executed)
         {
-            _logger = logger;
-        }
-
-        public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
-        {
-            _logger.Log("TestOldActionFilterAsyncAccess OnActionExecuted: " + TestAsyncContext.Value);
-
-            return Task.CompletedTask;
+            _executing = executing;
+            _executed = executed;
         }
 
         public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
-            _logger.Log("TestOldActionFilterAsyncAccess OnActionExecuting: " + TestAsyncContext.Value);
+            _executing();
+            return Task.FromResult(0);
+        }
 
-            actionContext.Response = new HttpResponseMessage(HttpStatusCode.OK);
-
-            return Task.CompletedTask;
+        public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
+        {
+            _executed();
+            return Task.FromResult(0);
         }
     }
 }

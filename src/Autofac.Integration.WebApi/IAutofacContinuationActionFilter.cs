@@ -29,7 +29,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
-using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
 {
@@ -40,7 +39,7 @@ namespace Autofac.Integration.WebApi
     public interface IAutofacContinuationActionFilter
     {
         /// <summary>
-        /// The method called when the filter executes. The filter should call 'continuation' to
+        /// The method called when the filter executes. The filter should call 'next' to
         /// continue processing the request.
         /// </summary>
         /// <param name="actionContext">The context of the current action.</param>

@@ -33,22 +33,22 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
 {
     public class TestContinuationActionFilter : IAutofacContinuationActionFilter
     {
-        private readonly ILogger _logger;
+        private readonly Action _before;
+        private readonly Action _after;
 
-        public TestContinuationActionFilter(ILogger logger)
+        public TestContinuationActionFilter(Action before, Action after)
         {
-            _logger = logger;
+            _before = before;
+            _after = after;
         }
 
-        public Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+        public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> next)
         {
-            TestAsyncContext.Value = "123";
+            _before();
 
-            _logger.Log("TestContinuationActionFilter ExecuteActionFilterAsync Before: " + TestAsyncContext.Value);
+            var result = await next();
 
-            var result = continuation();
-
-            _logger.Log("TestContinuationActionFilter ExecuteActionFilterAsync After: " + TestAsyncContext.Value);
+            _after();
 
             return result;
         }
