@@ -73,12 +73,12 @@ namespace Autofac.Integration.WebApi.Test
 
         protected override Type GetWrapperType()
         {
-            return typeof(ActionFilterWrapper);
+            return typeof(ContinuationActionFilterWrapper);
         }
 
         protected override Type GetOverrideWrapperType()
         {
-            return typeof(ActionFilterOverrideWrapper);
+            return typeof(ContinuationActionFilterOverrideWrapper);
         }
 
         protected override Action<ContainerBuilder> ConfigureControllerFilterOverride()

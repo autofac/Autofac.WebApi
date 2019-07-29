@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using Autofac.Features.Metadata;
 using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
@@ -63,6 +65,11 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterType<OrderTestExceptionFilter<F>>().AsWebApiExceptionFilterOverrideFor<TestControllerA>(c => c.Get());
             builder.RegisterType<OrderTestExceptionFilter<G>>().AsWebApiExceptionFilterFor<TestControllerA>(c => c.Get());
             builder.RegisterType<OrderTestExceptionFilter<H>>().AsWebApiExceptionFilterOverrideFor<TestControllerA>(c => c.Get());
+
+            var configuration = new HttpConfiguration();
+
+            builder.RegisterWebApiFilterProvider(configuration);
+
             var container = builder.Build();
 
             // Set up the filter provider so we can resolve the set of filters
@@ -79,7 +86,7 @@ namespace Autofac.Integration.WebApi.Test
             // resolution of the actual filters internally, so you won't
             // actually see them in this list. We have to fake an execution
             // pipeline to see what's really there.
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
             var filterInfos = provider.GetFilters(configuration, actionDescriptor).ToArray();
 
             // Fake execution of the filters to force the lazy initialization.
@@ -106,10 +113,8 @@ namespace Autofac.Integration.WebApi.Test
                 await fi.OnAuthorizationAsync(actionContext, token);
             }
 
-            foreach (var fi in filterInfos.Select(f => f.Instance).OfType<ActionFilterAttribute>())
-            {
-                await fi.OnActionExecutingAsync(actionContext, token);
-            }
+            // Emulate the action filter execution pipeline.
+            await ExecuteContinuationFilters(actionContext, filterInfos.Select(f => f.Instance).OfType<IActionFilter>(), token);
 
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<ExceptionFilterAttribute>())
             {
@@ -165,6 +170,24 @@ namespace Autofac.Integration.WebApi.Test
             {
                 Assert.Equal(expectedOrder[i], actualOrder[i]);
             }
+        }
+
+        private static async Task ExecuteContinuationFilters(HttpActionContext actionContext, IEnumerable<IActionFilter> filters, CancellationToken cancellationToken)
+        {
+            // Terminate the pipeline last.
+            Func<Task<HttpResponseMessage>> result = () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+
+            Func<Task<HttpResponseMessage>> ChainContinuation(Func<Task<HttpResponseMessage>> next, IActionFilter innerFilter)
+            {
+                return () => innerFilter.ExecuteActionFilterAsync(actionContext, cancellationToken, next);
+            }
+
+            foreach (var filterStage in filters.Reverse())
+            {
+                result = ChainContinuation(result, filterStage);
+            }
+
+            await result();
         }
 
         private class A
