@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,16 +23,34 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Autofac.Integration.WebApi
+using System.Collections.Generic;
+using Autofac.Builder;
+using Xunit;
+
+namespace Autofac.Integration.WebApi.Test
 {
-    /// <summary>
-    /// Common behaviour required for filter wrappers.
-    /// </summary>
-    internal interface IFilterWrapper
+    internal static class FilterMetadataExtensions
     {
+        public static HashSet<FilterMetadata> ToSingleFilterHashSet(this FilterMetadata metadata)
+        {
+            return new HashSet<FilterMetadata> { metadata };
+        }
+
         /// <summary>
-        /// Gets the metadata key used to retrieve the filter metadata.
+        /// Retrieve or create filter metadata. We want to maintain the fluent flow when we change
+        /// registration metadata so we'll do that here.
         /// </summary>
-        string MetadataKey { get; }
+        public static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> GetMetadata(
+            this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
+            out FilterMetadata filterMeta)
+        {
+            Assert.True(registration.RegistrationData.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var filterDataObj));
+
+            filterMeta = (FilterMetadata)filterDataObj;
+
+            Assert.NotNull(filterMeta);
+
+            return registration;
+        }
     }
 }

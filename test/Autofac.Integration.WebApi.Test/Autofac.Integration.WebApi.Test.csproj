@@ -79,6 +79,7 @@
     <Compile Include="ExceptionFilterWrapperFixture.cs" />
     <Compile Include="AutofacControllerConfigurationAttributeFixture.cs" />
     <Compile Include="AutofacFilterBaseFixture.cs" />
+    <Compile Include="FilterMetadataExtensions.cs" />
     <Compile Include="FilterOrderingFixture.cs" />
     <Compile Include="HttpConfigurationExtensionsFixture.cs" />
     <Compile Include="HttpRequestMessageProviderFixture.cs" />

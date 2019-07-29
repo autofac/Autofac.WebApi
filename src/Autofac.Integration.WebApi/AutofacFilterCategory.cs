@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright © 2011 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,33 +23,51 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Web.Http.Filters;
-
 namespace Autofac.Integration.WebApi
 {
     /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
+    /// Filter categories (used for grouping/ordering filters).
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
+    internal enum AutofacFilterCategory
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapper"/> class.
+        /// Authorization Filters
         /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthorizationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
-            : base(filterMetadata)
-        {
-        }
+        AuthorizationFilter,
 
         /// <summary>
-        /// Gets the filters to override.
+        /// Authorization Override Filters
         /// </summary>
-        public Type FiltersToOverride
-        {
-            get { return typeof(IAuthorizationFilter); }
-        }
+        AuthorizationFilterOverride,
+
+        /// <summary>
+        /// Authentication filters
+        /// </summary>
+        AuthenticationFilter,
+
+        /// <summary>
+        /// Authentication Override Filters
+        /// </summary>
+        AuthenticationFilterOverride,
+
+        /// <summary>
+        /// Action filters
+        /// </summary>
+        ActionFilter,
+
+        /// <summary>
+        /// Action Override filters
+        /// </summary>
+        ActionFilterOverride,
+
+        /// <summary>
+        /// Exception filters
+        /// </summary>
+        ExceptionFilter,
+
+        /// <summary>
+        /// Exception override filters
+        /// </summary>
+        ExceptionFilterOverride
     }
 }

@@ -24,6 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
@@ -37,17 +38,9 @@ namespace Autofac.Integration.WebApi
         /// Initializes a new instance of the <see cref="AuthenticationFilterOverrideWrapper"/> class.
         /// </summary>
         /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthenticationFilterOverrideWrapper(FilterMetadata filterMetadata)
+        public AuthenticationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
             : base(filterMetadata)
         {
-        }
-
-        /// <summary>
-        /// Gets the metadata key used to retrieve the filter metadata.
-        /// </summary>
-        public override string MetadataKey
-        {
-            get { return AutofacWebApiFilterProvider.AuthenticationFilterOverrideMetadataKey; }
         }
 
         /// <summary>

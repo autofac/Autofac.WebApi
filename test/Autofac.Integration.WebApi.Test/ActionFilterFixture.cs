@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using Autofac.Builder;
 using Autofac.Integration.WebApi;
@@ -28,6 +29,22 @@ namespace Autofac.Integration.WebApi.Test
             return r => r.AsWebApiActionFilterFor<TestController>(c => c.Get());
         }
 
+        protected override Action<IRegistrationBuilder<TestActionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstAllControllersRegistration()
+        {
+            return r => r.AsWebApiActionFilterForAllControllers();
+        }
+
+        protected override Action<IRegistrationBuilder<TestActionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstChainedControllersRegistration()
+        {
+            return r => r.AsWebApiActionFilterFor<TestControllerA>()
+                         .AsWebApiActionFilterFor<TestControllerB>();
+        }
+
+        protected override Action<IRegistrationBuilder<TestActionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstPredicateRegistration(Func<ILifetimeScope, HttpActionDescriptor, bool> predicate)
+        {
+            return r => r.AsWebApiActionFilterWhere(predicate);
+        }
+
         protected override Action<IRegistrationBuilder<TestActionFilter2, SimpleActivatorData, SingleRegistrationStyle>> ConfigureSecondControllerRegistration()
         {
             return r => r.AsWebApiActionFilterFor<TestController>();
@@ -36,6 +53,22 @@ namespace Autofac.Integration.WebApi.Test
         protected override Action<IRegistrationBuilder<TestActionFilter2, SimpleActivatorData, SingleRegistrationStyle>> ConfigureSecondActionRegistration()
         {
             return r => r.AsWebApiActionFilterFor<TestController>(c => c.Get());
+        }
+
+        protected override Action<IRegistrationBuilder<TestActionFilter2, SimpleActivatorData, SingleRegistrationStyle>> ConfigureSecondAllControllersRegistration()
+        {
+            return r => r.AsWebApiActionFilterForAllControllers();
+        }
+
+        protected override Action<IRegistrationBuilder<TestActionFilter2, SimpleActivatorData, SingleRegistrationStyle>> ConfigureSecondChainedControllersRegistration()
+        {
+            return r => r.AsWebApiActionFilterFor<TestControllerA>()
+                         .AsWebApiActionFilterFor<TestControllerB>();
+        }
+
+        protected override Action<IRegistrationBuilder<TestActionFilter2, SimpleActivatorData, SingleRegistrationStyle>> ConfigureSecondPredicateRegistration(Func<HttpActionDescriptor, bool> predicate)
+        {
+            return r => r.AsWebApiActionFilterWhere(predicate);
         }
 
         protected override Type GetWrapperType()
