@@ -5,12 +5,12 @@ using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
 {
-    public class ActionFilterOverrideWrapperFixture
+    public class ContinuationActionFilterOverrideWrapperFixture
     {
         [Fact]
         public void FiltersToOverrideReturnsCorrectType()
         {
-            var wrapper = new ActionFilterOverrideWrapper(new HashSet<FilterMetadata>());
+            var wrapper = new ContinuationActionFilterOverrideWrapper(new HashSet<FilterMetadata>());
             Assert.Equal(typeof(IActionFilter), wrapper.FiltersToOverride);
         }
     }
