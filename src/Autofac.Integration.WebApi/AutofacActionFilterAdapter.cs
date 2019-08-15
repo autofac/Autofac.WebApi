@@ -22,6 +22,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+//
+// Portions of this file come from the Microsoft ASP.NET web stack, licensed
+// under the Apache 2.0 license. You may obtain a copy of the license at
+// http://www.apache.org/licenses/LICENSE-2.0
 
 using System;
 using System.Diagnostics.CodeAnalysis;

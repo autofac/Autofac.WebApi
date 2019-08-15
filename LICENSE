@@ -20,3 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+This software includes code from the open source Microsoft ASP.NET web stack,
+licensed under the Apache 2.0 license. You may obtain a copy of the license at
+http://www.apache.org/licenses/LICENSE-2.0
