@@ -1003,7 +1003,7 @@ namespace Autofac.Integration.WebApi
             {
                 Scope = FilterScope.Controller,
                 FilterCategory = filterCategory,
-                Predicate = (scope, descriptor) => descriptor.ControllerDescriptor.ControllerType == typeof(TController)
+                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType)
             };
 
             filterMeta.PredicateSet.Add(registrationMetadata);
@@ -1026,7 +1026,7 @@ namespace Autofac.Integration.WebApi
             {
                 Scope = FilterScope.Controller,
                 FilterCategory = filterCategory,
-                Predicate = (scope, descriptor) => descriptor.ControllerDescriptor.ControllerType == typeof(TController)
+                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType)
             };
 
             filterMeta.PredicateSet.Add(registrationMetadata);
