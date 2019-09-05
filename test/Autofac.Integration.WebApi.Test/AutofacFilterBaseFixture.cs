@@ -21,6 +21,22 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
+        public void ResolvesControllerScopedFilterForImmediateBaseController()
+        {
+            AssertSingleFilter<TestControllerA>(
+                GetFirstRegistration(),
+                ConfigureFirstControllerRegistration());
+        }
+
+        [Fact]
+        public void ResolvesControllerScopedFilterForMostBaseController()
+        {
+            AssertSingleFilter<TestControllerB>(
+                GetFirstRegistration(),
+                ConfigureFirstActionRegistration());
+        }
+
+        [Fact]
         public void ResolvesActionScopedFilter()
         {
             AssertSingleFilter<TestController>(
