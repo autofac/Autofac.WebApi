@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -39,17 +38,15 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter for the specified metadata for each controller request.
     /// </summary>
-    [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal class AuthorizationFilterWrapper : AuthorizationFilterAttribute, IAutofacAuthorizationFilter
+    internal class ContinuationActionFilterWrapper : IActionFilter, IAutofacContinuationActionFilter
     {
         private readonly HashSet<FilterMetadata> _allFilters;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizationFilterWrapper"/> class.
+        /// Initializes a new instance of the <see cref="ContinuationActionFilterWrapper"/> class.
         /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthorizationFilterWrapper(HashSet<FilterMetadata> filterMetadata)
+        /// <param name="filterMetadata">The collection of filter metadata blocks that this wrapper should run.</param>
+        public ContinuationActionFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
             if (filterMetadata == null)
             {
@@ -59,33 +56,37 @@ namespace Autofac.Integration.WebApi
             _allFilters = filterMetadata;
         }
 
-        /// <summary>
-        /// Called when a process requests authorization.
-        /// </summary>
-        /// <param name="actionContext">The context for the action.</param>
-        /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if <paramref name="actionContext" /> is <see langword="null" />.
-        /// </exception>
-        public override async Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
-        {
-            if (actionContext == null)
-            {
-                throw new ArgumentNullException(nameof(actionContext));
-            }
+        public bool AllowMultiple { get; } = true;
 
+        public Task<HttpResponseMessage> ExecuteActionFilterAsync(
+            HttpActionContext actionContext,
+            CancellationToken cancellationToken,
+            Func<Task<HttpResponseMessage>> continuation)
+        {
             var dependencyScope = actionContext.Request.GetDependencyScope();
             var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
 
-            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthorizationFilter>>>>();
+            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacContinuationActionFilter>>>>();
 
-            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            Func<Task<HttpResponseMessage>> result = continuation;
+
+            Func<Task<HttpResponseMessage>> ChainContinuation(Func<Task<HttpResponseMessage>> next, IAutofacContinuationActionFilter innerFilter)
             {
-                await filter.Value.Value.OnAuthorizationAsync(actionContext, cancellationToken);
+                return () => innerFilter.ExecuteActionFilterAsync(actionContext, cancellationToken, next);
             }
+
+            // We go backwards for the beginning of the set of filters, where
+            // the last one invokes the provided continuation, the previous one invokes the last one, and so on,
+            // until there's a callback that invokes the first filter.
+            foreach (var filterStage in filters.Reverse().Where(FilterMatchesMetadata))
+            {
+                result = ChainContinuation(result, filterStage.Value.Value);
+            }
+
+            return result();
         }
 
-        private bool FilterMatchesMetadata(Meta<Lazy<IAutofacAuthorizationFilter>> filter)
+        private bool FilterMatchesMetadata(Meta<Lazy<IAutofacContinuationActionFilter>> filter)
         {
             var metadata = filter.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var metadataAsObject)
                 ? metadataAsObject as FilterMetadata

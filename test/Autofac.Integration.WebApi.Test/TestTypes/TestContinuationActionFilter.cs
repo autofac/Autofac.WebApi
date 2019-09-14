@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -24,32 +24,33 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Filters;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http.Controllers;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi.Test.TestTypes
 {
-    /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
+    public class TestContinuationActionFilter : IAutofacContinuationActionFilter
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapper"/> class.
-        /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthorizationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
-            : base(filterMetadata)
+        private readonly Action _before;
+        private readonly Action _after;
+
+        public TestContinuationActionFilter(Action before, Action after)
         {
+            _before = before;
+            _after = after;
         }
 
-        /// <summary>
-        /// Gets the filters to override.
-        /// </summary>
-        public Type FiltersToOverride
+        public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> next)
         {
-            get { return typeof(IAuthorizationFilter); }
+            _before();
+
+            var result = await next();
+
+            _after();
+
+            return result;
         }
     }
 }

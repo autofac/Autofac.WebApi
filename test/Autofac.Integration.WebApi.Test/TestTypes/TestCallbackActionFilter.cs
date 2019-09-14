@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -25,31 +25,37 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using System.Web.Http.ModelBinding;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi.Test.TestTypes
 {
-    /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
+    public class TestCallbackActionFilter : IAutofacActionFilter
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapper"/> class.
-        /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthorizationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
-            : base(filterMetadata)
+        private readonly Action _executing;
+        private readonly Action _executed;
+
+        public TestCallbackActionFilter(Action executing, Action executed)
         {
+            _executing = executing;
+            _executed = executed;
         }
 
-        /// <summary>
-        /// Gets the filters to override.
-        /// </summary>
-        public Type FiltersToOverride
+        public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
-            get { return typeof(IAuthorizationFilter); }
+            _executing();
+            return Task.FromResult(0);
+        }
+
+        public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
+        {
+            _executed();
+            return Task.FromResult(0);
         }
     }
 }

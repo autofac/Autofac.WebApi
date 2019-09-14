@@ -1,5 +1,5 @@
-﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// This software is part of the Autofac IoC container
+// Copyright (c) 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -24,32 +24,31 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Filters;
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http.Controllers;
 
 namespace Autofac.Integration.WebApi
 {
     /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
+    /// An action filter that will be created for each controller request, and
+    /// executes using continuations, so the async context is preserved.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
+    public interface IAutofacContinuationActionFilter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapper"/> class.
+        /// The method called when the filter executes. The filter should call 'next' to
+        /// continue processing the request.
         /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthorizationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
-            : base(filterMetadata)
-        {
-        }
-
-        /// <summary>
-        /// Gets the filters to override.
-        /// </summary>
-        public Type FiltersToOverride
-        {
-            get { return typeof(IAuthorizationFilter); }
-        }
+        /// <param name="actionContext">The context of the current action.</param>
+        /// <param name="cancellationToken">A cancellation token for the request.</param>
+        /// <param name="next">The function to call that invokes the next filter in the chain.</param>
+        [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in IActionFilter.")]
+        Task<HttpResponseMessage> ExecuteActionFilterAsync(
+            HttpActionContext actionContext,
+            CancellationToken cancellationToken,
+            Func<Task<HttpResponseMessage>> next);
     }
 }

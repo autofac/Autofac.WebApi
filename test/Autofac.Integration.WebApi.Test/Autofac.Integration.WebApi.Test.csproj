@@ -55,12 +55,13 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionFilterFixture.cs" />
-    <Compile Include="ActionFilterWrapperFixture.cs" />
+    <Compile Include="ContinuationActionFilterWrapperFixture.cs" />
     <Compile Include="AutofacWebApiDependencyResolverFixture.cs" />
     <Compile Include="AutofacWebApiFilterProviderFixture.cs" />
     <Compile Include="AutofacWebApiModelBinderProviderFixture.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="AuthenticationFilterWrapperFixture.cs" />
     <Compile Include="AuthorizationFilterFixture.cs" />
     <Compile Include="AuthenticationFilterFixture.cs" />
-    <Compile Include="ActionFilterOverrideWrapperFixture.cs" />
+    <Compile Include="ContinuationActionFilterOverrideWrapperFixture.cs" />
     <Compile Include="AuthenticationFilterOverrideWrapperFixture.cs" />
     <Compile Include="AuthorizationFilterOverrideWrapperFixture.cs" />
     <Compile Include="ExceptionFilterOverrideWrapperFixture.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="ExceptionFilterWrapperFixture.cs" />
     <Compile Include="AutofacControllerConfigurationAttributeFixture.cs" />
     <Compile Include="AutofacFilterBaseFixture.cs" />
+    <Compile Include="FilterMetadataExtensions.cs" />
     <Compile Include="FilterOrderingFixture.cs" />
     <Compile Include="HttpConfigurationExtensionsFixture.cs" />
     <Compile Include="HttpRequestMessageProviderFixture.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="TestTypes\InterfaceController.cs" />
     <Compile Include="TestTypes\IsAControllerNot.cs" />
     <Compile Include="TestTypes\Logger.cs" />
+    <Compile Include="TestTypes\TestCallbackActionFilter.cs" />
     <Compile Include="TestTypes\TestActionFilter3.cs" />
     <Compile Include="TestTypes\TestActionFilterWithResponse.cs" />
     <Compile Include="TestTypes\TestActionFilter.cs" />
@@ -100,6 +103,8 @@
     <Compile Include="TestTypes\TestAuthorizationFilter.cs" />
     <Compile Include="TestTypes\TestAuthorizationFilter2.cs" />
     <Compile Include="TestTypes\TestCombinationFilter.cs" />
+    <Compile Include="TestTypes\TestContinuationActionFilter.cs" />
+    <Compile Include="TestTypes\TestContinuationActionFilterWithTransactionScope.cs" />
     <Compile Include="TestTypes\TestController.cs" />
     <Compile Include="TestTypes\TestControllerA.cs" />
     <Compile Include="TestTypes\TestControllerB.cs" />

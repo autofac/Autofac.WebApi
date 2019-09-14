@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -32,14 +32,13 @@ namespace Autofac.Integration.WebApi
     /// <summary>
     /// Resolves a filter override for the specified metadata for each controller request.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
+    internal sealed class ContinuationActionFilterOverrideWrapper : ContinuationActionFilterWrapper, IOverrideFilter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapper"/> class.
+        /// Initializes a new instance of the <see cref="ContinuationActionFilterOverrideWrapper"/> class.
         /// </summary>
         /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthorizationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
+        public ContinuationActionFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
             : base(filterMetadata)
         {
         }
@@ -49,7 +48,7 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public Type FiltersToOverride
         {
-            get { return typeof(IAuthorizationFilter); }
+            get { return typeof(IActionFilter); }
         }
     }
 }

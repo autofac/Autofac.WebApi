@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright (c) 2012 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,40 +23,34 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Web.Http.Filters;
+using System.Collections.Generic;
+using Autofac.Builder;
+using Xunit;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi.Test
 {
-    /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class ActionFilterOverrideWrapper : ActionFilterWrapper, IOverrideFilter
+    internal static class FilterMetadataExtensions
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ActionFilterOverrideWrapper"/> class.
-        /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public ActionFilterOverrideWrapper(FilterMetadata filterMetadata)
-            : base(filterMetadata)
+        public static HashSet<FilterMetadata> ToSingleFilterHashSet(this FilterMetadata metadata)
         {
+            return new HashSet<FilterMetadata> { metadata };
         }
 
         /// <summary>
-        /// Gets the metadata key used to retrieve the filter metadata.
+        /// Retrieve or create filter metadata. We want to maintain the fluent flow when we change
+        /// registration metadata so we'll do that here.
         /// </summary>
-        public override string MetadataKey
+        public static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> GetMetadata(
+            this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
+            out FilterMetadata filterMeta)
         {
-            get { return AutofacWebApiFilterProvider.ActionFilterOverrideMetadataKey; }
-        }
+            Assert.True(registration.RegistrationData.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var filterDataObj));
 
-        /// <summary>
-        /// Gets the filters to override.
-        /// </summary>
-        public Type FiltersToOverride
-        {
-            get { return typeof(IActionFilter); }
+            filterMeta = (FilterMetadata)filterDataObj;
+
+            Assert.NotNull(filterMeta);
+
+            return registration;
         }
     }
 }

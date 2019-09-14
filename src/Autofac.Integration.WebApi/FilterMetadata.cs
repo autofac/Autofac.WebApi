@@ -24,9 +24,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-using System.Web.Http.Filters;
 
 namespace Autofac.Integration.WebApi
 {
@@ -36,21 +36,28 @@ namespace Autofac.Integration.WebApi
     internal class FilterMetadata
     {
         /// <summary>
-        /// Gets or sets the type of the controller.
+        /// Gets a unique ID for this filter registration.
         /// </summary>
-        [DefaultValue(null)]
-        public Type ControllerType { get; set; }
+        public Guid Id { get; } = Guid.NewGuid();
 
         /// <summary>
-        /// Gets or sets the filter scope.
+        /// Gets the registered set of predicates for this filter.
         /// </summary>
-        [DefaultValue(FilterScope.Global)]
-        public FilterScope FilterScope { get; set; }
+        public List<FilterPredicateMetadata> PredicateSet { get; } = new List<FilterPredicateMetadata>();
 
-        /// <summary>
-        /// Gets or sets the method info.
-        /// </summary>
-        [DefaultValue(null)]
-        public MethodInfo MethodInfo { get; set; }
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is FilterMetadata metadata)
+            {
+                return metadata.Id == Id;
+            }
+
+            return false;
+        }
     }
 }

@@ -46,11 +46,13 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
 
         public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
+            Logger.Log(nameof(AuthenticateAsync));
             return Task.FromResult(0);
         }
 
         public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
+            Logger.Log(nameof(ChallengeAsync));
             return Task.FromResult(0);
         }
     }

@@ -56,23 +56,6 @@ namespace Autofac.Integration.WebApi.Test
         }
 
         [Fact]
-        public void CanRegisterMultipleFilterTypesAgainstSingleService()
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance(new TestCombinationFilter())
-                .AsWebApiActionFilterFor<TestController>()
-                .AsWebApiAuthenticationFilterFor<TestController>()
-                .AsWebApiAuthorizationFilterFor<TestController>()
-                .AsWebApiExceptionFilterFor<TestController>();
-            var container = builder.Build();
-
-            Assert.NotNull(container.Resolve<IAutofacActionFilter>());
-            Assert.NotNull(container.Resolve<IAutofacAuthenticationFilter>());
-            Assert.NotNull(container.Resolve<IAutofacAuthorizationFilter>());
-            Assert.NotNull(container.Resolve<IAutofacExceptionFilter>());
-        }
-
-        [Fact]
         public void ResolvesMultipleFiltersOfDifferentTypes()
         {
             var builder = new ContainerBuilder();
@@ -94,12 +77,12 @@ namespace Autofac.Integration.WebApi.Test
                 .AsWebApiActionFilterFor<TestController>()
                 .InstancePerRequest();
 
+            var configuration = new HttpConfiguration();
+            builder.RegisterWebApiFilterProvider(configuration);
             var container = builder.Build();
             var provider = new AutofacWebApiFilterProvider(container);
-            var configuration = new HttpConfiguration
-            {
-                DependencyResolver = new AutofacWebApiDependencyResolver(container)
-            };
+            configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
             var actionDescriptor = BuildActionDescriptorForGetMethod();
 
             var filterInfos = provider.GetFilters(configuration, actionDescriptor).ToArray();
@@ -108,7 +91,7 @@ namespace Autofac.Integration.WebApi.Test
             Assert.Single(filters.OfType<AuthenticationFilterWrapper>());
             Assert.Single(filters.OfType<AuthorizationFilterWrapper>());
             Assert.Single(filters.OfType<ExceptionFilterWrapper>());
-            Assert.Single(filters.OfType<ActionFilterWrapper>());
+            Assert.Single(filters.OfType<ContinuationActionFilterWrapper>());
         }
 
         private static ReflectedHttpActionDescriptor BuildActionDescriptorForGetMethod()

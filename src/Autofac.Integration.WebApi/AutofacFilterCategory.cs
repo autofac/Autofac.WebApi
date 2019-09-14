@@ -1,5 +1,5 @@
 ﻿// This software is part of the Autofac IoC container
-// Copyright (c) 2013 Autofac Contributors
+// Copyright © 2011 Autofac Contributors
 // https://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -26,13 +26,48 @@
 namespace Autofac.Integration.WebApi
 {
     /// <summary>
-    /// Common behaviour required for filter wrappers.
+    /// Filter categories (used for grouping/ordering filters).
     /// </summary>
-    internal interface IFilterWrapper
+    internal enum AutofacFilterCategory
     {
         /// <summary>
-        /// Gets the metadata key used to retrieve the filter metadata.
+        /// Authorization Filters
         /// </summary>
-        string MetadataKey { get; }
+        AuthorizationFilter,
+
+        /// <summary>
+        /// Authorization Override Filters
+        /// </summary>
+        AuthorizationFilterOverride,
+
+        /// <summary>
+        /// Authentication filters
+        /// </summary>
+        AuthenticationFilter,
+
+        /// <summary>
+        /// Authentication Override Filters
+        /// </summary>
+        AuthenticationFilterOverride,
+
+        /// <summary>
+        /// Action filters
+        /// </summary>
+        ActionFilter,
+
+        /// <summary>
+        /// Action Override filters
+        /// </summary>
+        ActionFilterOverride,
+
+        /// <summary>
+        /// Exception filters
+        /// </summary>
+        ExceptionFilter,
+
+        /// <summary>
+        /// Exception override filters
+        /// </summary>
+        ExceptionFilterOverride
     }
 }
