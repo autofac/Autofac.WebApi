@@ -33,6 +33,8 @@ namespace Autofac.Integration.WebApi.Test
             // is executed (authorization, action, exception). Notice that it doesn't
             // matter if action filters are registered before authentication filters;
             // the appropriate group still executes at the right time.
+            // From Autofac 4.0.1 onwards, services are resolved in the same order as registration,
+            // which is a reversal of the approach before that version.
             builder.RegisterType<OrderTestActionFilter<A>>().AsWebApiActionFilterFor<TestControllerA>();
             builder.RegisterType<OrderTestActionFilter<B>>().AsWebApiActionFilterOverrideFor<TestControllerA>();
             builder.RegisterType<OrderTestActionFilter<C>>().AsWebApiActionFilterFor<TestControllerA>();
@@ -128,41 +130,41 @@ namespace Autofac.Integration.WebApi.Test
             // - Action scoped filters
             var expectedOrder = new Type[]
             {
-                typeof(OrderTestAuthenticationFilter<D>),
                 typeof(OrderTestAuthenticationFilter<B>),
-                typeof(OrderTestAuthenticationFilter<H>),
+                typeof(OrderTestAuthenticationFilter<D>),
                 typeof(OrderTestAuthenticationFilter<F>),
-                typeof(OrderTestAuthenticationFilter<C>),
+                typeof(OrderTestAuthenticationFilter<H>),
                 typeof(OrderTestAuthenticationFilter<A>),
-                typeof(OrderTestAuthenticationFilter<G>),
+                typeof(OrderTestAuthenticationFilter<C>),
                 typeof(OrderTestAuthenticationFilter<E>),
+                typeof(OrderTestAuthenticationFilter<G>),
 
-                typeof(OrderTestAuthorizationFilter<D>),
                 typeof(OrderTestAuthorizationFilter<B>),
-                typeof(OrderTestAuthorizationFilter<H>),
+                typeof(OrderTestAuthorizationFilter<D>),
                 typeof(OrderTestAuthorizationFilter<F>),
-                typeof(OrderTestAuthorizationFilter<C>),
+                typeof(OrderTestAuthorizationFilter<H>),
                 typeof(OrderTestAuthorizationFilter<A>),
-                typeof(OrderTestAuthorizationFilter<G>),
+                typeof(OrderTestAuthorizationFilter<C>),
                 typeof(OrderTestAuthorizationFilter<E>),
+                typeof(OrderTestAuthorizationFilter<G>),
 
-                typeof(OrderTestActionFilter<D>),
                 typeof(OrderTestActionFilter<B>),
-                typeof(OrderTestActionFilter<H>),
+                typeof(OrderTestActionFilter<D>),
                 typeof(OrderTestActionFilter<F>),
-                typeof(OrderTestActionFilter<C>),
+                typeof(OrderTestActionFilter<H>),
                 typeof(OrderTestActionFilter<A>),
-                typeof(OrderTestActionFilter<G>),
+                typeof(OrderTestActionFilter<C>),
                 typeof(OrderTestActionFilter<E>),
+                typeof(OrderTestActionFilter<G>),
 
-                typeof(OrderTestExceptionFilter<D>),
                 typeof(OrderTestExceptionFilter<B>),
-                typeof(OrderTestExceptionFilter<H>),
+                typeof(OrderTestExceptionFilter<D>),
                 typeof(OrderTestExceptionFilter<F>),
-                typeof(OrderTestExceptionFilter<C>),
+                typeof(OrderTestExceptionFilter<H>),
                 typeof(OrderTestExceptionFilter<A>),
-                typeof(OrderTestExceptionFilter<G>),
+                typeof(OrderTestExceptionFilter<C>),
                 typeof(OrderTestExceptionFilter<E>),
+                typeof(OrderTestExceptionFilter<G>),
             };
 
             Assert.Equal(expectedOrder.Length, actualOrder.Count);
