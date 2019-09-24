@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using System.Web.Http.Hosting;
+using Autofac.Features.Metadata;
 using Autofac.Integration.WebApi.Test.TestTypes;
 using Xunit;
 
@@ -93,10 +94,10 @@ namespace Autofac.Integration.WebApi.Test
                 CancellationToken.None,
                 () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[0]);
-            Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[1]);
-            Assert.Equal("TestActionFilter.OnActionExecutedAsync", order[2]);
-            Assert.Equal("TestActionFilter2.OnActionExecutedAsync", order[3]);
+            Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[0]);
+            Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);
+            Assert.Equal("TestActionFilter2.OnActionExecutedAsync", order[2]);
+            Assert.Equal("TestActionFilter.OnActionExecutedAsync", order[3]);
         }
 
         [Fact]
@@ -120,14 +121,14 @@ namespace Autofac.Integration.WebApi.Test
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
                 .GetMetadata(out var testActionFilterMetadata);
-            builder.RegisterType<TestActionFilterWithResponse>()
-                .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest()
-                .GetMetadata(out var testActionFilterWithResponseMetadata);
             builder.RegisterType<TestActionFilter2>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
                 .GetMetadata(out var testActionFilter2Metadata);
+            builder.RegisterType<TestActionFilterWithResponse>()
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testActionFilterWithResponseMetadata);
             builder.RegisterType<TestActionFilter3>()
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
@@ -158,11 +159,11 @@ namespace Autofac.Integration.WebApi.Test
                 CancellationToken.None,
                 () => throw new Exception("Should never reach here because a filter set the response."));
 
-            Assert.Equal("TestActionFilter3.OnActionExecutingAsync", order[0]);
+            Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[0]);
             Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);
             Assert.Equal("TestActionFilterWithResponse.OnActionExecutingAsync", order[2]);
             Assert.Equal("TestActionFilter2.OnActionExecutedAsync", order[3]);
-            Assert.Equal("TestActionFilter3.OnActionExecutedAsync", order[4]);
+            Assert.Equal("TestActionFilter.OnActionExecutedAsync", order[4]);
             Assert.Equal(5, order.Count);
         }
 
@@ -174,15 +175,7 @@ namespace Autofac.Integration.WebApi.Test
 
             TransactionScope scope = null;
 
-            // Autofac filters will resolve in reverse order.
-            builder.Register(s => new TestCallbackActionFilter(
-                    () =>
-                        Assert.NotNull(Transaction.Current),
-                    () =>
-                        Assert.NotNull(Transaction.Current)))
-                .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest()
-                .GetMetadata(out var testFilter1Meta);
+            // Since Autofac 4.0.1 filters will resolve in registration order.
             builder.Register(s => new TestCallbackActionFilter(
                     () =>
                         scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled),
@@ -192,6 +185,15 @@ namespace Autofac.Integration.WebApi.Test
                         scope.Dispose();
                         Assert.Null(Transaction.Current);
                     }))
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter1Meta);
+
+            builder.Register(s => new TestCallbackActionFilter(
+                    () =>
+                        Assert.NotNull(Transaction.Current),
+                    () =>
+                        Assert.NotNull(Transaction.Current)))
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter2Meta);
@@ -223,27 +225,26 @@ namespace Autofac.Integration.WebApi.Test
                 }).Wait();
         }
 
-
         [Fact]
         public void TransactionScopePreservedBetweenContinuationFilters()
         {
             // Issue #34 - Async/await context lost between filters.
             var builder = new ContainerBuilder();
 
-            // Autofac filters will resolve in reverse order.
-            builder.Register(s => new TestContinuationActionFilter(
-                    () =>
-                        Assert.NotNull(Transaction.Current),
-                    () =>
-                        Assert.NotNull(Transaction.Current)))
-                .AsWebApiActionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest()
-                .GetMetadata(out var testFilter1Meta);
+            // Since Autofac 4.0.1 filters will resolve in registration order.
             builder.Register(s => new TestContinuationActionFilterWithTransactionScope(
                     () =>
                         Assert.Null(Transaction.Current),
                     () =>
                         Assert.Null(Transaction.Current)))
+                .AsWebApiActionFilterFor<TestController>(c => c.Get())
+                .InstancePerRequest()
+                .GetMetadata(out var testFilter1Meta);
+            builder.Register(s => new TestContinuationActionFilter(
+                    () =>
+                        Assert.NotNull(Transaction.Current),
+                    () =>
+                        Assert.NotNull(Transaction.Current)))
                 .AsWebApiActionFilterFor<TestController>(c => c.Get())
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter2Meta);
