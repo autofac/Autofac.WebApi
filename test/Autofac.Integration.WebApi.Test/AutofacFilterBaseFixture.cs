@@ -213,6 +213,14 @@ namespace Autofac.Integration.WebApi.Test
                 }));
         }
 
+        [Fact]
+        public void CanRegisterAgainstAsyncMethod()
+        {
+            AssertSingleFilterOnAsyncGet<TestController>(
+                GetFirstRegistration(),
+                ConfigureAsyncActionRegistration());
+        }
+
         protected abstract Func<IComponentContext, TFilter1> GetFirstRegistration();
 
         protected abstract Func<IComponentContext, TFilter2> GetSecondRegistration();
@@ -220,6 +228,8 @@ namespace Autofac.Integration.WebApi.Test
         protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstControllerRegistration();
 
         protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstActionRegistration();
+
+        protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureAsyncActionRegistration();
 
         protected abstract Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstAllControllersRegistration();
 
@@ -261,6 +271,13 @@ namespace Autofac.Integration.WebApi.Test
             return new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
         }
 
+        private static ReflectedHttpActionDescriptor BuildActionDescriptorForGetAsyncMethod(Type controllerType)
+        {
+            var controllerDescriptor = new HttpControllerDescriptor { ControllerType = controllerType };
+            var methodInfo = controllerType.GetMethod("GetAsync");
+            return new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
+        }
+
         private void AssertSingleFilter<TController>(
             Func<IComponentContext, TFilter1> registration,
             Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> configure)
@@ -277,6 +294,29 @@ namespace Autofac.Integration.WebApi.Test
             var provider = new AutofacWebApiFilterProvider(container);
             configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
             var actionDescriptor = BuildActionDescriptorForGetMethod(typeof(TController));
+            var filterInfos = provider.GetFilters(configuration, actionDescriptor).ToArray();
+
+            var wrapperType = GetWrapperType();
+            var filter = filterInfos.Select(info => info.Instance).Single(i => i.GetType() == wrapperType);
+            Assert.IsType(wrapperType, filter);
+        }
+
+        private void AssertSingleFilterOnAsyncGet<TController>(
+            Func<IComponentContext, TFilter1> registration,
+            Action<IRegistrationBuilder<TFilter1, SimpleActivatorData, SingleRegistrationStyle>> configure)
+        {
+            var builder = new ContainerBuilder();
+            var configuration = new HttpConfiguration();
+            builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
+            configure(builder.Register(registration).InstancePerRequest());
+
+            // Need to do this so our adapter gets registered
+            builder.RegisterWebApiFilterProvider(configuration);
+
+            var container = builder.Build();
+            var provider = new AutofacWebApiFilterProvider(container);
+            configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+            var actionDescriptor = BuildActionDescriptorForGetAsyncMethod(typeof(TController));
             var filterInfos = provider.GetFilters(configuration, actionDescriptor).ToArray();
 
             var wrapperType = GetWrapperType();

@@ -29,6 +29,11 @@ namespace Autofac.Integration.WebApi.Test
             return r => r.AsWebApiExceptionFilterFor<TestController>(c => c.Get());
         }
 
+        protected override Action<IRegistrationBuilder<TestExceptionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureAsyncActionRegistration()
+        {
+            return r => r.AsWebApiExceptionFilterFor<TestController>(c => c.GetAsync(default));
+        }
+
         protected override Action<IRegistrationBuilder<TestExceptionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstAllControllersRegistration()
         {
             return r => r.AsWebApiExceptionFilterForAllControllers();
