@@ -55,6 +55,11 @@ namespace Autofac.Integration.WebApi.Test
             return r => r.AsWebApiAuthenticationFilterFor<TestController>(c => c.Get());
         }
 
+        protected override Action<IRegistrationBuilder<TestAuthenticationFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureAsyncActionRegistration()
+        {
+            return r => r.AsWebApiAuthenticationFilterFor<TestController>(c => c.GetAsync(default));
+        }
+
         protected override Action<IRegistrationBuilder<TestAuthenticationFilter2, SimpleActivatorData, SingleRegistrationStyle>> ConfigureSecondAllControllersRegistration()
         {
             return r => r.AsWebApiAuthenticationFilterForAllControllers();

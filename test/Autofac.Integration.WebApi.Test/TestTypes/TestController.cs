@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace Autofac.Integration.WebApi.Test.TestTypes
@@ -35,6 +36,12 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
         public virtual IEnumerable<string> Get()
         {
             return new[] { "value1", "value2" };
+        }
+
+        public virtual async Task<string> GetAsync(string arg)
+        {
+            await Task.Delay(1);
+            return arg;
         }
     }
 }
