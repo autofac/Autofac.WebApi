@@ -4,7 +4,7 @@
     <id>Autofac.WebApi2</id>
     <version>$version$</version>
     <authors>Autofac Contributors</authors>
-    <licenseUrl>https://opensource.org/licenses/mit-license.php</licenseUrl>
+    <license>MIT</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ASP.NET Web API 2.2 Integration for Autofac</description>
     <summary>Provides an IControllerFactory implementation and other integration points for the ASP.NET Web API.</summary>
@@ -20,6 +20,6 @@
   </metadata>
   <files>
     <!-- Workaround to get PDB in package for SourceLink until we move to dotnet cli build -->
-    <file src="bin\$configuration$\$id$.pdb" target="lib\net461\" />
+    <file src="bin/$configuration$/$id$.pdb" target="lib/net461/" />
   </files>
 </package>
