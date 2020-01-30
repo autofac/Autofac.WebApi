@@ -127,7 +127,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public void AsModelBinderForTypesThrowsExceptionForEmptyTypeList()
         {
-            var types = new Type[0];
+            var types = Array.Empty<Type>();
             var builder = new ContainerBuilder();
             var registration = builder.RegisterType<TestModelBinder>();
             Assert.Throws<ArgumentException>(() => registration.AsModelBinderForTypes(types));
