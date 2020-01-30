@@ -4,7 +4,7 @@
     <id>Autofac.WebApi2</id>
     <version>$version$</version>
     <authors>Autofac Contributors</authors>
-    <license>MIT</license>
+    <license type="expression">MIT</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ASP.NET Web API 2.2 Integration for Autofac</description>
     <summary>Provides an IControllerFactory implementation and other integration points for the ASP.NET Web API.</summary>
