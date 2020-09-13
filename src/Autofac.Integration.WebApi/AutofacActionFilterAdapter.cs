@@ -56,14 +56,14 @@ namespace Autofac.Integration.WebApi
 
         public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
         {
-            await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken).ConfigureAwait(false);
+            await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken);
 
             if (actionContext.Response != null)
             {
                 return actionContext.Response;
             }
 
-            return await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
+            return await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Autofac.Integration.WebApi
 
             try
             {
-                response = await continuation().ConfigureAwait(false);
+                response = await continuation();
             }
             catch (Exception e)
             {
@@ -106,7 +106,7 @@ namespace Autofac.Integration.WebApi
 
             try
             {
-                await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken).ConfigureAwait(false);
+                await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken);
             }
             catch
             {

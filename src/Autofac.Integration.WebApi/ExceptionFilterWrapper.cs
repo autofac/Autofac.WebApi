@@ -75,7 +75,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.OnExceptionAsync(actionExecutedContext, cancellationToken).ConfigureAwait(false);
+                await filter.Value.Value.OnExceptionAsync(actionExecutedContext, cancellationToken);
             }
         }
 

@@ -69,7 +69,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.AuthenticateAsync(context, cancellationToken).ConfigureAwait(false);
+                await filter.Value.Value.AuthenticateAsync(context, cancellationToken);
             }
         }
 
@@ -87,7 +87,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.ChallengeAsync(context, cancellationToken).ConfigureAwait(false);
+                await filter.Value.Value.ChallengeAsync(context, cancellationToken);
             }
         }
 
