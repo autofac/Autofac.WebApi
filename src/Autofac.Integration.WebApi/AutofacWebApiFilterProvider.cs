@@ -83,6 +83,11 @@ namespace Autofac.Integration.WebApi
                 throw new ArgumentNullException(nameof(configuration));
             }
 
+            if (actionDescriptor is null)
+            {
+                throw new ArgumentNullException(nameof(actionDescriptor));
+            }
+
             var filters = _filterProvider.GetFilters(configuration, actionDescriptor).ToList();
 
             foreach (var filterInfo in filters)
@@ -106,8 +111,8 @@ namespace Autofac.Integration.WebApi
                         { AutofacFilterCategory.AuthorizationFilter, new List<FilterPredicateMetadata>() },
                         { AutofacFilterCategory.AuthorizationFilterOverride, new List<FilterPredicateMetadata>() },
                         { AutofacFilterCategory.ExceptionFilter, new List<FilterPredicateMetadata>() },
-                        { AutofacFilterCategory.ExceptionFilterOverride, new List<FilterPredicateMetadata>() }
-                    }
+                        { AutofacFilterCategory.ExceptionFilterOverride, new List<FilterPredicateMetadata>() },
+                    },
                 };
 
                 // Controller scoped override filters (NOOP kind).
@@ -207,8 +212,11 @@ namespace Autofac.Integration.WebApi
                                 // Don't define a hash set if something has already been registered (should just be the IOverrideFilters).
                                 if (!MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, filterRegistration))
                                 {
-                                    metadataSet = new HashSet<FilterMetadata>();
-                                    metadataSet.Add(metadata);
+                                    metadataSet = new HashSet<FilterMetadata>
+                                    {
+                                        metadata,
+                                    };
+
                                     filterContext.AddedFilters[filterCategory].Add(filterRegistration);
                                 }
                             }

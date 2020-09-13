@@ -56,14 +56,14 @@ namespace Autofac.Integration.WebApi
 
         public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
         {
-            await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken);
+            await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken).ConfigureAwait(false);
 
             if (actionContext.Response != null)
             {
                 return actionContext.Response;
             }
 
-            return await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation);
+            return await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -71,6 +71,7 @@ namespace Autofac.Integration.WebApi
         /// that is basically the reference implementation for invoking an async filter's OnActionExecuted correctly.
         /// </summary>
         [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in original implementtion.")]
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Need to capture any exception that occurs.")]
         private async Task<HttpResponseMessage> CallOnActionExecutedAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -80,7 +81,7 @@ namespace Autofac.Integration.WebApi
 
             try
             {
-                response = await continuation();
+                response = await continuation().ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -100,12 +101,12 @@ namespace Autofac.Integration.WebApi
 
             HttpActionExecutedContext executedContext = new HttpActionExecutedContext(actionContext, exception)
             {
-                Response = response
+                Response = response,
             };
 
             try
             {
-                await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken);
+                await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken).ConfigureAwait(false);
             }
             catch
             {

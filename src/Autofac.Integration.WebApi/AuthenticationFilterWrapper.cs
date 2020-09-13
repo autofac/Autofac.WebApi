@@ -47,12 +47,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The filter metadata.</param>
         public AuthenticationFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
-            if (filterMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(filterMetadata));
-            }
-
-            _allFilters = filterMetadata;
+            _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
         }
 
         bool IFilter.AllowMultiple
@@ -74,7 +69,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.AuthenticateAsync(context, cancellationToken);
+                await filter.Value.Value.AuthenticateAsync(context, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -92,7 +87,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.ChallengeAsync(context, cancellationToken);
+                await filter.Value.Value.ChallengeAsync(context, cancellationToken).ConfigureAwait(false);
             }
         }
 

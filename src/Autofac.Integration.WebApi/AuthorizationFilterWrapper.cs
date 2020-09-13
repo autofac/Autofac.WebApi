@@ -51,12 +51,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The filter metadata.</param>
         public AuthorizationFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
-            if (filterMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(filterMetadata));
-            }
-
-            _allFilters = filterMetadata;
+            _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
         }
 
         /// <summary>
@@ -81,7 +76,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.OnAuthorizationAsync(actionContext, cancellationToken);
+                await filter.Value.Value.OnAuthorizationAsync(actionContext, cancellationToken).ConfigureAwait(false);
             }
         }
 
