@@ -68,6 +68,6 @@ namespace Autofac.Integration.WebApi
         /// <summary>
         /// Exception override filters
         /// </summary>
-        ExceptionFilterOverride
+        ExceptionFilterOverride,
     }
 }

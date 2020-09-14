@@ -50,12 +50,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The filter metadata.</param>
         public ExceptionFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
-            if (filterMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(filterMetadata));
-            }
-
-            this._allFilters = filterMetadata;
+            this._allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
         }
 
         /// <summary>

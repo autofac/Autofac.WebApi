@@ -51,12 +51,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The filter metadata.</param>
         public AuthorizationFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
-            if (filterMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(filterMetadata));
-            }
-
-            _allFilters = filterMetadata;
+            _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
         }
 
         /// <summary>
