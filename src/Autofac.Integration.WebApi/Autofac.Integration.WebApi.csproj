@@ -15,7 +15,8 @@
     <Features>IOperation</Features>
     <PackageId>Autofac.WebApi2</PackageId>
     <AssemblyName>Autofac.Integration.WebApi</AssemblyName>
-    <Company>Autofac Project - https://autofac.org</Company>
+    <Company>Autofac</Company>
+    <Authors>Autofac Contributors</Authors>
     <Product>Autofac</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>Autofac Web API Integration</Description>
@@ -45,7 +46,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="[5.0.0, 7.0.0)" />
+    <PackageReference Include="Autofac" Version="6.0.0-develop-01134" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="[5.2.0,6.0.0)" />    
     <PackageReference Include="Newtonsoft.Json" Version="5.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
