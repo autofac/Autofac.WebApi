@@ -27,8 +27,8 @@
     <EmbedAllSources>true</EmbedAllSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
-    
-  <ItemGroup>    
+
+  <ItemGroup>
     <Compile Update="AutofacControllerConfigurationAttributeResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -44,10 +44,10 @@
   <ItemGroup>
     <None Include="..\..\build\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.0.0-develop-01134" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="[5.2.0,6.0.0)" />    
+    <PackageReference Include="Autofac" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="[5.2.0,6.0.0)" />
     <PackageReference Include="Newtonsoft.Json" Version="5.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
       <PrivateAssets>All</PrivateAssets>
