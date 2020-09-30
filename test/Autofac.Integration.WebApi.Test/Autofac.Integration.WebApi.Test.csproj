@@ -1,44 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AD8D8B7A-184E-428D-AD9C-BE1CEA8225A8}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Autofac.Integration.WebApi.Test</RootNamespace>
-    <AssemblyName>Autofac.Integration.WebApi.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net472</TargetFramework>
     <NoWarn>$(NoWarn);CS1591;SA1602;SA1611;CA1812</NoWarn>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedAllSources>true</EmbedAllSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <Features>IOperation</Features>
-    <CodeAnalysisRuleSet>..\..\build\Analyzers.ruleset</CodeAnalysisRuleSet>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Autofac.Integration.WebApi.Test.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Autofac.Integration.WebApi.Test.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -47,129 +10,22 @@
     <AssemblyOriginatorKeyFile>..\..\Autofac.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionFilterFixture.cs" />
-    <Compile Include="ContinuationActionFilterWrapperFixture.cs" />
-    <Compile Include="AutofacWebApiDependencyResolverFixture.cs" />
-    <Compile Include="AutofacWebApiFilterProviderFixture.cs" />
-    <Compile Include="AutofacWebApiModelBinderProviderFixture.cs" />
-    <Compile Include="AutofacWebApiDependencyScopeFixture.cs" />
-    <Compile Include="AuthorizationFilterWrapperFixture.cs" />
-    <Compile Include="ControllerTypeKeyFixture.cs" />
-    <Compile Include="AuthenticationFilterWrapperFixture.cs" />
-    <Compile Include="AuthorizationFilterFixture.cs" />
-    <Compile Include="AuthenticationFilterFixture.cs" />
-    <Compile Include="ContinuationActionFilterOverrideWrapperFixture.cs" />
-    <Compile Include="AuthenticationFilterOverrideWrapperFixture.cs" />
-    <Compile Include="AuthorizationFilterOverrideWrapperFixture.cs" />
-    <Compile Include="ExceptionFilterOverrideWrapperFixture.cs" />
-    <Compile Include="ExceptionFilterFixture.cs" />
-    <Compile Include="CurrentRequestHandlerFixture.cs" />
-    <Compile Include="ExceptionFilterWrapperFixture.cs" />
-    <Compile Include="AutofacControllerConfigurationAttributeFixture.cs" />
-    <Compile Include="AutofacFilterBaseFixture.cs" />
-    <Compile Include="FilterMetadataExtensions.cs" />
-    <Compile Include="FilterOrderingFixture.cs" />
-    <Compile Include="HttpConfigurationExtensionsFixture.cs" />
-    <Compile Include="HttpRequestMessageProviderFixture.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegistrationExtensionsFixture.cs" />
-    <Compile Include="TestTypes\CustomActionFilterAttribute.cs" />
-    <Compile Include="TestTypes\DelegatingLogger.cs" />
-    <Compile Include="TestTypes\Dependency.cs" />
-    <Compile Include="TestTypes\ILogger.cs" />
-    <Compile Include="TestTypes\InterfaceController.cs" />
-    <Compile Include="TestTypes\IsAControllerNot.cs" />
-    <Compile Include="TestTypes\Logger.cs" />
-    <Compile Include="TestTypes\TestCallbackActionFilter.cs" />
-    <Compile Include="TestTypes\TestActionFilter3.cs" />
-    <Compile Include="TestTypes\TestActionFilterWithResponse.cs" />
-    <Compile Include="TestTypes\TestActionFilter.cs" />
-    <Compile Include="TestTypes\TestActionFilter2.cs" />
-    <Compile Include="TestTypes\TestAuthenticationFilter.cs" />
-    <Compile Include="TestTypes\TestAuthenticationFilter2.cs" />
-    <Compile Include="TestTypes\TestAuthorizationFilter.cs" />
-    <Compile Include="TestTypes\TestAuthorizationFilter2.cs" />
-    <Compile Include="TestTypes\TestCombinationFilter.cs" />
-    <Compile Include="TestTypes\TestContinuationActionFilter.cs" />
-    <Compile Include="TestTypes\TestContinuationActionFilterWithTransactionScope.cs" />
-    <Compile Include="TestTypes\TestController.cs" />
-    <Compile Include="TestTypes\TestControllerA.cs" />
-    <Compile Include="TestTypes\TestControllerB.cs" />
-    <Compile Include="TestTypes\TestControllerWithSuffix.cs" />
-    <Compile Include="TestTypes\TestExceptionFilter.cs" />
-    <Compile Include="TestTypes\TestExceptionFilter2.cs" />
-    <Compile Include="TestTypes\TestModel1.cs" />
-    <Compile Include="TestTypes\TestModel2.cs" />
-    <Compile Include="TestTypes\TestModelBinder.cs" />
+    <ProjectReference Include="..\..\src\Autofac.Integration.WebApi\Autofac.Integration.WebApi.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Autofac.Integration.WebApi\Autofac.Integration.WebApi.csproj">
-      <Project>{8437DAE1-0F24-44A9-A187-B34F52858A58}</Project>
-      <Name>Autofac.Integration.WebApi</Name>
-    </ProjectReference>
+    <PackageReference Include="Castle.Core" Version="4.3.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.0" />
+    <PackageReference Include="Moq" Version="4.8.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="5.0.8" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.analyzers" Version="0.9.0" />
+    <PackageReference Include="xunit.core" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Autofac">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Castle.Core">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core">
-      <Version>5.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
-      <Version>2.6.1</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Moq">
-      <Version>4.8.3</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>5.0.8</Version>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers">
-      <Version>1.1.0-beta008</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="xunit">
-      <Version>2.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="xunit.analyzers">
-      <Version>0.9.0</Version>
-    </PackageReference>
-    <PackageReference Include="xunit.core">
-      <Version>2.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.console">
-      <Version>2.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio">
-      <Version>2.3.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

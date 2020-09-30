@@ -1060,7 +1060,7 @@ namespace Autofac.Integration.WebApi
             {
                 Scope = filterScope,
                 FilterCategory = filterCategory,
-                Predicate = predicate
+                Predicate = predicate,
             };
 
             filterMeta.PredicateSet.Add(registrationMetadata);
@@ -1090,7 +1090,7 @@ namespace Autofac.Integration.WebApi
             {
                 Scope = filterScope,
                 FilterCategory = filterCategory,
-                Predicate = predicate
+                Predicate = predicate,
             };
 
             filterMeta.PredicateSet.Add(registrationMetadata);
@@ -1118,7 +1118,7 @@ namespace Autofac.Integration.WebApi
             {
                 Scope = FilterScope.Controller,
                 FilterCategory = filterCategory,
-                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType)
+                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType),
             };
 
             filterMeta.PredicateSet.Add(registrationMetadata);
@@ -1141,7 +1141,7 @@ namespace Autofac.Integration.WebApi
             {
                 Scope = FilterScope.Controller,
                 FilterCategory = filterCategory,
-                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType)
+                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType),
             };
 
             filterMeta.PredicateSet.Add(registrationMetadata);
@@ -1204,7 +1204,7 @@ namespace Autofac.Integration.WebApi
                 Scope = FilterScope.Action,
                 FilterCategory = filterCategory,
                 Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType) &&
-                                                   ActionMethodMatches(descriptor, action)
+                                                   ActionMethodMatches(descriptor, action),
             };
 
             filterMeta.PredicateSet.Add(registrationMetadata);
@@ -1262,7 +1262,7 @@ namespace Autofac.Integration.WebApi
             Scope = FilterScope.Action,
             FilterCategory = filterCategory,
             Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType) &&
-                                               ActionMethodMatches(descriptor, action)
+                                               ActionMethodMatches(descriptor, action),
           };
 
           filterMeta.PredicateSet.Add(registrationMetadata);
@@ -1324,7 +1324,7 @@ namespace Autofac.Integration.WebApi
             {
                 Scope = FilterScope.Controller,
                 FilterCategory = filterCategory,
-                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType)
+                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType),
             });
         }
 
@@ -1343,18 +1343,18 @@ namespace Autofac.Integration.WebApi
                 Scope = FilterScope.Action,
                 FilterCategory = filterCategory,
                 Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType) &&
-                                                   ActionMethodMatches(descriptor, methodInfo)
+                                                   ActionMethodMatches(descriptor, methodInfo),
             });
         }
 
         private static MethodInfo GetMethodInfo(LambdaExpression expression)
         {
-            var outermostExpression = expression.Body as MethodCallExpression;
+            if (expression.Body is MethodCallExpression outermostExpression)
+            {
+                return outermostExpression.Method;
+            }
 
-            if (outermostExpression == null)
-                throw new ArgumentException(RegistrationExtensionsResources.InvalidActionExpress);
-
-            return outermostExpression.Method;
+            throw new ArgumentException(RegistrationExtensionsResources.InvalidActionExpress);
         }
 
         /// <summary>
@@ -1401,18 +1401,16 @@ namespace Autofac.Integration.WebApi
 
         private static bool ActionMethodMatches(HttpActionDescriptor action, MethodInfo knownMethod)
         {
-            var reflectedDescriptor = action as ReflectedHttpActionDescriptor;
-
-            if (reflectedDescriptor == null)
+            if (action is ReflectedHttpActionDescriptor reflectedDescriptor)
             {
-                return false;
+                // Including fix for Issue #10 in new registration style:
+                // Comparing MethodInfo.MethodHandle rather than just MethodInfo equality
+                // because MethodInfo equality fails on a derived controller if the base class method
+                // isn't marked virtual... but MethodHandle correctly compares regardless.
+                return reflectedDescriptor.MethodInfo.GetBaseDefinition().MethodHandle == knownMethod.GetBaseDefinition().MethodHandle;
             }
 
-            // Including fix for Issue #10 in new registration style:
-            // Comparing MethodInfo.MethodHandle rather than just MethodInfo equality
-            // because MethodInfo equality fails on a derived controller if the base class method
-            // isn't marked virtual... but MethodHandle correctly compares regardless.
-            return reflectedDescriptor.MethodInfo.GetBaseDefinition().MethodHandle == knownMethod.GetBaseDefinition().MethodHandle;
+            return false;
         }
     }
 }
