@@ -25,6 +25,10 @@ test: off
 build_script:
 - ps: .\build.ps1
 
+artifacts:
+- path: artifacts\packages\**\*.nupkg
+  name: MyGet
+
 deploy:
 - provider: NuGet
   server: https://www.myget.org/F/autofac/
