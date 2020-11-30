@@ -54,7 +54,8 @@ namespace Autofac.Integration.WebApi
             if (config.MessageHandlers.OfType<CurrentRequestHandler>().Any()) return;
 
             builder.Register(c => HttpRequestMessageProvider.Current)
-                .InstancePerRequest();
+                .InstancePerRequest()
+                .ExternallyOwned();
 
             config.MessageHandlers.Add(new CurrentRequestHandler());
         }
