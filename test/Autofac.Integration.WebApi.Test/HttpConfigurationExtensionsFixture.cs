@@ -25,7 +25,9 @@
 
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using Autofac.Core.Lifetime;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
@@ -64,6 +66,34 @@ namespace Autofac.Integration.WebApi.Test
 
             var container = builder.Build();
             Assert.True(container.IsRegistered<HttpRequestMessage>());
+        }
+
+        [Fact]
+        public async Task RegisterHttpRequestMessageNotDisposeAfterScopeDipose()
+        {
+            var config = new HttpConfiguration();
+            var builder = new ContainerBuilder();
+
+            config.RegisterHttpRequestMessage(builder);
+
+            var container = builder.Build();
+            Assert.True(container.IsRegistered<HttpRequestMessage>());
+
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Content = new StringContent("")
+            };
+
+            HttpRequestMessageProvider.Current = httpRequestMessage;
+            var result = HttpRequestMessageProvider.Current;
+
+
+            using (var scope = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+            {
+                Assert.Same(result, scope.Resolve<HttpRequestMessage>());
+            }
+
+            _ = await result.Content.ReadAsStringAsync();
         }
     }
 }
