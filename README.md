@@ -2,7 +2,7 @@
 
 ASP.NET Web API integration for [Autofac](https://autofac.org).
 
-[![Build status](https://ci.appveyor.com/api/projects/status/i7fjrapyswrvy73r?svg=true)](https://ci.appveyor.com/project/Autofac/autofac-webapi)
+[![Build status](https://ci.appveyor.com/api/projects/status/i7fjrapyswrvy73r?svg=true)](https://ci.appveyor.com/project/Autofac/autofac-webapi) [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/autofac/Autofac.WebApi)
 
 Please file issues and pull requests for this package in this repository rather than in the Autofac core repo.
 
