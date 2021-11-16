@@ -28,25 +28,48 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace Autofac.Integration.WebApi
 {
     internal static class HttpRequestMessageProvider
     {
+        private const string SwitchKey = "Autofac.Integration.WebApi.HttpRequestMessageProvider.UseAsyncLocal";
         private static readonly string Key = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture).Substring(0, 12);
+        private static readonly AsyncLocal<HttpRequestMessage> CurrentRequest = new AsyncLocal<HttpRequestMessage>();
 
         internal static HttpRequestMessage Current
         {
             get
             {
+                if (UseAsyncLocal)
+                {
+                    return CurrentRequest.Value;
+                }
+
                 var wrapper = (HttpRequestMessageWrapper)CallContext.LogicalGetData(Key);
                 return wrapper?.Message;
             }
 
             set
             {
-                var wrapper = value == null ? null : new HttpRequestMessageWrapper(value);
-                CallContext.LogicalSetData(Key, wrapper);
+                if (UseAsyncLocal)
+                {
+                    CurrentRequest.Value = value;
+                }
+                else
+                {
+                    var wrapper = value == null ? null : new HttpRequestMessageWrapper(value);
+                    CallContext.LogicalSetData(Key, wrapper);
+                }
+            }
+        }
+
+        private static bool UseAsyncLocal
+        {
+            get
+            {
+                return AppContext.TryGetSwitch(SwitchKey, out var enabled) && enabled;
             }
         }
 
