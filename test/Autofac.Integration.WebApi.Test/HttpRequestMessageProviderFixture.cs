@@ -1,73 +1,28 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
 {
     public class HttpRequestMessageProviderFixture
     {
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void CurrentReturnsHttpRequestMessageWhenSet(bool useAsyncLocal)
+        [Fact]
+        public void CurrentReturnsHttpRequestMessageWhenSet()
         {
-            AppContext.SetSwitch("Autofac.Integration.WebApi.HttpRequestMessageProvider.UseAsyncLocal", useAsyncLocal);
+            // Arrange
+            var httpRequestMessage = new HttpRequestMessage();
 
-            try
-            {
-                // Arrange
-                var httpRequestMessage = new HttpRequestMessage();
+            // Act
+            HttpRequestMessageProvider.Current = httpRequestMessage;
+            var result = HttpRequestMessageProvider.Current;
 
-                // Act
-                HttpRequestMessageProvider.Current = httpRequestMessage;
-                var result = HttpRequestMessageProvider.Current;
-
-                // Assert
-                Assert.Same(httpRequestMessage, result);
-            }
-            finally
-            {
-                AppContext.SetSwitch("Autofac.Integration.WebApi.HttpRequestMessageProvider.UseAsyncLocal", false);
-            }
+            // Assert
+            Assert.Same(httpRequestMessage, result);
         }
 
         [Fact]
-        public void CurrentReturnsNotSharedWithAsyncLocalAndCallContext()
+        public void CurrentReturnsNullWhenHttpRequestMessageNotSet()
         {
-            AppContext.SetSwitch("Autofac.Integration.WebApi.HttpRequestMessageProvider.UseAsyncLocal", true);
-
-            try
-            {
-                // Arrange
-                var httpRequestMessage = new HttpRequestMessage();
-
-                // Act
-                HttpRequestMessageProvider.Current = httpRequestMessage;
-            }
-            finally
-            {
-                AppContext.SetSwitch("Autofac.Integration.WebApi.HttpRequestMessageProvider.UseAsyncLocal", false);
-            }
-
-            // Assert
             Assert.Null(HttpRequestMessageProvider.Current);
-        }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void CurrentReturnsNullWhenHttpRequestMessageNotSet(bool useAsyncLocal)
-        {
-            AppContext.SetSwitch("Autofac.Integration.WebApi.HttpRequestMessageProvider.UseAsyncLocal", useAsyncLocal);
-
-            try
-            {
-                Assert.Null(HttpRequestMessageProvider.Current);
-            }
-            finally
-            {
-                AppContext.SetSwitch("Autofac.Integration.WebApi.HttpRequestMessageProvider.UseAsyncLocal", false);
-            }
         }
     }
 }
