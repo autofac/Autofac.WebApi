@@ -25,6 +25,9 @@ namespace Autofac.Integration.WebApi
     {
         private const string InitializedKey = "InjectControllerServicesAttributeInitialized";
 
+        /// <summary>
+        /// Metadata key that signifies existing controller services should be cleared.
+        /// </summary>
         internal const string ClearServiceListKey = "ClearServiceList";
 
         /// <summary>

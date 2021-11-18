@@ -23,11 +23,18 @@ namespace Autofac.Integration.WebApi
     {
         private readonly IAutofacActionFilter _legacyFilter;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AutofacActionFilterAdapter"/> class.
+        /// </summary>
+        /// <param name="legacyFilter">
+        /// Original style <see cref="IAutofacActionFilter"/> to wrap as a continuation filter.
+        /// </param>
         public AutofacActionFilterAdapter(IAutofacActionFilter legacyFilter)
         {
             _legacyFilter = legacyFilter;
         }
 
+        /// <inheritdoc/>
         public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
         {
             await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken);

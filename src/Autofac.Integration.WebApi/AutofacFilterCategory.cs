@@ -9,42 +9,42 @@ namespace Autofac.Integration.WebApi
     internal enum AutofacFilterCategory
     {
         /// <summary>
-        /// Authorization Filters
+        /// Authorization filters.
         /// </summary>
         AuthorizationFilter,
 
         /// <summary>
-        /// Authorization Override Filters
+        /// Authorization override filters.
         /// </summary>
         AuthorizationFilterOverride,
 
         /// <summary>
-        /// Authentication filters
+        /// Authentication filters.
         /// </summary>
         AuthenticationFilter,
 
         /// <summary>
-        /// Authentication Override Filters
+        /// Authentication override filters.
         /// </summary>
         AuthenticationFilterOverride,
 
         /// <summary>
-        /// Action filters
+        /// Action filters.
         /// </summary>
         ActionFilter,
 
         /// <summary>
-        /// Action Override filters
+        /// Action override filters.
         /// </summary>
         ActionFilterOverride,
 
         /// <summary>
-        /// Exception filters
+        /// Exception filters.
         /// </summary>
         ExceptionFilter,
 
         /// <summary>
-        /// Exception override filters
+        /// Exception override filters.
         /// </summary>
         ExceptionFilterOverride,
     }

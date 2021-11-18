@@ -34,8 +34,10 @@ namespace Autofac.Integration.WebApi
             _allFilters = filterMetadata;
         }
 
+        /// <inheritdoc/>
         public bool AllowMultiple { get; } = true;
 
+        /// <inheritdoc/>
         public Task<HttpResponseMessage> ExecuteActionFilterAsync(
             HttpActionContext actionContext,
             CancellationToken cancellationToken,

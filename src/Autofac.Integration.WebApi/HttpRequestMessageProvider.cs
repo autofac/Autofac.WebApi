@@ -7,10 +7,19 @@ using System.Threading;
 
 namespace Autofac.Integration.WebApi
 {
+    /// <summary>
+    /// Provider that holds the current <see cref="HttpRequestMessage"/> for injection as a dependency.
+    /// </summary>
     internal static class HttpRequestMessageProvider
     {
         private static readonly AsyncLocal<HttpRequestMessageHolder> CurrentRequest = new AsyncLocal<HttpRequestMessageHolder>();
 
+        /// <summary>
+        /// Gets or sets the current request message.
+        /// </summary>
+        /// <value>
+        /// The <see cref="HttpRequestMessage"/> for the current/ongoing request.
+        /// </value>
         internal static HttpRequestMessage Current
         {
             get

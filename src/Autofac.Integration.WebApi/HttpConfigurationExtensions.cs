@@ -27,6 +27,11 @@ namespace Autofac.Integration.WebApi
         {
         }
 
+        /// <summary>
+        /// Makes the current <see cref="HttpRequestMessage"/> resolvable through the dependency scope.
+        /// </summary>
+        /// <param name="config">The HTTP server configuration.</param>
+        /// <param name="builder">The <see cref="ContainerBuilder"/> into which the message will be registered.</param>
         internal static void RegisterHttpRequestMessage(this HttpConfiguration config, ContainerBuilder builder)
         {
             if (config.MessageHandlers.OfType<CurrentRequestHandler>().Any()) return;

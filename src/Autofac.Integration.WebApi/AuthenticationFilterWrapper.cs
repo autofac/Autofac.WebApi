@@ -28,11 +28,13 @@ namespace Autofac.Integration.WebApi
             _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
         }
 
+        /// <inheritdoc/>
         bool IFilter.AllowMultiple
         {
             get { return true; }
         }
 
+        /// <inheritdoc/>
         public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
             if (context == null)
@@ -51,6 +53,7 @@ namespace Autofac.Integration.WebApi
             }
         }
 
+        /// <inheritdoc/>
         public async Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
             if (context == null)

@@ -23,11 +23,13 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         public List<FilterPredicateMetadata> PredicateSet { get; } = new List<FilterPredicateMetadata>();
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return Id.GetHashCode();
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj is FilterMetadata metadata)
