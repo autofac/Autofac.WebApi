@@ -59,7 +59,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var httpRequestMessage = new HttpRequestMessage
             {
-                Content = new StringContent("")
+                Content = new StringContent(""),
             };
 
             HttpRequestMessageProvider.Current = httpRequestMessage;

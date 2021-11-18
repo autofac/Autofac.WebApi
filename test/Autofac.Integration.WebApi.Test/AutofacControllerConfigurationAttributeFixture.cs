@@ -193,7 +193,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var services = settings.Services.GetServices(typeof(ModelBinderProvider)).ToArray();
 
-            Assert.Equal(2, services.Count());
+            Assert.Equal(2, services.Length);
             Assert.Contains(provider1, services);
             Assert.Contains(provider2, services);
         }

@@ -8,7 +8,7 @@ using System.Web.Http.Filters;
 namespace Autofac.Integration.WebApi.Test.TestTypes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    public class CustomActionFilterAttribute : ActionFilterAttribute
+    public sealed class CustomActionFilterAttribute : ActionFilterAttribute
     {
         public ILogger Logger { get; set; }
 

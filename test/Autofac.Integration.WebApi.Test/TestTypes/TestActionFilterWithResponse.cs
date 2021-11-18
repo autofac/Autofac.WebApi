@@ -25,6 +25,11 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
 
         public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
+            if (actionContext == null)
+            {
+                throw new ArgumentNullException(nameof(actionContext));
+            }
+
             Logger.Log("TestActionFilterWithResponse.OnActionExecutingAsync");
             actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Forbidden, "forbidden");
             return Task.FromResult(0);

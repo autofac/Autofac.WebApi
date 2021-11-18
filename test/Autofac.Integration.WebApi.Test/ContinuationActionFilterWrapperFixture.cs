@@ -87,7 +87,7 @@ namespace Autofac.Integration.WebApi.Test
             var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
             {
                 testFilter1Meta,
-                testFilter2Meta
+                testFilter2Meta,
             });
 
             await wrapper.ExecuteActionFilterAsync(
@@ -152,13 +152,13 @@ namespace Autofac.Integration.WebApi.Test
                 testActionFilterMetadata,
                 testActionFilterWithResponseMetadata,
                 testActionFilter2Metadata,
-                testActionFilter3Metadata
+                testActionFilter3Metadata,
             });
 
             await wrapper.ExecuteActionFilterAsync(
                 actionContext,
                 CancellationToken.None,
-                () => throw new Exception("Should never reach here because a filter set the response.")).ConfigureAwait(false);
+                () => throw new InvalidOperationException("Should never reach here because a filter set the response.")).ConfigureAwait(false);
 
             Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[0]);
             Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);
@@ -213,7 +213,7 @@ namespace Autofac.Integration.WebApi.Test
             var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
             {
                 testFilter1Meta,
-                testFilter2Meta
+                testFilter2Meta,
             });
 
             wrapper.ExecuteActionFilterAsync(
@@ -264,7 +264,7 @@ namespace Autofac.Integration.WebApi.Test
             var wrapper = new ContinuationActionFilterWrapper(new HashSet<FilterMetadata>
             {
                 testFilter1Meta,
-                testFilter2Meta
+                testFilter2Meta,
             });
 
             wrapper.ExecuteActionFilterAsync(

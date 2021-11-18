@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -196,38 +197,47 @@ namespace Autofac.Integration.WebApi.Test
             await result().ConfigureAwait(false);
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class A
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class B
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class C
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class D
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class E
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class F
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class G
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class H
         {
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class OrderTestActionFilter<T> : IAutofacActionFilter
         {
             private readonly Action<Type> _record;
@@ -249,6 +259,7 @@ namespace Autofac.Integration.WebApi.Test
             }
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class OrderTestAuthenticationFilter<T> : IAutofacAuthenticationFilter
         {
             private readonly Action<Type> _record;
@@ -270,6 +281,7 @@ namespace Autofac.Integration.WebApi.Test
             }
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class OrderTestAuthorizationFilter<T> : IAutofacAuthorizationFilter
         {
             private readonly Action<Type> _record;
@@ -286,6 +298,7 @@ namespace Autofac.Integration.WebApi.Test
             }
         }
 
+        [SuppressMessage("CA1812", "CA1812", Justification = "Used in testing and via reflection.")]
         private class OrderTestExceptionFilter<T> : IAutofacExceptionFilter
         {
             private readonly Action<Type> _record;

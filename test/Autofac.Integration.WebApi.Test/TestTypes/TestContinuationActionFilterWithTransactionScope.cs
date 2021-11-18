@@ -23,6 +23,11 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
 
         public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> next)
         {
+            if (next == null)
+            {
+                throw new ArgumentNullException(nameof(next));
+            }
+
             _before();
 
             HttpResponseMessage result;
