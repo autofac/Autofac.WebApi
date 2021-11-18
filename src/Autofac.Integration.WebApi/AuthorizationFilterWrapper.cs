@@ -33,6 +33,15 @@ namespace Autofac.Integration.WebApi
         }
 
         /// <summary>
+        /// Gets the filter metadata.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="IEnumerable{T}"/> with the filter metadata the
+        /// attribute was initialized with.
+        /// </returns>
+        public IEnumerable<FilterMetadata> FilterMetadata => _allFilters.AsEnumerable();
+
+        /// <summary>
         /// Called when a process requests authorization.
         /// </summary>
         /// <param name="actionContext">The context for the action.</param>
