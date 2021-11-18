@@ -29,7 +29,7 @@ namespace Autofac.Integration.WebApi
         }
 
         private readonly ILifetimeScope _rootLifetimeScope;
-        private readonly ActionDescriptorFilterProvider _filterProvider = new ActionDescriptorFilterProvider();
+        private readonly ActionDescriptorFilterProvider _filterProvider = new ();
 
         /// <summary>
         /// Metadata key that holds Autofac filter data.

@@ -12,7 +12,7 @@ namespace Autofac.Integration.WebApi
     /// </summary>
     internal static class HttpRequestMessageProvider
     {
-        private static readonly AsyncLocal<HttpRequestMessageHolder> CurrentRequest = new AsyncLocal<HttpRequestMessageHolder>();
+        private static readonly AsyncLocal<HttpRequestMessageHolder> CurrentRequest = new ();
 
         /// <summary>
         /// Gets or sets the current request message.

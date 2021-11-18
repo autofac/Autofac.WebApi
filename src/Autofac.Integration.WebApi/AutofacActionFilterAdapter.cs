@@ -80,7 +80,7 @@ namespace Autofac.Integration.WebApi
                 exception = exceptionInfo.SourceException;
             }
 
-            HttpActionExecutedContext executedContext = new HttpActionExecutedContext(actionContext, exception)
+            HttpActionExecutedContext executedContext = new (actionContext, exception)
             {
                 Response = response,
             };
