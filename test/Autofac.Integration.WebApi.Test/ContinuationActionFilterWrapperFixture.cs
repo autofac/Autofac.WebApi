@@ -50,7 +50,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var wrapper = new ContinuationActionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-            await wrapper.ExecuteActionFilterAsync(actionContext, CancellationToken.None, () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
+            await wrapper.ExecuteActionFilterAsync(actionContext, CancellationToken.None, () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))).ConfigureAwait(false);
             Assert.Equal(1, activationCount);
         }
 
@@ -93,7 +93,7 @@ namespace Autofac.Integration.WebApi.Test
             await wrapper.ExecuteActionFilterAsync(
                 actionContext,
                 CancellationToken.None,
-                () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
+                () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))).ConfigureAwait(false);
 
             Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[0]);
             Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);
@@ -158,7 +158,7 @@ namespace Autofac.Integration.WebApi.Test
             await wrapper.ExecuteActionFilterAsync(
                 actionContext,
                 CancellationToken.None,
-                () => throw new Exception("Should never reach here because a filter set the response."));
+                () => throw new Exception("Should never reach here because a filter set the response.")).ConfigureAwait(false);
 
             Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[0]);
             Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);

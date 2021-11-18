@@ -47,7 +47,7 @@ namespace Autofac.Integration.WebApi.Test
             var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
             var wrapper = new ExceptionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-            await wrapper.OnExceptionAsync(actionExecutedContext, CancellationToken.None);
+            await wrapper.OnExceptionAsync(actionExecutedContext, CancellationToken.None).ConfigureAwait(false);
             Assert.Equal(1, activationCount);
         }
     }

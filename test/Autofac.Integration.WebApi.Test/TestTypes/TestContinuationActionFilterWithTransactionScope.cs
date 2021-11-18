@@ -29,7 +29,7 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
 
             using (new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                result = await next();
+                result = await next().ConfigureAwait(false);
             }
 
             _after();

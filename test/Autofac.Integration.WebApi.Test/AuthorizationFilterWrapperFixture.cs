@@ -46,7 +46,7 @@ namespace Autofac.Integration.WebApi.Test
 
             var wrapper = new AuthorizationFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-            await wrapper.OnAuthorizationAsync(actionContext, CancellationToken.None);
+            await wrapper.OnAuthorizationAsync(actionContext, CancellationToken.None).ConfigureAwait(false);
             Assert.Equal(1, activationCount);
         }
     }

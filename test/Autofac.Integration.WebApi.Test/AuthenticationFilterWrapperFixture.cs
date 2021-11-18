@@ -52,9 +52,9 @@ namespace Autofac.Integration.WebApi.Test
 
             var wrapper = new AuthenticationFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-            await wrapper.AuthenticateAsync(context, CancellationToken.None);
+            await wrapper.AuthenticateAsync(context, CancellationToken.None).ConfigureAwait(false);
 
-            await wrapper.ChallengeAsync(challengeContext, CancellationToken.None);
+            await wrapper.ChallengeAsync(challengeContext, CancellationToken.None).ConfigureAwait(false);
 
             Assert.Equal(nameof(wrapper.AuthenticateAsync), output[0]);
             Assert.Equal(nameof(wrapper.ChallengeAsync), output[1]);
@@ -88,9 +88,9 @@ namespace Autofac.Integration.WebApi.Test
 
             var wrapper = new AuthenticationFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-            await wrapper.AuthenticateAsync(context, CancellationToken.None);
+            await wrapper.AuthenticateAsync(context, CancellationToken.None).ConfigureAwait(false);
 
-            await wrapper.ChallengeAsync(challengeContext, CancellationToken.None);
+            await wrapper.ChallengeAsync(challengeContext, CancellationToken.None).ConfigureAwait(false);
 
             Assert.Equal(1, activationCount);
         }

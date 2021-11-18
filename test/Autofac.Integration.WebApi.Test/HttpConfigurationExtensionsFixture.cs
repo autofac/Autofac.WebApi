@@ -71,7 +71,7 @@ namespace Autofac.Integration.WebApi.Test
                 Assert.Same(result, scope.Resolve<HttpRequestMessage>());
             }
 
-            _ = await result.Content.ReadAsStringAsync();
+            _ = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
     }
 }

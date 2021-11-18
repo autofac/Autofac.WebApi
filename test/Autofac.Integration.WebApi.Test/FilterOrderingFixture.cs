@@ -107,22 +107,22 @@ namespace Autofac.Integration.WebApi.Test
 
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<IAuthenticationFilter>())
             {
-                await fi.AuthenticateAsync(authnContext, token);
+                await fi.AuthenticateAsync(authnContext, token).ConfigureAwait(false);
             }
 
             // Loop through each type of filter in the order Web API would
             // do it. This will give us the complete list of filters.
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<AuthorizationFilterAttribute>())
             {
-                await fi.OnAuthorizationAsync(actionContext, token);
+                await fi.OnAuthorizationAsync(actionContext, token).ConfigureAwait(false);
             }
 
             // Emulate the action filter execution pipeline.
-            await ExecuteContinuationFilters(actionContext, filterInfos.Select(f => f.Instance).OfType<IActionFilter>(), token);
+            await ExecuteContinuationFilters(actionContext, filterInfos.Select(f => f.Instance).OfType<IActionFilter>(), token).ConfigureAwait(false);
 
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<ExceptionFilterAttribute>())
             {
-                await fi.OnExceptionAsync(actionExecutedContext, token);
+                await fi.OnExceptionAsync(actionExecutedContext, token).ConfigureAwait(false);
             }
 
             // Order is:
@@ -191,7 +191,7 @@ namespace Autofac.Integration.WebApi.Test
                 result = ChainContinuation(result, filterStage);
             }
 
-            await result();
+            await result().ConfigureAwait(false);
         }
 
         private class A

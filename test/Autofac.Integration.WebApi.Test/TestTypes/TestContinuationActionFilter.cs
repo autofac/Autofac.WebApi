@@ -24,7 +24,7 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
         {
             _before();
 
-            var result = await next();
+            var result = await next().ConfigureAwait(false);
 
             _after();
 
