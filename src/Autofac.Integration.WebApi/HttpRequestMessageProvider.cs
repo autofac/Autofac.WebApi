@@ -23,44 +23,45 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Net.Http;
-using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace Autofac.Integration.WebApi
 {
     internal static class HttpRequestMessageProvider
     {
-        private static readonly string Key = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture).Substring(0, 12);
+        private static readonly AsyncLocal<HttpRequestMessageHolder> CurrentRequest = new AsyncLocal<HttpRequestMessageHolder>();
 
         internal static HttpRequestMessage Current
         {
             get
             {
-                var wrapper = (HttpRequestMessageWrapper)CallContext.LogicalGetData(Key);
-                return wrapper?.Message;
+                return CurrentRequest.Value?.Message;
             }
 
             set
             {
-                var wrapper = value == null ? null : new HttpRequestMessageWrapper(value);
-                CallContext.LogicalSetData(Key, wrapper);
+                var holder = CurrentRequest.Value;
+                if (holder != null)
+                {
+                    // Clear current HttpRequestMessage trapped in the AsyncLocals, as its done.
+                    holder.Message = null;
+                }
+
+                if (value != null)
+                {
+                    // Use an object indirection to hold the HttpRequestMessage in the AsyncLocal,
+                    // so it can be cleared in all ExecutionContexts when its cleared.
+                    CurrentRequest.Value = new HttpRequestMessageHolder { Message = value };
+                }
             }
         }
 
-        [Serializable]
-        private sealed class HttpRequestMessageWrapper : MarshalByRefObject
+        private sealed class HttpRequestMessageHolder
         {
-            [NonSerialized]
             [SuppressMessage("SA1401", "SA1401", Justification = "Field is only used during testing.")]
-            internal readonly HttpRequestMessage Message;
-
-            internal HttpRequestMessageWrapper(HttpRequestMessage message)
-            {
-                Message = message;
-            }
+            public HttpRequestMessage Message;
         }
     }
 }
