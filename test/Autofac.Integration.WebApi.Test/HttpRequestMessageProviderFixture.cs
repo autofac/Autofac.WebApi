@@ -1,4 +1,7 @@
-﻿using System.Net.Http;
+﻿// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using System.Net.Http;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using System.Collections.Generic;
 using System.Web.Http.Filters;
-using Autofac.Integration.WebApi;
 using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
