@@ -1,7 +1,7 @@
-version: 6.0.1.{build}
+version: 6.1.0.{build}
 
 dotnet_csproj:
-  version_prefix: '6.0.1'
+  version_prefix: '6.1.0'
   patch: true
   file: 'src\**\*.csproj'
 
@@ -20,7 +20,7 @@ nuget:
 
 clone_depth: 1
 
-test: off
+test: false
 
 build_script:
 - ps: .\build.ps1
