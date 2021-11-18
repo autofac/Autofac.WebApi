@@ -24,13 +24,13 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
 
         public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
-            this.Logger.Log("TestActionFilter2.OnActionExecutingAsync");
+            Logger.Log("TestActionFilter2.OnActionExecutingAsync");
             return Task.FromResult(0);
         }
 
         public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
-            this.Logger.Log("TestActionFilter2.OnActionExecutedAsync");
+            Logger.Log("TestActionFilter2.OnActionExecutedAsync");
             return Task.FromResult(0);
         }
     }

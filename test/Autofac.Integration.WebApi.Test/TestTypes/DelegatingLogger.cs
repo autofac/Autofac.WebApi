@@ -11,12 +11,12 @@ namespace Autofac.Integration.WebApi.Test.TestTypes
 
         public DelegatingLogger(Action<string> onLog)
         {
-            this._onLog = onLog;
+            _onLog = onLog;
         }
 
         public void Log(string value)
         {
-            this._onLog(value);
+            _onLog(value);
         }
     }
 }

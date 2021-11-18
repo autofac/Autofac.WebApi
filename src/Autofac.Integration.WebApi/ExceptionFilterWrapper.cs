@@ -28,7 +28,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The filter metadata.</param>
         public ExceptionFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
-            this._allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
+            _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Autofac.Integration.WebApi
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacExceptionFilter>>>>();
 
-            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            foreach (var filter in filters.Where(FilterMatchesMetadata))
             {
                 await filter.Value.Value.OnExceptionAsync(actionExecutedContext, cancellationToken).ConfigureAwait(false);
             }

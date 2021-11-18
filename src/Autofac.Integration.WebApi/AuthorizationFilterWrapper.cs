@@ -52,7 +52,7 @@ namespace Autofac.Integration.WebApi
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthorizationFilter>>>>();
 
-            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            foreach (var filter in filters.Where(FilterMatchesMetadata))
             {
                 await filter.Value.Value.OnAuthorizationAsync(actionContext, cancellationToken).ConfigureAwait(false);
             }

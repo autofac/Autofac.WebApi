@@ -101,13 +101,13 @@ namespace Autofac.Integration.WebApi.Test
             request.SetConfiguration(configuration);
             var controllerContext = new HttpControllerContext { Configuration = configuration, Request = request };
             var actionContext = new HttpActionContext() { ControllerContext = controllerContext };
-            var authnContext = new HttpAuthenticationContext(actionContext, null);
+            var authenticationContext = new HttpAuthenticationContext(actionContext, null);
             var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
             var token = new CancellationTokenSource().Token;
 
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<IAuthenticationFilter>())
             {
-                await fi.AuthenticateAsync(authnContext, token).ConfigureAwait(false);
+                await fi.AuthenticateAsync(authenticationContext, token).ConfigureAwait(false);
             }
 
             // Loop through each type of filter in the order Web API would
@@ -232,7 +232,7 @@ namespace Autofac.Integration.WebApi.Test
 
             public OrderTestActionFilter(Action<Type> record)
             {
-                this._record = record;
+                _record = record;
             }
 
             public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
@@ -242,7 +242,7 @@ namespace Autofac.Integration.WebApi.Test
 
             public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
             {
-                this._record(this.GetType());
+                _record(GetType());
                 return Task.FromResult(0);
             }
         }
@@ -253,12 +253,12 @@ namespace Autofac.Integration.WebApi.Test
 
             public OrderTestAuthenticationFilter(Action<Type> record)
             {
-                this._record = record;
+                _record = record;
             }
 
             public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
             {
-                this._record(this.GetType());
+                _record(GetType());
                 return Task.FromResult(0);
             }
 
@@ -274,12 +274,12 @@ namespace Autofac.Integration.WebApi.Test
 
             public OrderTestAuthorizationFilter(Action<Type> record)
             {
-                this._record = record;
+                _record = record;
             }
 
             public Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
             {
-                this._record(this.GetType());
+                _record(GetType());
                 return Task.FromResult(0);
             }
         }
@@ -290,12 +290,12 @@ namespace Autofac.Integration.WebApi.Test
 
             public OrderTestExceptionFilter(Action<Type> record)
             {
-                this._record = record;
+                _record = record;
             }
 
             public Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
             {
-                this._record(this.GetType());
+                _record(GetType());
                 return Task.FromResult(0);
             }
         }
