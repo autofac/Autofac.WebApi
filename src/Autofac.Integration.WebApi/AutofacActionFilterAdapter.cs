@@ -51,7 +51,7 @@ namespace Autofac.Integration.WebApi
         /// The content of this method is taken from the ActionFilterAttribute code in the ASP.NET source, since
         /// that is basically the reference implementation for invoking an async filter's OnActionExecuted correctly.
         /// </summary>
-        [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in original implementtion.")]
+        [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in original implementation.")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Need to capture any exception that occurs.")]
         private async Task<HttpResponseMessage> CallOnActionExecutedAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
         {

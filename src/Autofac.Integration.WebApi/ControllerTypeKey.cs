@@ -21,9 +21,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="controllerType">Type of the controller.</param>
         public ControllerTypeKey(Type controllerType)
         {
-            if (controllerType == null) throw new ArgumentNullException(nameof(controllerType));
-
-            ControllerType = controllerType;
+            ControllerType = controllerType ?? throw new ArgumentNullException(nameof(controllerType));
         }
 
         /// <summary>

@@ -53,8 +53,15 @@ namespace Autofac.Integration.WebApi
                 throw new ArgumentNullException(nameof(controllerDescriptor));
             }
 
-            if (controllerDescriptor.Configuration == null) return;
-            if (!controllerDescriptor.Properties.TryAdd(InitializedKey, null)) return;
+            if (controllerDescriptor.Configuration == null)
+            {
+                return;
+            }
+
+            if (!controllerDescriptor.Properties.TryAdd(InitializedKey, null))
+            {
+                return;
+            }
 
             var container = controllerDescriptor.Configuration.DependencyResolver.GetRootLifetimeScope();
             if (container == null)
@@ -98,7 +105,9 @@ namespace Autofac.Integration.WebApi
             }
 
             if (instance != null)
+            {
                 services.Replace(typeof(T), instance.Value);
+            }
         }
 
         private static void UpdateControllerServices<T>(ServicesContainer services, IComponentContext container, ControllerTypeKey serviceKey)
@@ -107,10 +116,14 @@ namespace Autofac.Integration.WebApi
             var resolvedInstances = container.ResolveOptionalKeyed<IEnumerable<Meta<T>>>(serviceKey).ToArray();
 
             if (resolvedInstances.Any(service => ClearExistingServices(service.Metadata)))
+            {
                 services.Clear(typeof(T));
+            }
 
             foreach (var instance in resolvedInstances)
+            {
                 services.Add(typeof(T), instance.Value);
+            }
         }
 
         private static void UpdateControllerFormatters(ICollection<MediaTypeFormatter> collection, IComponentContext container, ControllerTypeKey serviceKey)
@@ -118,10 +131,14 @@ namespace Autofac.Integration.WebApi
             var formatters = container.ResolveOptionalKeyed<IEnumerable<Meta<MediaTypeFormatter>>>(serviceKey).ToArray();
 
             if (formatters.Any(service => ClearExistingServices(service.Metadata)))
+            {
                 collection.Clear();
+            }
 
             foreach (var formatter in formatters)
+            {
                 collection.Add(formatter.Value);
+            }
         }
 
         private static bool ClearExistingServices(IDictionary<string, object> metadata)

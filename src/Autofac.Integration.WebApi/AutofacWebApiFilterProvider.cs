@@ -72,7 +72,9 @@ namespace Autofac.Integration.WebApi
             var filters = _filterProvider.GetFilters(configuration, actionDescriptor).ToList();
 
             foreach (var filterInfo in filters)
+            {
                 _rootLifetimeScope.InjectProperties(filterInfo.Instance);
+            }
 
             // Use a fake scope to resolve the metadata for the filter.
             var rootLifetimeScope = configuration.DependencyResolver.GetRootLifetimeScope();

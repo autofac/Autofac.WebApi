@@ -23,9 +23,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="lifetimeScope">The lifetime scope to resolve services from.</param>
         public AutofacWebApiDependencyScope(ILifetimeScope lifetimeScope)
         {
-            if (lifetimeScope == null) throw new ArgumentNullException(nameof(lifetimeScope));
-
-            _lifetimeScope = lifetimeScope;
+            _lifetimeScope = lifetimeScope ?? throw new ArgumentNullException(nameof(lifetimeScope));
         }
 
         /// <summary>
@@ -62,7 +60,9 @@ namespace Autofac.Integration.WebApi
         public IEnumerable<object> GetServices(Type serviceType)
         {
             if (!_lifetimeScope.IsRegistered(serviceType))
+            {
                 return Enumerable.Empty<object>();
+            }
 
             var enumerableServiceType = typeof(IEnumerable<>).MakeGenericType(serviceType);
             var instance = _lifetimeScope.Resolve(enumerableServiceType);

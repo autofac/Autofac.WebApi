@@ -26,9 +26,7 @@ namespace Autofac.Integration.WebApi
         public AutofacWebApiDependencyResolver(ILifetimeScope container, Action<ContainerBuilder> configurationAction)
             : this(container)
         {
-            if (configurationAction == null) throw new ArgumentNullException(nameof(configurationAction));
-
-            _configurationAction = configurationAction;
+            _configurationAction = configurationAction ?? throw new ArgumentNullException(nameof(configurationAction));
         }
 
         /// <summary>
@@ -37,9 +35,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="container">The container that nested lifetime scopes will be create from.</param>
         public AutofacWebApiDependencyResolver(ILifetimeScope container)
         {
-            if (container == null) throw new ArgumentNullException(nameof(container));
-
-            _container = container;
+            _container = container ?? throw new ArgumentNullException(nameof(container));
             _rootDependencyScope = new AutofacWebApiDependencyScope(container);
         }
 

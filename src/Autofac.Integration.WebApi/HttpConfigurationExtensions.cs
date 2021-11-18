@@ -34,7 +34,10 @@ namespace Autofac.Integration.WebApi
         /// <param name="builder">The <see cref="ContainerBuilder"/> into which the message will be registered.</param>
         internal static void RegisterHttpRequestMessage(this HttpConfiguration config, ContainerBuilder builder)
         {
-            if (config.MessageHandlers.OfType<CurrentRequestHandler>().Any()) return;
+            if (config.MessageHandlers.OfType<CurrentRequestHandler>().Any())
+            {
+                return;
+            }
 
             builder.Register(c => HttpRequestMessageProvider.Current)
                 .InstancePerRequest()

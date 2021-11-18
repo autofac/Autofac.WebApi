@@ -87,7 +87,10 @@ namespace Autofac.Integration.WebApi
             InstancePerApiControllerType<TLimit, TActivatorData, TStyle>(
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration, Type controllerType)
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
 
             return InstancePerApiControllerType(registration, controllerType, false);
         }
@@ -106,7 +109,10 @@ namespace Autofac.Integration.WebApi
             InstancePerApiControllerType<TLimit, TActivatorData, TStyle>(
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration, Type controllerType, bool clearExistingServices)
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
 
             var services = registration.RegistrationData.Services.ToArray();
             registration.RegistrationData.ClearServices();
@@ -124,8 +130,15 @@ namespace Autofac.Integration.WebApi
         /// <param name="config">The HTTP server configuration.</param>
         public static void RegisterHttpRequestMessage(this ContainerBuilder builder, HttpConfiguration config)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
-            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
 
             config.RegisterHttpRequestMessage(builder);
         }
@@ -136,7 +149,10 @@ namespace Autofac.Integration.WebApi
         /// <param name="builder">The container builder.</param>
         public static void RegisterWebApiModelBinderProvider(this ContainerBuilder builder)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
 
             builder.RegisterType<AutofacWebApiModelBinderProvider>()
                 .As<ModelBinderProvider>()
@@ -156,8 +172,15 @@ namespace Autofac.Integration.WebApi
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
             RegisterWebApiModelBinders(this ContainerBuilder builder, params Assembly[] modelBinderAssemblies)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
-            if (modelBinderAssemblies == null) throw new ArgumentNullException(nameof(modelBinderAssemblies));
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (modelBinderAssemblies == null)
+            {
+                throw new ArgumentNullException(nameof(modelBinderAssemblies));
+            }
 
             return builder.RegisterAssemblyTypes(modelBinderAssemblies)
                 .Where(type => type.IsAssignableTo<IModelBinder>())
@@ -187,12 +210,21 @@ namespace Autofac.Integration.WebApi
             where TActivatorData : IConcreteActivatorData
             where TRegistrationStyle : SingleRegistrationStyle
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (types == null) throw new ArgumentNullException(nameof(types));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (types == null)
+            {
+                throw new ArgumentNullException(nameof(types));
+            }
 
             var typeList = types.Where(type => type != null).ToList();
             if (typeList.Count == 0)
+            {
                 throw new ArgumentException(RegistrationExtensionsResources.ListMustNotBeEmptyOrContainNulls, nameof(types));
+            }
 
             return registration.As<IModelBinder>().WithMetadata(AutofacWebApiModelBinderProvider.MetadataKey, typeList);
         }
@@ -257,7 +289,7 @@ namespace Autofac.Integration.WebApi
                 Expression<Func<TController, Task>> actionSelector)
                     where TController : IHttpController
         {
-          return AsActionFilterFor(registration, AutofacFilterCategory.ActionFilter, actionSelector);
+            return AsActionFilterFor(registration, AutofacFilterCategory.ActionFilter, actionSelector);
         }
 
         /// <summary>
@@ -1024,10 +1056,20 @@ namespace Autofac.Integration.WebApi
                 Func<ILifetimeScope, HttpActionDescriptor, bool> predicate,
                 FilterScope filterScope)
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
             if (filterScope != FilterScope.Action && filterScope != FilterScope.Controller)
+            {
                 throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
+            }
 
             registration.ValidateFilterType<TFilter>();
 
@@ -1054,10 +1096,20 @@ namespace Autofac.Integration.WebApi
                 Func<ILifetimeScope, HttpActionDescriptor, bool> predicate,
                 FilterScope filterScope)
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
             if (filterScope != FilterScope.Action && filterScope != FilterScope.Controller)
+            {
                 throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
+            }
 
             registration.ValidateActionFilterType(out var isLegacyFilterType);
 
@@ -1085,7 +1137,10 @@ namespace Autofac.Integration.WebApi
             AsFilterFor<TFilter, TController>(IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration, AutofacFilterCategory filterCategory)
                 where TController : IHttpController
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
 
             registration.ValidateFilterType<TFilter>();
 
@@ -1108,7 +1163,10 @@ namespace Autofac.Integration.WebApi
             AsActionFilterFor<TController>(IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration, AutofacFilterCategory filterCategory)
             where TController : IHttpController
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
 
             registration.ValidateActionFilterType(out var isLegacyFilterType);
 
@@ -1139,8 +1197,15 @@ namespace Autofac.Integration.WebApi
                 Expression<Action<TController>> actionSelector)
                 where TController : IHttpController
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (actionSelector == null) throw new ArgumentNullException(nameof(actionSelector));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (actionSelector == null)
+            {
+                throw new ArgumentNullException(nameof(actionSelector));
+            }
 
             var method = GetMethodInfo(actionSelector);
 
@@ -1154,8 +1219,15 @@ namespace Autofac.Integration.WebApi
                 Expression<Func<TController, Task>> actionSelector)
                 where TController : IHttpController
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (actionSelector == null) throw new ArgumentNullException(nameof(actionSelector));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (actionSelector == null)
+            {
+                throw new ArgumentNullException(nameof(actionSelector));
+            }
 
             var method = GetMethodInfo(actionSelector);
 
@@ -1169,8 +1241,15 @@ namespace Autofac.Integration.WebApi
                 MethodInfo action)
                 where TController : IHttpController
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (action == null) throw new ArgumentNullException(nameof(action));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
 
             registration.ValidateFilterType<TFilter>();
 
@@ -1197,8 +1276,15 @@ namespace Autofac.Integration.WebApi
                 Expression<Action<TController>> actionSelector)
             where TController : IHttpController
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (actionSelector == null) throw new ArgumentNullException(nameof(actionSelector));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (actionSelector == null)
+            {
+                throw new ArgumentNullException(nameof(actionSelector));
+            }
 
             var method = GetMethodInfo(actionSelector);
 
@@ -1212,8 +1298,15 @@ namespace Autofac.Integration.WebApi
                 Expression<Func<TController, Task>> actionSelector)
             where TController : IHttpController
         {
-            if (registration == null) throw new ArgumentNullException(nameof(registration));
-            if (actionSelector == null) throw new ArgumentNullException(nameof(actionSelector));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
+
+            if (actionSelector == null)
+            {
+                throw new ArgumentNullException(nameof(actionSelector));
+            }
 
             var method = GetMethodInfo(actionSelector);
 
@@ -1227,30 +1320,37 @@ namespace Autofac.Integration.WebApi
                     MethodInfo action)
                 where TController : IHttpController
         {
-          if (registration == null) throw new ArgumentNullException(nameof(registration));
-          if (action == null) throw new ArgumentNullException(nameof(action));
+            if (registration == null)
+            {
+                throw new ArgumentNullException(nameof(registration));
+            }
 
-          registration.ValidateActionFilterType(out var isLegacyFilterType);
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
 
-          // Get the filter metadata set.
-          registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
+            registration.ValidateActionFilterType(out var isLegacyFilterType);
 
-          var registrationMetadata = new FilterPredicateMetadata
-          {
-            Scope = FilterScope.Action,
-            FilterCategory = filterCategory,
-            Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType) &&
-                                               ActionMethodMatches(descriptor, action),
-          };
+            // Get the filter metadata set.
+            registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
 
-          filterMeta.PredicateSet.Add(registrationMetadata);
+            var registrationMetadata = new FilterPredicateMetadata
+            {
+                Scope = FilterScope.Action,
+                FilterCategory = filterCategory,
+                Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType) &&
+                                                   ActionMethodMatches(descriptor, action),
+            };
 
-          if (isLegacyFilterType)
-          {
-            return registration.As<IAutofacActionFilter>();
-          }
+            filterMeta.PredicateSet.Add(registrationMetadata);
 
-          return registration.As<IAutofacContinuationActionFilter>();
+            if (isLegacyFilterType)
+            {
+                return registration.As<IAutofacActionFilter>();
+            }
+
+            return registration.As<IAutofacContinuationActionFilter>();
         }
 
         private static void ValidateFilterType<TFilter>(this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration)
@@ -1308,7 +1408,10 @@ namespace Autofac.Integration.WebApi
 
         private static void AsOverrideFor<TFilter, TController>(ContainerBuilder builder, AutofacFilterCategory filterCategory, Expression<Action<TController>> actionSelector)
         {
-            if (actionSelector == null) throw new ArgumentNullException(nameof(actionSelector));
+            if (actionSelector == null)
+            {
+                throw new ArgumentNullException(nameof(actionSelector));
+            }
 
             var methodInfo = GetMethodInfo(actionSelector);
 
@@ -1339,7 +1442,7 @@ namespace Autofac.Integration.WebApi
         /// Retrieve or create filter metadata. We want to maintain the fluent flow when we change
         /// registration metadata so we'll do that here.
         /// </summary>
-        private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> GetOrCreateMetadata (
+        private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> GetOrCreateMetadata(
             this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
             out FilterMetadata filterMeta)
         {
