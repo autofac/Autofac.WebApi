@@ -105,7 +105,7 @@ namespace Autofac.Integration.WebApi.Test
         public async void StopsIfFilterOnExecutingSetsResponse()
         {
             // Issue #30.
-            // The filter behaviour if a response is set should be as follows, to
+            // The filter behavior if a response is set should be as follows, to
             // mirror the functionality of filters in the normal IActionFilter implementations.
             //
             // If a filter sets the response:

@@ -26,12 +26,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="filterMetadata">The collection of filter metadata blocks that this wrapper should run.</param>
         public ContinuationActionFilterWrapper(HashSet<FilterMetadata> filterMetadata)
         {
-            if (filterMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(filterMetadata));
-            }
-
-            _allFilters = filterMetadata;
+            _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
         }
 
         /// <inheritdoc/>
