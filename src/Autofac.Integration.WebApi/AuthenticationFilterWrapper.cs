@@ -47,9 +47,9 @@ namespace Autofac.Integration.WebApi
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
 
-            foreach (var filter in filters.Where(this.FilterMatchesMetadata))
+            foreach (var filter in filters.Where(FilterMatchesMetadata))
             {
-                await filter.Value.Value.AuthenticateAsync(context, cancellationToken);
+                await filter.Value.Value.AuthenticateAsync(context, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var filter in filters.Where(this.FilterMatchesMetadata))
             {
-                await filter.Value.Value.ChallengeAsync(context, cancellationToken);
+                await filter.Value.Value.ChallengeAsync(context, cancellationToken).ConfigureAwait(false);
             }
         }
 
