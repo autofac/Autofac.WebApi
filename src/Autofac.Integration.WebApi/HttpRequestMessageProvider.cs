@@ -45,13 +45,13 @@ namespace Autofac.Integration.WebApi
                 var holder = CurrentRequest.Value;
                 if (holder != null)
                 {
-                    // Clear current HttpContext trapped in the AsyncLocals, as its done.
+                    // Clear current HttpRequestMessage trapped in the AsyncLocals, as its done.
                     holder.Message = null;
                 }
 
                 if (value != null)
                 {
-                    // Use an object indirection to hold the HttpContext in the AsyncLocal,
+                    // Use an object indirection to hold the HttpRequestMessage in the AsyncLocal,
                     // so it can be cleared in all ExecutionContexts when its cleared.
                     CurrentRequest.Value = new HttpRequestMessageHolder { Message = value };
                 }
