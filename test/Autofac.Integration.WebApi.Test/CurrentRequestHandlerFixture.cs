@@ -12,7 +12,7 @@ namespace Autofac.Integration.WebApi.Test
         public void HandlerSetsHttpRequestMessageOnProvider()
         {
             // Arrange
-            var request = new HttpRequestMessage();
+            using var request = new HttpRequestMessage();
 
             // Act
             CurrentRequestHandler.UpdateScopeWithHttpRequestMessage(request);

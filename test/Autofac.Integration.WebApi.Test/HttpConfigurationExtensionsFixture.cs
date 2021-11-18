@@ -15,7 +15,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public void RegisterHttpRequestMessageAddsHandler()
         {
-            var config = new HttpConfiguration();
+            using var config = new HttpConfiguration();
 
             config.RegisterHttpRequestMessage(new ContainerBuilder());
 
@@ -25,7 +25,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public void RegisterHttpRequestMessageEnsuresHandlerAddedOnlyOnce()
         {
-            var config = new HttpConfiguration();
+            using var config = new HttpConfiguration();
             var builder = new ContainerBuilder();
 
             config.RegisterHttpRequestMessage(builder);
@@ -37,7 +37,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public void RegisterHttpRequestMessageAddsRegistration()
         {
-            var config = new HttpConfiguration();
+            using var config = new HttpConfiguration();
             var builder = new ContainerBuilder();
 
             config.RegisterHttpRequestMessage(builder);
@@ -49,7 +49,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public async Task RegisterHttpRequestMessageNotDisposeAfterScopeDipose()
         {
-            var config = new HttpConfiguration();
+            using var config = new HttpConfiguration();
             var builder = new ContainerBuilder();
 
             config.RegisterHttpRequestMessage(builder);
@@ -64,7 +64,6 @@ namespace Autofac.Integration.WebApi.Test
 
             HttpRequestMessageProvider.Current = httpRequestMessage;
             var result = HttpRequestMessageProvider.Current;
-
 
             using (var scope = container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
             {

@@ -31,7 +31,7 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
             builder.RegisterWebApiFilterProvider(configuration);
             var activationCount = 0;
             builder.Register<IAutofacActionFilter>(c => new TestActionFilter(c.Resolve<ILogger>()))
@@ -73,7 +73,7 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter2Meta);
 
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
 
             builder.RegisterWebApiFilterProvider(configuration);
 
@@ -135,7 +135,7 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerRequest()
                 .GetMetadata(out var testActionFilter3Metadata);
 
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
 
             builder.RegisterWebApiFilterProvider(configuration);
 
@@ -199,7 +199,7 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter2Meta);
 
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
 
             builder.RegisterWebApiFilterProvider(configuration);
 
@@ -250,7 +250,7 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerRequest()
                 .GetMetadata(out var testFilter2Meta);
 
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
 
             builder.RegisterWebApiFilterProvider(configuration);
 

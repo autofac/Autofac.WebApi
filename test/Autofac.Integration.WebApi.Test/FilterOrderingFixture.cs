@@ -103,7 +103,8 @@ namespace Autofac.Integration.WebApi.Test
             var actionContext = new HttpActionContext() { ControllerContext = controllerContext };
             var authenticationContext = new HttpAuthenticationContext(actionContext, null);
             var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-            var token = new CancellationTokenSource().Token;
+            using var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
 
             foreach (var fi in filterInfos.Select(f => f.Instance).OfType<IAuthenticationFilter>())
             {
@@ -179,7 +180,8 @@ namespace Autofac.Integration.WebApi.Test
         private static async Task ExecuteContinuationFilters(HttpActionContext actionContext, IEnumerable<IActionFilter> filters, CancellationToken cancellationToken)
         {
             // Terminate the pipeline last.
-            Func<Task<HttpResponseMessage>> result = () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            using var message = new HttpResponseMessage(HttpStatusCode.OK);
+            Func<Task<HttpResponseMessage>> result = () => Task.FromResult(message);
 
             Func<Task<HttpResponseMessage>> ChainContinuation(Func<Task<HttpResponseMessage>> next, IActionFilter innerFilter)
             {

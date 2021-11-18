@@ -19,7 +19,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterType<AuthorizeAttribute>().AsImplementedInterfaces();
             var container = builder.Build();
             var provider = new AutofacWebApiFilterProvider(container);
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var actionDescriptor = BuildActionDescriptorForGetMethod();
 
             var filterInfos = provider.GetFilters(configuration, actionDescriptor);
@@ -34,7 +34,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
             var container = builder.Build();
             var provider = new AutofacWebApiFilterProvider(container);
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var actionDescriptor = BuildActionDescriptorForGetMethod();
 
             var filterInfos = provider.GetFilters(configuration, actionDescriptor).ToArray();
@@ -49,7 +49,7 @@ namespace Autofac.Integration.WebApi.Test
             var builder = new ContainerBuilder();
             var container = builder.Build();
             var provider = new AutofacWebApiFilterProvider(container);
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var actionDescriptor = BuildActionDescriptorForGetMethod();
 
             var filterInfos = provider.GetFilters(configuration, actionDescriptor).ToArray();
@@ -80,7 +80,7 @@ namespace Autofac.Integration.WebApi.Test
                 .AsWebApiActionFilterFor<TestController>()
                 .InstancePerRequest();
 
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
             builder.RegisterWebApiFilterProvider(configuration);
             var container = builder.Build();
             var provider = new AutofacWebApiFilterProvider(container);

@@ -85,7 +85,8 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             builder.RegisterWebApiModelBinderProvider();
-            builder.RegisterInstance(new HttpConfiguration());
+            using var config = new HttpConfiguration();
+            builder.RegisterInstance(config);
             var container = builder.Build();
 
             var resolvedProvider1 = container.Resolve<ModelBinderProvider>();
@@ -119,7 +120,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterInstance(binder).AsModelBinderForTypes(typeof(TestModel1));
             var container = builder.Build();
             var resolver = new AutofacWebApiDependencyResolver(container);
-            var configuration = new HttpConfiguration { DependencyResolver = resolver };
+            using var configuration = new HttpConfiguration { DependencyResolver = resolver };
             var provider = new AutofacWebApiModelBinderProvider();
             Assert.Same(binder, provider.GetBinder(configuration, typeof(TestModel1)));
         }
@@ -132,7 +133,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterType<TestModelBinder>().AsModelBinderForTypes(typeof(TestModel1), typeof(TestModel2));
             var container = builder.Build();
             var resolver = new AutofacWebApiDependencyResolver(container);
-            var configuration = new HttpConfiguration { DependencyResolver = resolver };
+            using var configuration = new HttpConfiguration { DependencyResolver = resolver };
             var provider = new AutofacWebApiModelBinderProvider();
 
             Assert.IsType<TestModelBinder>(provider.GetBinder(configuration, typeof(TestModel1)));
@@ -181,7 +182,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public void RegisterHttpRequestMessageAddsHandler()
         {
-            var config = new HttpConfiguration();
+            using var config = new HttpConfiguration();
             var builder = new ContainerBuilder();
             builder.RegisterHttpRequestMessage(config);
 
@@ -201,7 +202,7 @@ namespace Autofac.Integration.WebApi.Test
         [Fact]
         public void RegisterHttpRequestMessageEnsuresHandlerAddedOnlyOnce()
         {
-            var config = new HttpConfiguration();
+            using var config = new HttpConfiguration();
             var builder = new ContainerBuilder();
 
             builder.RegisterHttpRequestMessage(config);
@@ -287,7 +288,7 @@ namespace Autofac.Integration.WebApi.Test
                 .AsWebApiAuthorizationFilterFor<TestController>()
                 .AsWebApiExceptionFilterFor<TestController>();
 
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
             builder.RegisterWebApiFilterProvider(configuration);
             var container = builder.Build();
 
@@ -304,7 +305,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterInstance(new TestCombinationFilter())
                 .AsWebApiActionFilterFor<TestController>();
 
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
 
             builder.RegisterWebApiFilterProvider(configuration);
 

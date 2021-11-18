@@ -31,7 +31,7 @@ namespace Autofac.Integration.WebApi.Test
         public void GetServiceReturnsNullForUnregisteredService()
         {
             var container = new ContainerBuilder().Build();
-            var resolver = new AutofacWebApiDependencyResolver(container);
+            using var resolver = new AutofacWebApiDependencyResolver(container);
 
             var service = resolver.GetService(typeof(object));
 
@@ -44,7 +44,7 @@ namespace Autofac.Integration.WebApi.Test
             var builder = new ContainerBuilder();
             builder.Register(c => new object());
             var container = builder.Build();
-            var resolver = new AutofacWebApiDependencyResolver(container);
+            using var resolver = new AutofacWebApiDependencyResolver(container);
 
             var service = resolver.GetService(typeof(object));
 
@@ -55,7 +55,7 @@ namespace Autofac.Integration.WebApi.Test
         public void GetServicesReturnsEmptyEnumerableForUnregisteredService()
         {
             var container = new ContainerBuilder().Build();
-            var resolver = new AutofacWebApiDependencyResolver(container);
+            using var resolver = new AutofacWebApiDependencyResolver(container);
 
             var services = resolver.GetServices(typeof(object));
 
@@ -68,7 +68,7 @@ namespace Autofac.Integration.WebApi.Test
             var builder = new ContainerBuilder();
             builder.Register(c => new object());
             var container = builder.Build();
-            var resolver = new AutofacWebApiDependencyResolver(container);
+            using var resolver = new AutofacWebApiDependencyResolver(container);
 
             var services = resolver.GetServices(typeof(object));
 
@@ -82,7 +82,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.Register(c => new object());
             builder.Register(c => new object());
             var container = builder.Build();
-            var resolver = new AutofacWebApiDependencyResolver(container);
+            using var resolver = new AutofacWebApiDependencyResolver(container);
 
             var services = resolver.GetServices(typeof(object));
 
@@ -95,7 +95,7 @@ namespace Autofac.Integration.WebApi.Test
             var builder = new ContainerBuilder();
             builder.Register(c => new object());
             var container = builder.Build();
-            var resolver = new AutofacWebApiDependencyResolver(container);
+            using var resolver = new AutofacWebApiDependencyResolver(container);
 
             Assert.NotSame(resolver.BeginScope(), resolver.BeginScope());
         }
@@ -106,7 +106,7 @@ namespace Autofac.Integration.WebApi.Test
             var builder = new ContainerBuilder();
             builder.Register(c => new object());
             var container = builder.Build();
-            var resolver = new AutofacWebApiDependencyResolver(container, containerBuilder => containerBuilder.Register(c => new object()));
+            using var resolver = new AutofacWebApiDependencyResolver(container, containerBuilder => containerBuilder.Register(c => new object()));
             var services = resolver.GetServices(typeof(object));
             var servicesInScope = resolver.BeginScope().GetServices(typeof(object));
 

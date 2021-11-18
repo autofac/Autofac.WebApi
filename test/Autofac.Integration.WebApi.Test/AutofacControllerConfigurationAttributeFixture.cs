@@ -20,7 +20,7 @@ namespace Autofac.Integration.WebApi.Test
         public void ExceptionThrownWhenAutofacDependencyResolverMissing()
         {
             var attribute = new AutofacControllerConfigurationAttribute();
-            var configuration = new HttpConfiguration();
+            using var configuration = new HttpConfiguration();
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
 
@@ -31,7 +31,8 @@ namespace Autofac.Integration.WebApi.Test
         public void HandlesMissingHttpConfiguration()
         {
             var attribute = new AutofacControllerConfigurationAttribute();
-            var settings = new HttpControllerSettings(new HttpConfiguration());
+            using var config = new HttpConfiguration();
+            var settings = new HttpControllerSettings(config);
             var descriptor = new HttpControllerDescriptor();
 
             // XUnit doesn't have Assert.DoesNotThrow
@@ -49,7 +50,7 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerApiControllerType(typeof(TestController))
                 .OnActivated(e => callCount++);
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -70,7 +71,7 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerApiControllerType(typeof(TestController));
             var container = builder.Build();
             var resolver = new AutofacWebApiDependencyResolver(container);
-            var configuration = new HttpConfiguration { DependencyResolver = resolver };
+            using var configuration = new HttpConfiguration { DependencyResolver = resolver };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -85,7 +86,7 @@ namespace Autofac.Integration.WebApi.Test
         {
             var builder = new ContainerBuilder();
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -102,7 +103,7 @@ namespace Autofac.Integration.WebApi.Test
             var service = new Mock<IHttpActionSelector>().Object;
             builder.RegisterInstance(service);
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -122,7 +123,7 @@ namespace Autofac.Integration.WebApi.Test
                 .InstancePerApiControllerType(typeof(TestController));
             var container = builder.Build();
             var resolver = new AutofacWebApiDependencyResolver(container);
-            var configuration = new HttpConfiguration { DependencyResolver = resolver };
+            using var configuration = new HttpConfiguration { DependencyResolver = resolver };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestControllerA", typeof(TestControllerA));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -141,7 +142,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterInstance(formatter1).InstancePerApiControllerType(typeof(TestController));
             builder.RegisterInstance(formatter2).InstancePerApiControllerType(typeof(TestController));
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -162,7 +163,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterInstance(formatter1).InstancePerApiControllerType(typeof(TestController), true);
             builder.RegisterInstance(formatter2).InstancePerApiControllerType(typeof(TestController), true);
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -183,7 +184,7 @@ namespace Autofac.Integration.WebApi.Test
             builder.RegisterInstance(provider1).InstancePerApiControllerType(typeof(TestController), true);
             builder.RegisterInstance(provider2).InstancePerApiControllerType(typeof(TestController), true);
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -264,7 +265,7 @@ namespace Autofac.Integration.WebApi.Test
             var service = new Mock<TLimit>().Object;
             builder.RegisterInstance(service).As<TLimit>().InstancePerApiControllerType(typeof(TestController));
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();
@@ -281,7 +282,7 @@ namespace Autofac.Integration.WebApi.Test
             var service = new Mock<TLimit>().Object;
             builder.RegisterInstance(service).As<TLimit>().InstancePerApiControllerType(typeof(TestController));
             var container = builder.Build();
-            var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
+            using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
             var settings = new HttpControllerSettings(configuration);
             var descriptor = new HttpControllerDescriptor(configuration, "TestController", typeof(TestController));
             var attribute = new AutofacControllerConfigurationAttribute();

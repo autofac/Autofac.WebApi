@@ -54,8 +54,8 @@ namespace Autofac.Integration.WebApi.Test
             Assert.IsType<TestModelBinder>(modelBinders.First());
 
             var provider = container.Resolve<ModelBinderProvider>();
-
-            Assert.Null(provider.GetBinder(new HttpConfiguration(), typeof(TestModel1)));
+            using var config = new HttpConfiguration();
+            Assert.Null(provider.GetBinder(config, typeof(TestModel1)));
         }
 
         private static IContainer BuildContainer()
