@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -11,7 +9,6 @@ using System.Web.Http.Filters;
 using System.Web.Http.ModelBinding;
 using Autofac.Builder;
 using Autofac.Integration.WebApi.Test.TestTypes;
-using Xunit;
 
 namespace Autofac.Integration.WebApi.Test
 {
