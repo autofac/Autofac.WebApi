@@ -7,44 +7,43 @@ using System.Web.Http.Filters;
 using System.Web.Http.Hosting;
 using Autofac.Integration.WebApi.Test.TestTypes;
 
-namespace Autofac.Integration.WebApi.Test
+namespace Autofac.Integration.WebApi.Test;
+
+public class ExceptionFilterWrapperFixture
 {
-    public class ExceptionFilterWrapperFixture
+    [Fact]
+    public void RequiresFilterMetadata()
     {
-        [Fact]
-        public void RequiresFilterMetadata()
-        {
-            var exception = Assert.Throws<ArgumentNullException>(() => new ExceptionFilterWrapper(null));
-            Assert.Equal("filterMetadata", exception.ParamName);
-        }
+        var exception = Assert.Throws<ArgumentNullException>(() => new ExceptionFilterWrapper(null));
+        Assert.Equal("filterMetadata", exception.ParamName);
+    }
 
-        [Fact]
-        public async void WrapperResolvesExceptionFilterFromDependencyScope()
-        {
-            var builder = new ContainerBuilder();
-            builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
-            var activationCount = 0;
-            builder.Register<IAutofacExceptionFilter>(c => new TestExceptionFilter(c.Resolve<ILogger>()))
-                .AsWebApiExceptionFilterFor<TestController>(c => c.Get())
-                .InstancePerRequest()
-                .OnActivated(e => activationCount++)
-                .GetMetadata(out var filterMetadata);
-            var container = builder.Build();
+    [Fact]
+    public async void WrapperResolvesExceptionFilterFromDependencyScope()
+    {
+        var builder = new ContainerBuilder();
+        builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
+        var activationCount = 0;
+        builder.Register<IAutofacExceptionFilter>(c => new TestExceptionFilter(c.Resolve<ILogger>()))
+            .AsWebApiExceptionFilterFor<TestController>(c => c.Get())
+            .InstancePerRequest()
+            .OnActivated(e => activationCount++)
+            .GetMetadata(out var filterMetadata);
+        var container = builder.Build();
 
-            var resolver = new AutofacWebApiDependencyResolver(container);
-            var configuration = new HttpConfiguration { DependencyResolver = resolver };
-            var requestMessage = new HttpRequestMessage();
-            requestMessage.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, configuration);
-            var contollerContext = new HttpControllerContext { Request = requestMessage };
-            var controllerDescriptor = new HttpControllerDescriptor { ControllerType = typeof(TestController) };
-            var methodInfo = typeof(TestController).GetMethod("Get");
-            var actionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
-            var actionContext = new HttpActionContext(contollerContext, actionDescriptor);
-            var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-            var wrapper = new ExceptionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
+        var resolver = new AutofacWebApiDependencyResolver(container);
+        var configuration = new HttpConfiguration { DependencyResolver = resolver };
+        var requestMessage = new HttpRequestMessage();
+        requestMessage.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, configuration);
+        var contollerContext = new HttpControllerContext { Request = requestMessage };
+        var controllerDescriptor = new HttpControllerDescriptor { ControllerType = typeof(TestController) };
+        var methodInfo = typeof(TestController).GetMethod("Get");
+        var actionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
+        var actionContext = new HttpActionContext(contollerContext, actionDescriptor);
+        var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
+        var wrapper = new ExceptionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-            await wrapper.OnExceptionAsync(actionExecutedContext, CancellationToken.None).ConfigureAwait(false);
-            Assert.Equal(1, activationCount);
-        }
+        await wrapper.OnExceptionAsync(actionExecutedContext, CancellationToken.None).ConfigureAwait(false);
+        Assert.Equal(1, activationCount);
     }
 }

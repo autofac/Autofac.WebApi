@@ -3,13 +3,12 @@
 
 using System.Web.Http.Controllers;
 
-namespace Autofac.Integration.WebApi.Test.TestTypes
+namespace Autofac.Integration.WebApi.Test.TestTypes;
+
+public class InterfaceController : IHttpController
 {
-    public class InterfaceController : IHttpController
+    public Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken)
     {
-        public Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken)
-        {
-            throw new System.NotImplementedException();
-        }
+        throw new System.NotImplementedException();
     }
 }

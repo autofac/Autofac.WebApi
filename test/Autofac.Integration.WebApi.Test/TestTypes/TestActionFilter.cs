@@ -4,27 +4,26 @@
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
-namespace Autofac.Integration.WebApi.Test.TestTypes
+namespace Autofac.Integration.WebApi.Test.TestTypes;
+
+public class TestActionFilter : IAutofacActionFilter
 {
-    public class TestActionFilter : IAutofacActionFilter
+    public ILogger Logger { get; private set; }
+
+    public TestActionFilter(ILogger logger)
     {
-        public ILogger Logger { get; private set; }
+        Logger = logger;
+    }
 
-        public TestActionFilter(ILogger logger)
-        {
-            Logger = logger;
-        }
+    public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
+    {
+        Logger.Log("TestActionFilter.OnActionExecutingAsync");
+        return Task.FromResult(0);
+    }
 
-        public Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
-        {
-            Logger.Log("TestActionFilter.OnActionExecutingAsync");
-            return Task.FromResult(0);
-        }
-
-        public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
-        {
-            Logger.Log("TestActionFilter.OnActionExecutedAsync");
-            return Task.FromResult(0);
-        }
+    public Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
+    {
+        Logger.Log("TestActionFilter.OnActionExecutedAsync");
+        return Task.FromResult(0);
     }
 }

@@ -4,83 +4,82 @@
 using System.Web.Http.Filters;
 using Autofac.Features.Metadata;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi;
+
+/// <summary>
+/// Resolves a filter for the specified metadata for each controller request.
+/// </summary>
+internal class AuthenticationFilterWrapper : IAuthenticationFilter, IAutofacAuthenticationFilter
 {
+    private readonly HashSet<FilterMetadata> _allFilters;
+
     /// <summary>
-    /// Resolves a filter for the specified metadata for each controller request.
+    /// Initializes a new instance of the <see cref="AuthenticationFilterWrapper"/> class.
     /// </summary>
-    internal class AuthenticationFilterWrapper : IAuthenticationFilter, IAutofacAuthenticationFilter
+    /// <param name="filterMetadata">The filter metadata.</param>
+    public AuthenticationFilterWrapper(HashSet<FilterMetadata> filterMetadata)
     {
-        private readonly HashSet<FilterMetadata> _allFilters;
+        _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AuthenticationFilterWrapper"/> class.
-        /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public AuthenticationFilterWrapper(HashSet<FilterMetadata> filterMetadata)
+    /// <inheritdoc/>
+    bool IFilter.AllowMultiple
+    {
+        get { return true; }
+    }
+
+    /// <inheritdoc/>
+    public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
+    {
+        if (context == null)
         {
-            _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <inheritdoc/>
-        bool IFilter.AllowMultiple
+        var dependencyScope = context.Request.GetDependencyScope();
+        var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+        if (lifetimeScope == null)
         {
-            get { return true; }
+            return;
         }
 
-        /// <inheritdoc/>
-        public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
+        var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
+
+        foreach (var filter in filters.Where(FilterMatchesMetadata))
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            await filter.Value.Value.AuthenticateAsync(context, cancellationToken).ConfigureAwait(false);
+        }
+    }
 
-            var dependencyScope = context.Request.GetDependencyScope();
-            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
-            if (lifetimeScope == null)
-            {
-                return;
-            }
-
-            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
-
-            foreach (var filter in filters.Where(FilterMatchesMetadata))
-            {
-                await filter.Value.Value.AuthenticateAsync(context, cancellationToken).ConfigureAwait(false);
-            }
+    /// <inheritdoc/>
+    public async Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <inheritdoc/>
-        public async Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
+        var dependencyScope = context.Request.GetDependencyScope();
+        var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+        if (lifetimeScope == null)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var dependencyScope = context.Request.GetDependencyScope();
-            var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
-            if (lifetimeScope == null)
-            {
-                return;
-            }
-
-            var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
-
-            foreach (var filter in filters.Where(FilterMatchesMetadata))
-            {
-                await filter.Value.Value.ChallengeAsync(context, cancellationToken).ConfigureAwait(false);
-            }
+            return;
         }
 
-        private bool FilterMatchesMetadata(Meta<Lazy<IAutofacAuthenticationFilter>> filter)
-        {
-            var metadata = filter.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var metadataAsObject)
-                ? metadataAsObject as FilterMetadata
-                : null;
+        var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
 
-            return metadata != null && _allFilters.Contains(metadata);
+        foreach (var filter in filters.Where(FilterMatchesMetadata))
+        {
+            await filter.Value.Value.ChallengeAsync(context, cancellationToken).ConfigureAwait(false);
         }
+    }
+
+    private bool FilterMatchesMetadata(Meta<Lazy<IAutofacAuthenticationFilter>> filter)
+    {
+        var metadata = filter.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var metadataAsObject)
+            ? metadataAsObject as FilterMetadata
+            : null;
+
+        return metadata != null && _allFilters.Contains(metadata);
     }
 }

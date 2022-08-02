@@ -3,40 +3,39 @@
 
 using System.Web.Http.Filters;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi;
+
+/// <summary>
+/// Allows other filters to be overridden at the control and action level.
+/// </summary>
+internal class AutofacOverrideFilter : IOverrideFilter
 {
     /// <summary>
-    /// Allows other filters to be overridden at the control and action level.
+    /// Initializes a new instance of the <see cref="AutofacOverrideFilter"/> class.
     /// </summary>
-    internal class AutofacOverrideFilter : IOverrideFilter
+    /// <param name="filtersToOverride">
+    /// The <see cref="Type"/> of filters to override.
+    /// </param>
+    public AutofacOverrideFilter(Type filtersToOverride)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AutofacOverrideFilter"/> class.
-        /// </summary>
-        /// <param name="filtersToOverride">
-        /// The <see cref="Type"/> of filters to override.
-        /// </param>
-        public AutofacOverrideFilter(Type filtersToOverride)
-        {
-            FiltersToOverride = filtersToOverride;
-        }
+        FiltersToOverride = filtersToOverride;
+    }
 
-        /// <inheritdoc/>
-        public bool AllowMultiple
-        {
-            get { return false; }
-        }
+    /// <inheritdoc/>
+    public bool AllowMultiple
+    {
+        get { return false; }
+    }
 
-        /// <summary>
-        /// Gets the filter type to override.
-        /// </summary>
-        /// <value>
-        /// A <see cref="Type"/> indicating the filter type to override.
-        /// </value>
-        public Type FiltersToOverride
-        {
-            get;
-            private set;
-        }
+    /// <summary>
+    /// Gets the filter type to override.
+    /// </summary>
+    /// <value>
+    /// A <see cref="Type"/> indicating the filter type to override.
+    /// </value>
+    public Type FiltersToOverride
+    {
+        get;
+        private set;
     }
 }

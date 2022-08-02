@@ -3,20 +3,19 @@
 
 using System.Web.Http.Controllers;
 
-namespace Autofac.Integration.WebApi.Test.TestTypes
+namespace Autofac.Integration.WebApi.Test.TestTypes;
+
+public class TestAuthorizationFilter2 : IAutofacAuthorizationFilter
 {
-    public class TestAuthorizationFilter2 : IAutofacAuthorizationFilter
+    public ILogger Logger { get; private set; }
+
+    public TestAuthorizationFilter2(ILogger logger)
     {
-        public ILogger Logger { get; private set; }
+        Logger = logger;
+    }
 
-        public TestAuthorizationFilter2(ILogger logger)
-        {
-            Logger = logger;
-        }
-
-        public Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(0);
-        }
+    public Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(0);
     }
 }

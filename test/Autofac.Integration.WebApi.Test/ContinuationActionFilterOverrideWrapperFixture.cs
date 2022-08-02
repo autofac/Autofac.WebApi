@@ -3,15 +3,14 @@
 
 using System.Web.Http.Filters;
 
-namespace Autofac.Integration.WebApi.Test
+namespace Autofac.Integration.WebApi.Test;
+
+public class ContinuationActionFilterOverrideWrapperFixture
 {
-    public class ContinuationActionFilterOverrideWrapperFixture
+    [Fact]
+    public void FiltersToOverrideReturnsCorrectType()
     {
-        [Fact]
-        public void FiltersToOverrideReturnsCorrectType()
-        {
-            var wrapper = new ContinuationActionFilterOverrideWrapper(new HashSet<FilterMetadata>());
-            Assert.Equal(typeof(IActionFilter), wrapper.FiltersToOverride);
-        }
+        var wrapper = new ContinuationActionFilterOverrideWrapper(new HashSet<FilterMetadata>());
+        Assert.Equal(typeof(IActionFilter), wrapper.FiltersToOverride);
     }
 }

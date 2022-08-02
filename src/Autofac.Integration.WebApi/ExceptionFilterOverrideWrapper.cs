@@ -3,29 +3,28 @@
 
 using System.Web.Http.Filters;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi;
+
+/// <summary>
+/// Resolves a filter override for the specified metadata for each controller request.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
+internal sealed class ExceptionFilterOverrideWrapper : ExceptionFilterWrapper, IOverrideFilter
 {
     /// <summary>
-    /// Resolves a filter override for the specified metadata for each controller request.
+    /// Initializes a new instance of the <see cref="ExceptionFilterOverrideWrapper"/> class.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    internal sealed class ExceptionFilterOverrideWrapper : ExceptionFilterWrapper, IOverrideFilter
+    /// <param name="filterMetadata">The filter metadata.</param>
+    public ExceptionFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
+        : base(filterMetadata)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExceptionFilterOverrideWrapper"/> class.
-        /// </summary>
-        /// <param name="filterMetadata">The filter metadata.</param>
-        public ExceptionFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
-            : base(filterMetadata)
-        {
-        }
+    }
 
-        /// <summary>
-        /// Gets the filters to override.
-        /// </summary>
-        public Type FiltersToOverride
-        {
-            get { return typeof(IExceptionFilter); }
-        }
+    /// <summary>
+    /// Gets the filters to override.
+    /// </summary>
+    public Type FiltersToOverride
+    {
+        get { return typeof(IExceptionFilter); }
     }
 }

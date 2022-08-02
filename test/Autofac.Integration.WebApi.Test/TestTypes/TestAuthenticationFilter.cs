@@ -3,27 +3,26 @@
 
 using System.Web.Http.Filters;
 
-namespace Autofac.Integration.WebApi.Test.TestTypes
+namespace Autofac.Integration.WebApi.Test.TestTypes;
+
+public class TestAuthenticationFilter : IAutofacAuthenticationFilter
 {
-    public class TestAuthenticationFilter : IAutofacAuthenticationFilter
+    public ILogger Logger { get; private set; }
+
+    public TestAuthenticationFilter(ILogger logger)
     {
-        public ILogger Logger { get; private set; }
+        Logger = logger;
+    }
 
-        public TestAuthenticationFilter(ILogger logger)
-        {
-            Logger = logger;
-        }
+    public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
+    {
+        Logger.Log(nameof(AuthenticateAsync));
+        return Task.FromResult(0);
+    }
 
-        public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
-        {
-            Logger.Log(nameof(AuthenticateAsync));
-            return Task.FromResult(0);
-        }
-
-        public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
-        {
-            Logger.Log(nameof(ChallengeAsync));
-            return Task.FromResult(0);
-        }
+    public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
+    {
+        Logger.Log(nameof(ChallengeAsync));
+        return Task.FromResult(0);
     }
 }

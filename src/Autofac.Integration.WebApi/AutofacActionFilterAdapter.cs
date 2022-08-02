@@ -6,113 +6,112 @@ using System.Runtime.ExceptionServices;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi;
+
+/// <summary>
+/// This is an adapter responsible for wrapping the old style <see cref="IAutofacActionFilter"/>
+/// and converting it to a <see cref="IAutofacContinuationActionFilter"/>.
+/// </summary>
+/// <remarks>
+/// The adapter from old -> new is registered in <see cref="RegistrationExtensions.RegisterWebApiFilterProvider"/>.
+/// </remarks>
+internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
 {
+    private readonly IAutofacActionFilter _legacyFilter;
+
     /// <summary>
-    /// This is an adapter responsible for wrapping the old style <see cref="IAutofacActionFilter"/>
-    /// and converting it to a <see cref="IAutofacContinuationActionFilter"/>.
+    /// Initializes a new instance of the <see cref="AutofacActionFilterAdapter"/> class.
     /// </summary>
-    /// <remarks>
-    /// The adapter from old -> new is registered in <see cref="RegistrationExtensions.RegisterWebApiFilterProvider"/>.
-    /// </remarks>
-    internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
+    /// <param name="legacyFilter">
+    /// Original style <see cref="IAutofacActionFilter"/> to wrap as a continuation filter.
+    /// </param>
+    public AutofacActionFilterAdapter(IAutofacActionFilter legacyFilter)
     {
-        private readonly IAutofacActionFilter _legacyFilter;
+        _legacyFilter = legacyFilter;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AutofacActionFilterAdapter"/> class.
-        /// </summary>
-        /// <param name="legacyFilter">
-        /// Original style <see cref="IAutofacActionFilter"/> to wrap as a continuation filter.
-        /// </param>
-        public AutofacActionFilterAdapter(IAutofacActionFilter legacyFilter)
+    /// <inheritdoc/>
+    public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+    {
+        await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken).ConfigureAwait(false);
+
+        if (actionContext.Response != null)
         {
-            _legacyFilter = legacyFilter;
+            return actionContext.Response;
         }
 
-        /// <inheritdoc/>
-        public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+        return await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// The content of this method is taken from the ActionFilterAttribute code in the ASP.NET source, since
+    /// that is basically the reference implementation for invoking an async filter's OnActionExecuted correctly.
+    /// </summary>
+    [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in original implementation.")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Need to capture any exception that occurs.")]
+    private async Task<HttpResponseMessage> CallOnActionExecutedAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        HttpResponseMessage? response = null;
+        ExceptionDispatchInfo? exceptionInfo = null;
+
+        try
         {
-            await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken).ConfigureAwait(false);
-
-            if (actionContext.Response != null)
-            {
-                return actionContext.Response;
-            }
-
-            return await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
+            response = await continuation().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            exceptionInfo = ExceptionDispatchInfo.Capture(e);
         }
 
-        /// <summary>
-        /// The content of this method is taken from the ActionFilterAttribute code in the ASP.NET source, since
-        /// that is basically the reference implementation for invoking an async filter's OnActionExecuted correctly.
-        /// </summary>
-        [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in original implementation.")]
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Need to capture any exception that occurs.")]
-        private async Task<HttpResponseMessage> CallOnActionExecutedAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+        Exception? exception;
+
+        if (exceptionInfo == null)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            exception = null;
+        }
+        else
+        {
+            exception = exceptionInfo.SourceException;
+        }
 
-            HttpResponseMessage? response = null;
-            ExceptionDispatchInfo? exceptionInfo = null;
+        HttpActionExecutedContext executedContext = new(actionContext, exception)
+        {
+            Response = response,
+        };
 
-            try
+        try
+        {
+            await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Catch is running because OnActionExecuted threw an exception, so we just want to re-throw.
+            // We also need to reset the response to forget about it since a filter threw an exception.
+            actionContext.Response = null;
+            throw;
+        }
+
+        if (executedContext.Response != null)
+        {
+            return executedContext.Response;
+        }
+
+        Exception newException = executedContext.Exception;
+
+        if (newException != null)
+        {
+            if (newException == exception && exceptionInfo != null)
             {
-                response = await continuation().ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                exceptionInfo = ExceptionDispatchInfo.Capture(e);
-            }
-
-            Exception? exception;
-
-            if (exceptionInfo == null)
-            {
-                exception = null;
+                exceptionInfo.Throw();
             }
             else
             {
-                exception = exceptionInfo.SourceException;
+                throw newException;
             }
-
-            HttpActionExecutedContext executedContext = new(actionContext, exception)
-            {
-                Response = response,
-            };
-
-            try
-            {
-                await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken).ConfigureAwait(false);
-            }
-            catch
-            {
-                // Catch is running because OnActionExecuted threw an exception, so we just want to re-throw.
-                // We also need to reset the response to forget about it since a filter threw an exception.
-                actionContext.Response = null;
-                throw;
-            }
-
-            if (executedContext.Response != null)
-            {
-                return executedContext.Response;
-            }
-
-            Exception newException = executedContext.Exception;
-
-            if (newException != null)
-            {
-                if (newException == exception && exceptionInfo != null)
-                {
-                    exceptionInfo.Throw();
-                }
-                else
-                {
-                    throw newException;
-                }
-            }
-
-            throw new InvalidOperationException();
         }
+
+        throw new InvalidOperationException();
     }
 }

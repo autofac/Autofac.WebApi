@@ -4,20 +4,19 @@
 using System.Web.Http.Controllers;
 using System.Web.Http.ModelBinding;
 
-namespace Autofac.Integration.WebApi.Test.TestTypes
+namespace Autofac.Integration.WebApi.Test.TestTypes;
+
+public class TestModelBinder : IModelBinder
 {
-    public class TestModelBinder : IModelBinder
+    public Dependency Dependency { get; private set; }
+
+    public TestModelBinder(Dependency dependency)
     {
-        public Dependency Dependency { get; private set; }
+        Dependency = dependency;
+    }
 
-        public TestModelBinder(Dependency dependency)
-        {
-            Dependency = dependency;
-        }
-
-        public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
-        {
-            return true;
-        }
+    public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
+    {
+        return true;
     }
 }

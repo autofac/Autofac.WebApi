@@ -1,22 +1,21 @@
 ﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-namespace Autofac.Integration.WebApi.Test
+namespace Autofac.Integration.WebApi.Test;
+
+public class CurrentRequestHandlerFixture
 {
-    public class CurrentRequestHandlerFixture
+    [Fact]
+    public void HandlerSetsHttpRequestMessageOnProvider()
     {
-        [Fact]
-        public void HandlerSetsHttpRequestMessageOnProvider()
-        {
-            // Arrange
-            using var request = new HttpRequestMessage();
+        // Arrange
+        using var request = new HttpRequestMessage();
 
-            // Act
-            CurrentRequestHandler.UpdateScopeWithHttpRequestMessage(request);
-            var result = HttpRequestMessageProvider.Current;
+        // Act
+        CurrentRequestHandler.UpdateScopeWithHttpRequestMessage(request);
+        var result = HttpRequestMessageProvider.Current;
 
-            // Assert
-            Assert.Equal(request, result);
-        }
+        // Assert
+        Assert.Equal(request, result);
     }
 }
