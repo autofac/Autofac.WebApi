@@ -3,9 +3,8 @@
 
 using System.Web.Http;
 
-namespace Autofac.Integration.WebApi.Test.TestTypes
+namespace Autofac.Integration.WebApi.Test.TestTypes;
+
+public class IsAControllerNot : ApiController
 {
-    public class IsAControllerNot : ApiController
-    {
-    }
 }

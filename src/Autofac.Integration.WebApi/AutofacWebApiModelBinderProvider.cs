@@ -1,57 +1,53 @@
 // Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Autofac.Features.Metadata;
 
-namespace Autofac.Integration.WebApi
+namespace Autofac.Integration.WebApi;
+
+/// <summary>
+/// Autofac implementation of the <see cref="ModelBinderProvider"/> class.
+/// </summary>
+public class AutofacWebApiModelBinderProvider : ModelBinderProvider
 {
     /// <summary>
-    /// Autofac implementation of the <see cref="ModelBinderProvider"/> class.
+    /// Metadata key for the supported model types.
     /// </summary>
-    public class AutofacWebApiModelBinderProvider : ModelBinderProvider
+    internal const string MetadataKey = "SupportedModelTypes";
+
+    /// <summary>
+    /// Find a binder for the given type.
+    /// </summary>
+    /// <param name="configuration">A configuration object.</param>
+    /// <param name="modelType">The type of the model to bind against.</param>
+    /// <returns>A binder, which can attempt to bind this type. Or null if the binder knows statically that it will never be able to bind the type.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="configuration" /> is <see langword="null" />.
+    /// </exception>
+    public override IModelBinder? GetBinder(HttpConfiguration configuration, Type modelType)
     {
-        /// <summary>
-        /// Metadata key for the supported model types.
-        /// </summary>
-        internal const string MetadataKey = "SupportedModelTypes";
-
-        /// <summary>
-        /// Find a binder for the given type.
-        /// </summary>
-        /// <param name="configuration">A configuration object.</param>
-        /// <param name="modelType">The type of the model to bind against.</param>
-        /// <returns>A binder, which can attempt to bind this type. Or null if the binder knows statically that it will never be able to bind the type.</returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if <paramref name="configuration" /> is <see langword="null" />.
-        /// </exception>
-        public override IModelBinder GetBinder(HttpConfiguration configuration, Type modelType)
+        if (configuration == null)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            throw new ArgumentNullException(nameof(configuration));
+        }
 
-            var modelBinders = configuration.DependencyResolver
-                .GetServices(typeof(Meta<Lazy<IModelBinder>>))
-                .Cast<Meta<Lazy<IModelBinder>>>();
+        var modelBinders = configuration.DependencyResolver
+            .GetServices(typeof(Meta<Lazy<IModelBinder>>))
+            .Cast<Meta<Lazy<IModelBinder>>>();
 
-            foreach (var binder in modelBinders)
+        foreach (var binder in modelBinders)
+        {
+            if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject) && metadataAsObject != null)
             {
-                if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject))
+                if (((List<Type>)metadataAsObject).Contains(modelType))
                 {
-                    if (((List<Type>)metadataAsObject).Contains(modelType))
-                    {
-                        return binder.Value.Value;
-                    }
+                    return binder.Value.Value;
                 }
             }
-
-            return null;
         }
+
+        return null;
     }
 }

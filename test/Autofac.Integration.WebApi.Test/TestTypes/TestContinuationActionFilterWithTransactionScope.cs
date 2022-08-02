@@ -1,45 +1,40 @@
 ﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Web.Http.Controllers;
 
-namespace Autofac.Integration.WebApi.Test.TestTypes
+namespace Autofac.Integration.WebApi.Test.TestTypes;
+
+public class TestContinuationActionFilterWithTransactionScope : IAutofacContinuationActionFilter
 {
-    public class TestContinuationActionFilterWithTransactionScope : IAutofacContinuationActionFilter
+    private readonly Action _before;
+    private readonly Action _after;
+
+    public TestContinuationActionFilterWithTransactionScope(Action before, Action after)
     {
-        private readonly Action _before;
-        private readonly Action _after;
+        _before = before;
+        _after = after;
+    }
 
-        public TestContinuationActionFilterWithTransactionScope(Action before, Action after)
+    public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> next)
+    {
+        if (next == null)
         {
-            _before = before;
-            _after = after;
+            throw new ArgumentNullException(nameof(next));
         }
 
-        public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> next)
+        _before();
+
+        HttpResponseMessage result;
+
+        using (new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
-            if (next == null)
-            {
-                throw new ArgumentNullException(nameof(next));
-            }
-
-            _before();
-
-            HttpResponseMessage result;
-
-            using (new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                result = await next().ConfigureAwait(false);
-            }
-
-            _after();
-
-            return result;
+            result = await next().ConfigureAwait(false);
         }
+
+        _after();
+
+        return result;
     }
 }
