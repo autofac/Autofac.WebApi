@@ -27,11 +27,6 @@ internal class FilterMetadata
     /// <inheritdoc/>
     public override bool Equals(object obj)
     {
-        if (obj is FilterMetadata metadata)
-        {
-            return metadata.Id == Id;
-        }
-
-        return false;
+        return obj is FilterMetadata metadata && metadata.Id == Id;
     }
 }

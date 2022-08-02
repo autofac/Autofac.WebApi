@@ -63,7 +63,7 @@ public class AutofacWebApiFilterProvider : IFilterProvider
     /// <param name="configuration">The configuration.</param>
     /// <param name="actionDescriptor">The action descriptor.</param>
     /// <returns>A collection of filters with instances property injected.</returns>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="configuration" /> is <see langword="null" />.
     /// </exception>
     public IEnumerable<FilterInfo> GetFilters(HttpConfiguration configuration, HttpActionDescriptor actionDescriptor)

@@ -15,7 +15,7 @@ public static class HttpConfigurationExtensions
     /// Makes the current <see cref="HttpRequestMessage"/> resolvable through the dependency scope.
     /// </summary>
     /// <param name="config">The HTTP server configuration.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="config" /> is <see langword="null" />.
     /// </exception>
     [Obsolete("The HttpRequestMessage must be registered using the RegisterHttpRequestMessage extension method on ContainerBuilder.", true)]

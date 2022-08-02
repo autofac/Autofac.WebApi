@@ -40,7 +40,7 @@ internal class AuthorizationFilterWrapper : AuthorizationFilterAttribute, IAutof
     /// </summary>
     /// <param name="actionContext">The context for the action.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="actionContext" /> is <see langword="null" />.
     /// </exception>
     public override async Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)

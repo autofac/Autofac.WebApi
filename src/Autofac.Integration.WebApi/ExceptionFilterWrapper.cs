@@ -39,7 +39,7 @@ internal class ExceptionFilterWrapper : ExceptionFilterAttribute, IAutofacExcept
     /// </summary>
     /// <param name="actionExecutedContext">The context for the action.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="actionExecutedContext" /> is <see langword="null" />.
     /// </exception>
     public override async Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)

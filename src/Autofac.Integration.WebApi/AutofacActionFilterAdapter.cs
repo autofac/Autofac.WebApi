@@ -35,12 +35,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
     {
         await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken).ConfigureAwait(false);
 
-        if (actionContext.Response != null)
-        {
-            return actionContext.Response;
-        }
-
-        return await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
+        return actionContext.Response ?? await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -65,17 +60,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
             exceptionInfo = ExceptionDispatchInfo.Capture(e);
         }
 
-        Exception? exception;
-
-        if (exceptionInfo == null)
-        {
-            exception = null;
-        }
-        else
-        {
-            exception = exceptionInfo.SourceException;
-        }
-
+        Exception? exception = exceptionInfo?.SourceException;
         HttpActionExecutedContext executedContext = new(actionContext, exception)
         {
             Response = response,

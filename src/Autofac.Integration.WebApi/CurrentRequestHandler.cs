@@ -15,7 +15,7 @@ internal class CurrentRequestHandler : DelegatingHandler
     /// <param name="request">The HTTP request message to send to the server.</param>
     /// <param name="cancellationToken">A cancellation token to cancel operation.</param>
     /// <returns>
-    /// Returns <see cref="System.Threading.Tasks.Task{T}" />. The task object representing the asynchronous operation.
+    /// Returns <see cref="Task{T}" />. The task object representing the asynchronous operation.
     /// </returns>
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

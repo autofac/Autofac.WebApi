@@ -32,10 +32,10 @@ public sealed class AutofacControllerConfigurationAttribute : Attribute, IContro
     /// </summary>
     /// <param name="controllerSettings">The controller settings to initialize.</param>
     /// <param name="controllerDescriptor">The controller descriptor. Note that the
-    /// <see cref="System.Web.Http.Controllers.HttpControllerDescriptor"/> can be
-    /// associated with the derived controller type given that <see cref="System.Web.Http.Controllers.IControllerConfiguration"/>
+    /// <see cref="HttpControllerDescriptor"/> can be
+    /// associated with the derived controller type given that <see cref="IControllerConfiguration"/>
     /// is inherited.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="controllerSettings" /> or <paramref name="controllerDescriptor" /> is <see langword="null" />.
     /// </exception>
     public void Initialize(HttpControllerSettings controllerSettings, HttpControllerDescriptor controllerDescriptor)
@@ -67,8 +67,8 @@ public sealed class AutofacControllerConfigurationAttribute : Attribute, IContro
                 string.Format(
                     CultureInfo.CurrentCulture,
                     AutofacControllerConfigurationAttributeResources.DependencyResolverMissing,
-                    typeof(AutofacWebApiDependencyResolver).Name,
-                    typeof(AutofacControllerConfigurationAttribute).Name));
+                    nameof(AutofacWebApiDependencyResolver),
+                    nameof(AutofacControllerConfigurationAttribute)));
         }
 
         var controllerServices = controllerSettings.Services;

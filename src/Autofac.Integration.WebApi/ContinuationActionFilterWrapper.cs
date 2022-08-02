@@ -43,10 +43,8 @@ internal class ContinuationActionFilterWrapper : IActionFilter, IAutofacContinua
 
         Func<Task<HttpResponseMessage>> result = continuation;
 
-        Func<Task<HttpResponseMessage>> ChainContinuation(Func<Task<HttpResponseMessage>> next, IAutofacContinuationActionFilter innerFilter)
-        {
-            return () => innerFilter.ExecuteActionFilterAsync(actionContext, cancellationToken, next);
-        }
+        Func<Task<HttpResponseMessage>> ChainContinuation(Func<Task<HttpResponseMessage>> next, IAutofacContinuationActionFilter innerFilter) =>
+            () => innerFilter.ExecuteActionFilterAsync(actionContext, cancellationToken, next);
 
         // We go backwards for the beginning of the set of filters, where
         // the last one invokes the provided continuation, the previous one invokes the last one, and so on,

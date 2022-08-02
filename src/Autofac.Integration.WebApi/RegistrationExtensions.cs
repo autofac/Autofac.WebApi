@@ -58,7 +58,7 @@ public static class RegistrationExtensions
     /// <param name="registration">The registration to configure.</param>
     /// <param name="lifetimeScopeTags">Additional tags applied for matching lifetime scopes.</param>
     /// <returns>A registration builder allowing further configuration of the component.</returns>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="registration" /> is <see langword="null" />.
     /// </exception>
     [Obsolete("Instead of using the Web-API-specific InstancePerApiRequest, please switch to the InstancePerRequest shared registration extension from Autofac core.")]
@@ -83,12 +83,9 @@ public static class RegistrationExtensions
             this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration, Type controllerType)
         where TLimit : notnull
     {
-        if (registration == null)
-        {
-            throw new ArgumentNullException(nameof(registration));
-        }
-
-        return InstancePerApiControllerType(registration, controllerType, false);
+        return registration == null
+            ? throw new ArgumentNullException(nameof(registration))
+            : InstancePerApiControllerType(registration, controllerType, false);
     }
 
     /// <summary>
@@ -162,7 +159,7 @@ public static class RegistrationExtensions
     /// <param name="builder">The container builder.</param>
     /// <param name="modelBinderAssemblies">Assemblies to scan for model binders.</param>
     /// <returns>A registration builder allowing further configuration of the component.</returns>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="builder" /> or <paramref name="modelBinderAssemblies" /> is <see langword="null" />.
     /// </exception>
     [Obsolete("Use the AsModelBinderForTypes() registration extension to register model binders and be sure to RegisterWebApiModelBinderProvider() in your container if you do. This method doesn't connect the model binders to the Autofac binder provider. It will be removed in a future version.")]
@@ -180,10 +177,10 @@ public static class RegistrationExtensions
         }
 
         return builder.RegisterAssemblyTypes(modelBinderAssemblies)
-            .Where(type => type.IsAssignableTo<IModelBinder>())
-            .As<IModelBinder>()
-            .AsSelf()
-            .SingleInstance();
+                        .Where(type => type.IsAssignableTo<IModelBinder>())
+                        .As<IModelBinder>()
+                        .AsSelf()
+                        .SingleInstance();
     }
 
     /// <summary>
@@ -195,10 +192,10 @@ public static class RegistrationExtensions
     /// <typeparam name="TActivatorData">Activator data type.</typeparam>
     /// <typeparam name="TRegistrationStyle">Registration style.</typeparam>
     /// <returns>An Autofac registration that can be modified as needed.</returns>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="registration" /> or <paramref name="types" /> is <see langword="null" />.
     /// </exception>
-    /// <exception cref="System.ArgumentException">
+    /// <exception cref="ArgumentException">
     /// Thrown if <paramref name="types" /> is empty or contains all <see langword="null" /> values.
     /// </exception>
     public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle>
@@ -218,12 +215,9 @@ public static class RegistrationExtensions
         }
 
         var typeList = types.Where(type => type != null).ToList();
-        if (typeList.Count == 0)
-        {
-            throw new ArgumentException(RegistrationExtensionsResources.ListMustNotBeEmptyOrContainNulls, nameof(types));
-        }
-
-        return registration.As<IModelBinder>().WithMetadata(AutofacWebApiModelBinderProvider.MetadataKey, typeList);
+        return typeList.Count == 0
+            ? throw new ArgumentException(RegistrationExtensionsResources.ListMustNotBeEmptyOrContainNulls, nameof(types))
+            : registration.As<IModelBinder>().WithMetadata(AutofacWebApiModelBinderProvider.MetadataKey, typeList);
     }
 
     /// <summary>
@@ -231,7 +225,7 @@ public static class RegistrationExtensions
     /// </summary>
     /// <param name="configuration">Configuration of HttpServer instances.</param>
     /// <param name="builder">The container builder.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="builder" /> or <paramref name="configuration" /> is <see langword="null" />.
     /// </exception>
     public static void RegisterWebApiFilterProvider(this ContainerBuilder builder, HttpConfiguration configuration)
@@ -1065,7 +1059,7 @@ public static class RegistrationExtensions
             throw new ArgumentNullException(nameof(predicate));
         }
 
-        if (filterScope != FilterScope.Action && filterScope != FilterScope.Controller)
+        if (filterScope is not FilterScope.Action and not FilterScope.Controller)
         {
             throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
         }
@@ -1105,7 +1099,7 @@ public static class RegistrationExtensions
             throw new ArgumentNullException(nameof(predicate));
         }
 
-        if (filterScope != FilterScope.Action && filterScope != FilterScope.Controller)
+        if (filterScope is not FilterScope.Action and not FilterScope.Controller)
         {
             throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
         }
@@ -1124,12 +1118,7 @@ public static class RegistrationExtensions
 
         filterMeta.PredicateSet.Add(registrationMetadata);
 
-        if (isLegacyFilterType)
-        {
-            return registration.As<IAutofacActionFilter>();
-        }
-
-        return registration.As<IAutofacContinuationActionFilter>();
+        return isLegacyFilterType ? registration.As<IAutofacActionFilter>() : registration.As<IAutofacContinuationActionFilter>();
     }
 
     private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
@@ -1182,12 +1171,7 @@ public static class RegistrationExtensions
 
         filterMeta.PredicateSet.Add(registrationMetadata);
 
-        if (isLegacyFilterType)
-        {
-            return registration.As<IAutofacActionFilter>();
-        }
-
-        return registration.As<IAutofacContinuationActionFilter>();
+        return isLegacyFilterType ? registration.As<IAutofacActionFilter>() : registration.As<IAutofacContinuationActionFilter>();
     }
 
     private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
@@ -1348,12 +1332,7 @@ public static class RegistrationExtensions
 
         filterMeta.PredicateSet.Add(registrationMetadata);
 
-        if (isLegacyFilterType)
-        {
-            return registration.As<IAutofacActionFilter>();
-        }
-
-        return registration.As<IAutofacContinuationActionFilter>();
+        return isLegacyFilterType ? registration.As<IAutofacActionFilter>() : registration.As<IAutofacContinuationActionFilter>();
     }
 
     private static void ValidateFilterType<TFilter>(this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration)
@@ -1433,12 +1412,9 @@ public static class RegistrationExtensions
 
     private static MethodInfo GetMethodInfo(LambdaExpression expression)
     {
-        if (expression.Body is MethodCallExpression outermostExpression)
-        {
-            return outermostExpression.Method;
-        }
-
-        throw new ArgumentException(RegistrationExtensionsResources.InvalidActionExpress);
+        return expression.Body is MethodCallExpression outermostExpression
+            ? outermostExpression.Method
+            : throw new ArgumentException(RegistrationExtensionsResources.InvalidActionExpress);
     }
 
     /// <summary>
