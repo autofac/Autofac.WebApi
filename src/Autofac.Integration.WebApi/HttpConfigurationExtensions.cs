@@ -39,7 +39,7 @@ namespace Autofac.Integration.WebApi
                 return;
             }
 
-            builder.Register(c => HttpRequestMessageProvider.Current)
+            builder.Register(c => HttpRequestMessageProvider.Current!)
                 .InstancePerRequest()
                 .ExternallyOwned();
 

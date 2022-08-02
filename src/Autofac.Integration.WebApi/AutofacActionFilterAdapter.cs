@@ -57,8 +57,8 @@ namespace Autofac.Integration.WebApi
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            HttpResponseMessage response = null;
-            ExceptionDispatchInfo exceptionInfo = null;
+            HttpResponseMessage? response = null;
+            ExceptionDispatchInfo? exceptionInfo = null;
 
             try
             {
@@ -69,7 +69,7 @@ namespace Autofac.Integration.WebApi
                 exceptionInfo = ExceptionDispatchInfo.Capture(e);
             }
 
-            Exception exception;
+            Exception? exception;
 
             if (exceptionInfo == null)
             {
@@ -106,7 +106,7 @@ namespace Autofac.Integration.WebApi
 
             if (newException != null)
             {
-                if (newException == exception)
+                if (newException == exception && exceptionInfo != null)
                 {
                     exceptionInfo.Throw();
                 }

@@ -18,6 +18,8 @@ namespace Autofac.Integration.WebApi.Test
         /// Retrieve or create filter metadata. We want to maintain the fluent flow when we change
         /// registration metadata so we'll do that here.
         /// </summary>
+        /// <param name="registration">The registration for which metadata is being retrieved.</param>
+        /// <param name="filterMeta">The metadata retrieved from the registration.</param>
         public static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> GetMetadata(
             this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
             out FilterMetadata filterMeta)

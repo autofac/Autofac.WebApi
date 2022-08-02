@@ -14,9 +14,8 @@ namespace Autofac.Integration.WebApi
     public class AutofacWebApiDependencyResolver : IDependencyResolver
     {
         private bool _disposed;
-        private readonly ILifetimeScope _container;
         private readonly IDependencyScope _rootDependencyScope;
-        private readonly Action<ContainerBuilder> _configurationAction;
+        private readonly Action<ContainerBuilder>? _configurationAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AutofacWebApiDependencyResolver"/> class.
@@ -35,7 +34,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="container">The container that nested lifetime scopes will be create from.</param>
         public AutofacWebApiDependencyResolver(ILifetimeScope container)
         {
-            _container = container ?? throw new ArgumentNullException(nameof(container));
+            Container = container ?? throw new ArgumentNullException(nameof(container));
             _rootDependencyScope = new AutofacWebApiDependencyScope(container);
         }
 
@@ -50,10 +49,7 @@ namespace Autofac.Integration.WebApi
         /// <summary>
         /// Gets the root container provided to the dependency resolver.
         /// </summary>
-        public ILifetimeScope Container
-        {
-            get { return _container; }
-        }
+        public ILifetimeScope Container { get; }
 
         /// <summary>
         /// Try to get a service of the given type.
@@ -85,8 +81,8 @@ namespace Autofac.Integration.WebApi
         public IDependencyScope BeginScope()
         {
             var lifetimeScope = _configurationAction == null
-                                    ? _container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag)
-                                    : _container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag, _configurationAction);
+                                    ? Container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag)
+                                    : Container.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag, _configurationAction);
             return new AutofacWebApiDependencyScope(lifetimeScope);
         }
 

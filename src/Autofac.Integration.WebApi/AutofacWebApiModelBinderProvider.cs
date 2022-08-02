@@ -29,7 +29,7 @@ namespace Autofac.Integration.WebApi
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="configuration" /> is <see langword="null" />.
         /// </exception>
-        public override IModelBinder GetBinder(HttpConfiguration configuration, Type modelType)
+        public override IModelBinder? GetBinder(HttpConfiguration configuration, Type modelType)
         {
             if (configuration == null)
             {
@@ -42,7 +42,7 @@ namespace Autofac.Integration.WebApi
 
             foreach (var binder in modelBinders)
             {
-                if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject))
+                if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject) && metadataAsObject != null)
                 {
                     if (((List<Type>)metadataAsObject).Contains(modelType))
                     {

@@ -44,6 +44,10 @@ namespace Autofac.Integration.WebApi
 
             var dependencyScope = context.Request.GetDependencyScope();
             var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+            if (lifetimeScope == null)
+            {
+                return;
+            }
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
 
@@ -63,6 +67,10 @@ namespace Autofac.Integration.WebApi
 
             var dependencyScope = context.Request.GetDependencyScope();
             var lifetimeScope = dependencyScope.GetRequestLifetimeScope();
+            if (lifetimeScope == null)
+            {
+                return;
+            }
 
             var filters = lifetimeScope.Resolve<IEnumerable<Meta<Lazy<IAutofacAuthenticationFilter>>>>();
 
@@ -78,7 +86,7 @@ namespace Autofac.Integration.WebApi
                 ? metadataAsObject as FilterMetadata
                 : null;
 
-            return _allFilters.Contains(metadata);
+            return metadata != null && _allFilters.Contains(metadata);
         }
     }
 }

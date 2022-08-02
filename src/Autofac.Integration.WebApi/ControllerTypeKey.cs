@@ -31,7 +31,7 @@ namespace Autofac.Integration.WebApi
         /// <returns>
         /// true if the specified <see cref="object" /> is equal to the current <see cref="object" />; otherwise, false.
         /// </returns>
-        public bool Equals(ControllerTypeKey other)
+        public bool Equals(ControllerTypeKey? other)
         {
             return other != null && other.ControllerType.IsAssignableFrom(ControllerType);
         }

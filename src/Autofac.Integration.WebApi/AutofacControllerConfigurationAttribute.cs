@@ -141,9 +141,9 @@ namespace Autofac.Integration.WebApi
             }
         }
 
-        private static bool ClearExistingServices(IDictionary<string, object> metadata)
+        private static bool ClearExistingServices(IDictionary<string, object?> metadata)
         {
-            return metadata.ContainsKey(ClearServiceListKey) && (bool)metadata[ClearServiceListKey];
+            return metadata.TryGetValue(ClearServiceListKey, out var value) && value != null && (bool)value;
         }
     }
 }

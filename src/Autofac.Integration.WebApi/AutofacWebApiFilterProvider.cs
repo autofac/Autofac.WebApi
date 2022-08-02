@@ -19,13 +19,25 @@ namespace Autofac.Integration.WebApi
     {
         private class FilterContext
         {
-            public ILifetimeScope LifetimeScope { get; set; }
+            public FilterContext(
+                ILifetimeScope lifetimeScope,
+                Type controllerType,
+                List<FilterInfo> filters,
+                Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> addedFilters)
+            {
+                LifetimeScope = lifetimeScope;
+                ControllerType = controllerType;
+                Filters = filters;
+                AddedFilters = addedFilters;
+            }
 
-            public Type ControllerType { get; set; }
+            public ILifetimeScope LifetimeScope { get; }
 
-            public List<FilterInfo> Filters { get; set; }
+            public Type ControllerType { get; }
 
-            public Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> AddedFilters { get; set; }
+            public List<FilterInfo> Filters { get; }
+
+            public Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> AddedFilters { get; }
         }
 
         private readonly ILifetimeScope _rootLifetimeScope;
@@ -78,14 +90,18 @@ namespace Autofac.Integration.WebApi
 
             // Use a fake scope to resolve the metadata for the filter.
             var rootLifetimeScope = configuration.DependencyResolver.GetRootLifetimeScope();
+            if (rootLifetimeScope == null)
+            {
+                return filters;
+            }
+
             using (var lifetimeScope = rootLifetimeScope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
             {
-                var filterContext = new FilterContext
-                {
-                    LifetimeScope = lifetimeScope,
-                    ControllerType = actionDescriptor.ControllerDescriptor.ControllerType,
-                    Filters = filters,
-                    AddedFilters = new Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>>
+                var filterContext = new FilterContext(
+                    lifetimeScope,
+                    actionDescriptor.ControllerDescriptor.ControllerType,
+                    filters,
+                    new Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>>
                     {
                         { AutofacFilterCategory.ActionFilter, new List<FilterPredicateMetadata>() },
                         { AutofacFilterCategory.ActionFilterOverride, new List<FilterPredicateMetadata>() },
@@ -95,8 +111,7 @@ namespace Autofac.Integration.WebApi
                         { AutofacFilterCategory.AuthorizationFilterOverride, new List<FilterPredicateMetadata>() },
                         { AutofacFilterCategory.ExceptionFilter, new List<FilterPredicateMetadata>() },
                         { AutofacFilterCategory.ExceptionFilterOverride, new List<FilterPredicateMetadata>() },
-                    },
-                };
+                    });
 
                 // Controller scoped override filters (NOOP kind).
                 ResolveScopedNoopFilterOverrides(filterContext, FilterScope.Controller, lifetimeScope, actionDescriptor);
@@ -173,7 +188,7 @@ namespace Autofac.Integration.WebApi
             var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<Lazy<TFilter>>>>();
 
             // We'll store the unique filter registrations here until we create the wrapper.
-            HashSet<FilterMetadata> metadataSet = null;
+            HashSet<FilterMetadata>? metadataSet = null;
 
             foreach (var filter in filters)
             {
@@ -253,7 +268,7 @@ namespace Autofac.Integration.WebApi
         {
             var filters = filterContext.AddedFilters[filterCategory];
             return filters.Any(filter => filter.Scope == metadata.Scope &&
-                                         filter.Predicate(lifeTimeScope, descriptor));
+                                         (filter.Predicate == null || filter.Predicate(lifeTimeScope, descriptor)));
         }
 
         private static bool FilterMatches(
@@ -265,7 +280,7 @@ namespace Autofac.Integration.WebApi
         {
             return metadata.FilterCategory == filterCategory &&
                    metadata.Scope == scope &&
-                   metadata.Predicate(lifeTimeScope, descriptor);
+                   (metadata.Predicate == null || metadata.Predicate(lifeTimeScope, descriptor));
         }
 
         private static bool FilterMatchesAndNotAlreadyAdded(

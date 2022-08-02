@@ -31,7 +31,7 @@ namespace Autofac.Integration.WebApi
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="controllerAssemblies">Assemblies to scan for controllers.</param>
-        /// <returns>Registration builder allowing the controller components to be customised.</returns>
+        /// <returns>Registration builder allowing the controller components to be customized.</returns>
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
             RegisterApiControllers(this ContainerBuilder builder, params Assembly[] controllerAssemblies)
         {
@@ -45,7 +45,7 @@ namespace Autofac.Integration.WebApi
         /// <param name="builder">The container builder.</param>
         /// <param name="controllerSuffix">The type name suffix of the controllers.</param>
         /// <param name="controllerAssemblies">Assemblies to scan for controllers.</param>
-        /// <returns>Registration builder allowing the controller components to be customised.</returns>
+        /// <returns>Registration builder allowing the controller components to be customized.</returns>
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
             RegisterApiControllers(this ContainerBuilder builder, string controllerSuffix, params Assembly[] controllerAssemblies)
         {
@@ -86,6 +86,7 @@ namespace Autofac.Integration.WebApi
         public static IRegistrationBuilder<TLimit, TActivatorData, TStyle>
             InstancePerApiControllerType<TLimit, TActivatorData, TStyle>(
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration, Type controllerType)
+            where TLimit : notnull
         {
             if (registration == null)
             {
@@ -108,6 +109,7 @@ namespace Autofac.Integration.WebApi
         public static IRegistrationBuilder<TLimit, TActivatorData, TStyle>
             InstancePerApiControllerType<TLimit, TActivatorData, TStyle>(
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration, Type controllerType, bool clearExistingServices)
+            where TLimit : notnull
         {
             if (registration == null)
             {
@@ -1033,6 +1035,7 @@ namespace Autofac.Integration.WebApi
                 AutofacFilterCategory filterCategory,
                 Func<HttpActionDescriptor, bool> predicate,
                 FilterScope filterScope)
+            where TFilter : notnull
         {
             return AsFilterFor<TFilter>(registration, filterCategory, (lifetime, action) => predicate(action), filterScope);
         }
@@ -1055,6 +1058,7 @@ namespace Autofac.Integration.WebApi
                 AutofacFilterCategory filterCategory,
                 Func<ILifetimeScope, HttpActionDescriptor, bool> predicate,
                 FilterScope filterScope)
+            where TFilter : notnull
         {
             if (registration == null)
             {
@@ -1136,6 +1140,7 @@ namespace Autofac.Integration.WebApi
         private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
             AsFilterFor<TFilter, TController>(IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration, AutofacFilterCategory filterCategory)
                 where TController : IHttpController
+                where TFilter : notnull
         {
             if (registration == null)
             {
@@ -1195,7 +1200,8 @@ namespace Autofac.Integration.WebApi
                 IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
                 AutofacFilterCategory filterCategory,
                 Expression<Action<TController>> actionSelector)
-                where TController : IHttpController
+            where TController : IHttpController
+            where TFilter : notnull
         {
             if (registration == null)
             {
@@ -1217,7 +1223,8 @@ namespace Autofac.Integration.WebApi
                 IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
                 AutofacFilterCategory filterCategory,
                 Expression<Func<TController, Task>> actionSelector)
-                where TController : IHttpController
+            where TController : IHttpController
+            where TFilter : notnull
         {
             if (registration == null)
             {
@@ -1239,7 +1246,8 @@ namespace Autofac.Integration.WebApi
                 IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
                 AutofacFilterCategory filterCategory,
                 MethodInfo action)
-                where TController : IHttpController
+            where TController : IHttpController
+            where TFilter : notnull
         {
             if (registration == null)
             {
@@ -1446,7 +1454,7 @@ namespace Autofac.Integration.WebApi
             this IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration,
             out FilterMetadata filterMeta)
         {
-            if (registration.RegistrationData.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var filterDataObj))
+            if (registration.RegistrationData.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var filterDataObj) && filterDataObj != null)
             {
                 filterMeta = (FilterMetadata)filterDataObj;
             }
@@ -1467,7 +1475,7 @@ namespace Autofac.Integration.WebApi
             this IRegistrationBuilder<AutofacOverrideFilter, SimpleActivatorData, SingleRegistrationStyle> registration,
             out FilterMetadata filterMeta)
         {
-            if (registration.RegistrationData.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var filterDataObj))
+            if (registration.RegistrationData.Metadata.TryGetValue(AutofacWebApiFilterProvider.FilterMetadataKey, out var filterDataObj) && filterDataObj != null)
             {
                 filterMeta = (FilterMetadata)filterDataObj;
             }

@@ -15,33 +15,28 @@ namespace Autofac.Integration.WebApi
     {
         private bool _disposed;
 
-        private readonly ILifetimeScope _lifetimeScope;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AutofacWebApiDependencyScope"/> class.
         /// </summary>
         /// <param name="lifetimeScope">The lifetime scope to resolve services from.</param>
         public AutofacWebApiDependencyScope(ILifetimeScope lifetimeScope)
         {
-            _lifetimeScope = lifetimeScope ?? throw new ArgumentNullException(nameof(lifetimeScope));
+            LifetimeScope = lifetimeScope ?? throw new ArgumentNullException(nameof(lifetimeScope));
         }
 
         /// <summary>
         /// Gets the lifetime scope for the current dependency scope.
         /// </summary>
-        public ILifetimeScope LifetimeScope
-        {
-            get { return _lifetimeScope; }
-        }
+        public ILifetimeScope LifetimeScope { get; }
 
         /// <summary>
         /// Try to get a service of the given type.
         /// </summary>
         /// <param name="serviceType">ControllerType of service to request.</param>
         /// <returns>An instance of the service, or null if the service is not found.</returns>
-        public object GetService(Type serviceType)
+        public object? GetService(Type serviceType)
         {
-            return _lifetimeScope.ResolveOptional(serviceType);
+            return LifetimeScope.ResolveOptional(serviceType);
         }
 
         /// <summary>
@@ -51,13 +46,13 @@ namespace Autofac.Integration.WebApi
         /// <returns>An enumeration (possibly empty) of the service.</returns>
         public IEnumerable<object> GetServices(Type serviceType)
         {
-            if (!_lifetimeScope.IsRegistered(serviceType))
+            if (!LifetimeScope.IsRegistered(serviceType))
             {
                 return Enumerable.Empty<object>();
             }
 
             var enumerableServiceType = typeof(IEnumerable<>).MakeGenericType(serviceType);
-            var instance = _lifetimeScope.Resolve(enumerableServiceType);
+            var instance = LifetimeScope.Resolve(enumerableServiceType);
             return (IEnumerable<object>)instance;
         }
 
@@ -83,9 +78,9 @@ namespace Autofac.Integration.WebApi
             {
                 if (disposing)
                 {
-                    if (_lifetimeScope != null)
+                    if (LifetimeScope != null)
                     {
-                        _lifetimeScope.Dispose();
+                        LifetimeScope.Dispose();
                     }
                 }
 

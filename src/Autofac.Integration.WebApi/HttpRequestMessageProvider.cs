@@ -20,7 +20,7 @@ namespace Autofac.Integration.WebApi
         /// <value>
         /// The <see cref="HttpRequestMessage"/> for the current/ongoing request.
         /// </value>
-        internal static HttpRequestMessage Current
+        internal static HttpRequestMessage? Current
         {
             get
             {
@@ -48,7 +48,7 @@ namespace Autofac.Integration.WebApi
         private sealed class HttpRequestMessageHolder
         {
             [SuppressMessage("SA1401", "SA1401", Justification = "Field is only used during testing.")]
-            public HttpRequestMessage Message;
+            public HttpRequestMessage? Message;
         }
     }
 }
