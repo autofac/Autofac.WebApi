@@ -1,6 +1,12 @@
 {
   "cSpell.words": [
     "autofac",
+    "cref",
+    "inheritdoc",
+    "langword",
+    "paramref",
+    "seealso",
+    "typeparam",
     "xunit"
   ],
   "dotnet-test-explorer.runInParallel": true,
