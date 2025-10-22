@@ -31,9 +31,10 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
     }
 
     /// <inheritdoc/>
+    [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "SynchronizationContext should be preserved")]
     public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
     {
-        await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken).ConfigureAwait(false);
+        await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken);
 
         return actionContext.Response ?? await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
     }
@@ -44,6 +45,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
     /// </summary>
     [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in original implementation.")]
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Need to capture any exception that occurs.")]
+    [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Need to preserve the SynchronizationContext for the action execution")]
     private async Task<HttpResponseMessage> CallOnActionExecutedAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -53,7 +55,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
 
         try
         {
-            response = await continuation().ConfigureAwait(false);
+            response = await continuation();
         }
         catch (Exception e)
         {
@@ -68,7 +70,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
 
         try
         {
-            await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken).ConfigureAwait(false);
+            await _legacyFilter.OnActionExecutedAsync(executedContext, cancellationToken);
         }
         catch
         {
