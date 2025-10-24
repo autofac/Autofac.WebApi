@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <!-- VersionPrefix patched by AppVeyor -->
-    <VersionPrefix>0.0.1</VersionPrefix>
     <!-- Assembly metadata -->
     <AssemblyName>Autofac.Integration.WebApi</AssemblyName>
     <AssemblyTitle>Autofac.Integration.WebApi</AssemblyTitle>
@@ -18,7 +16,8 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <CodeAnalysisRuleSet>../../build/Analyzers.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>../../build/Source.ruleset</CodeAnalysisRuleSet>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- Packaging -->
@@ -36,53 +35,45 @@
     <EmbedAllSources>true</EmbedAllSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- OmniSharp/VS Code resource generation -->
+    <CoreCompileDependsOn>PrepareResources;$(CompileDependsOn)</CoreCompileDependsOn>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.4.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="[5.2.0,6.0.0)" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" Condition="Exists('$(MSBuildThisFileDirectory)../../.git')">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
+    <Using Include="System.Diagnostics.CodeAnalysis" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="AutofacControllerConfigurationAttributeResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AutofacControllerConfigurationAttributeResources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="RegistrationExtensionsResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RegistrationExtensionsResources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
   <ItemGroup>
     <None Include="..\..\build\icon.png" Pack="true" PackagePath="\" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-
   <ItemGroup>
     <AdditionalFiles Include="..\..\build\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.4.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="[5.2.0,6.0.0)" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" Condition="Exists('$(MSBuildThisFileDirectory)../../.git')">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemDefinitionGroup>
+    <EmbeddedResource>
+      <Generator>MSBuild:Compile</Generator>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedFileName>$(IntermediateOutputPath)%(Filename).Designer.cs</StronglyTypedFileName>
+      <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
+    </EmbeddedResource>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <EmbeddedResource Update="AutofacControllerConfigurationAttributeResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>AutofacControllerConfigurationAttributeResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
+      <StronglyTypedNamespace>Autofac.Integration.WebApi</StronglyTypedNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="RegistrationExtensionsResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>RegistrationExtensionsResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
+      <StronglyTypedNamespace>Autofac.Integration.WebApi</StronglyTypedNamespace>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
