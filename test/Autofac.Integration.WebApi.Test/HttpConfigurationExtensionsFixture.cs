@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.Net.Http;
 using System.Web.Http;
 using Autofac.Core.Lifetime;
 
@@ -43,7 +44,7 @@ public class HttpConfigurationExtensionsFixture
     }
 
     [Fact]
-    public async Task RegisterHttpRequestMessageNotDisposeAfterScopeDipose()
+    public async Task RegisterHttpRequestMessageNotDisposeAfterScopeDispose()
     {
         using var config = new HttpConfiguration();
         var builder = new ContainerBuilder();
@@ -66,6 +67,6 @@ public class HttpConfigurationExtensionsFixture
             Assert.Same(result, scope.Resolve<HttpRequestMessage>());
         }
 
-        _ = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
+        await result.Content.ReadAsStringAsync();
     }
 }

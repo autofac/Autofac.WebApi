@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Hosting;
@@ -18,7 +19,7 @@ public class AuthorizationFilterWrapperFixture
     }
 
     [Fact]
-    public async void WrapperResolvesAuthorizationFilterFromDependencyScope()
+    public async Task WrapperResolvesAuthorizationFilterFromDependencyScope()
     {
         var builder = new ContainerBuilder();
         builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
@@ -34,15 +35,15 @@ public class AuthorizationFilterWrapperFixture
         var configuration = new HttpConfiguration { DependencyResolver = resolver };
         var requestMessage = new HttpRequestMessage();
         requestMessage.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, configuration);
-        var contollerContext = new HttpControllerContext { Request = requestMessage };
+        var controllerContext = new HttpControllerContext { Request = requestMessage };
         var controllerDescriptor = new HttpControllerDescriptor { ControllerType = typeof(TestController) };
         var methodInfo = typeof(TestController).GetMethod("Get");
         var actionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
-        var actionContext = new HttpActionContext(contollerContext, actionDescriptor);
+        var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
 
         var wrapper = new AuthorizationFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-        await wrapper.OnAuthorizationAsync(actionContext, CancellationToken.None).ConfigureAwait(false);
+        await wrapper.OnAuthorizationAsync(actionContext, CancellationToken.None);
         Assert.Equal(1, activationCount);
     }
 }

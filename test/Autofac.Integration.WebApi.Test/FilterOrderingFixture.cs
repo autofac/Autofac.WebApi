@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
@@ -13,7 +14,7 @@ namespace Autofac.Integration.WebApi.Test;
 public class FilterOrderingFixture
 {
     [Fact]
-    public async void FilterOrderForAllFilterTypes()
+    public async Task FilterOrderForAllFilterTypes()
     {
         // This test primarily serves as an example for
         // how filters and override filters interact, particularly
@@ -102,22 +103,22 @@ public class FilterOrderingFixture
 
         foreach (var fi in filterInfos.Select(f => f.Instance).OfType<IAuthenticationFilter>())
         {
-            await fi.AuthenticateAsync(authenticationContext, token).ConfigureAwait(false);
+            await fi.AuthenticateAsync(authenticationContext, token);
         }
 
         // Loop through each type of filter in the order Web API would
         // do it. This will give us the complete list of filters.
         foreach (var fi in filterInfos.Select(f => f.Instance).OfType<AuthorizationFilterAttribute>())
         {
-            await fi.OnAuthorizationAsync(actionContext, token).ConfigureAwait(false);
+            await fi.OnAuthorizationAsync(actionContext, token);
         }
 
         // Emulate the action filter execution pipeline.
-        await ExecuteContinuationFilters(actionContext, filterInfos.Select(f => f.Instance).OfType<IActionFilter>(), token).ConfigureAwait(false);
+        await ExecuteContinuationFilters(actionContext, filterInfos.Select(f => f.Instance).OfType<IActionFilter>(), token);
 
         foreach (var fi in filterInfos.Select(f => f.Instance).OfType<ExceptionFilterAttribute>())
         {
-            await fi.OnExceptionAsync(actionExecutedContext, token).ConfigureAwait(false);
+            await fi.OnExceptionAsync(actionExecutedContext, token);
         }
 
         // Order is:

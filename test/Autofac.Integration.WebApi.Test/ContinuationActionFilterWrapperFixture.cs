@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Transactions;
 using System.Web.Http;
@@ -22,7 +23,7 @@ public class ContinuationActionFilterWrapperFixture
     }
 
     [Fact]
-    public async void WrapperResolvesActionFilterFromDependencyScope()
+    public async Task WrapperResolvesActionFilterFromDependencyScope()
     {
         var builder = new ContainerBuilder();
         builder.Register<ILogger>(c => new Logger()).InstancePerDependency();
@@ -45,12 +46,12 @@ public class ContinuationActionFilterWrapperFixture
 
         var wrapper = new ContinuationActionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
 
-        await wrapper.ExecuteActionFilterAsync(actionContext, CancellationToken.None, () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))).ConfigureAwait(false);
+        await wrapper.ExecuteActionFilterAsync(actionContext, CancellationToken.None, () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
         Assert.Equal(1, activationCount);
     }
 
     [Fact]
-    public async void RunsFiltersInCorrectOrder()
+    public async Task RunsFiltersInCorrectOrder()
     {
         // Issue #16: Filters need to run 1, 2, 3 in Executing but 3, 2, 1 in Executed.
         var builder = new ContainerBuilder();
@@ -88,7 +89,7 @@ public class ContinuationActionFilterWrapperFixture
         await wrapper.ExecuteActionFilterAsync(
             actionContext,
             CancellationToken.None,
-            () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))).ConfigureAwait(false);
+            () => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
         Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[0]);
         Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);
@@ -97,7 +98,7 @@ public class ContinuationActionFilterWrapperFixture
     }
 
     [Fact]
-    public async void StopsIfFilterOnExecutingSetsResponse()
+    public async Task StopsIfFilterOnExecutingSetsResponse()
     {
         // Issue #30.
         // The filter behavior if a response is set should be as follows, to
@@ -153,7 +154,7 @@ public class ContinuationActionFilterWrapperFixture
         await wrapper.ExecuteActionFilterAsync(
             actionContext,
             CancellationToken.None,
-            () => throw new InvalidOperationException("Should never reach here because a filter set the response.")).ConfigureAwait(false);
+            () => throw new InvalidOperationException("Should never reach here because a filter set the response."));
 
         Assert.Equal("TestActionFilter.OnActionExecutingAsync", order[0]);
         Assert.Equal("TestActionFilter2.OnActionExecutingAsync", order[1]);
@@ -346,7 +347,7 @@ public class ContinuationActionFilterWrapperFixture
                     await Task.Delay(1);
                     recordedContinuationContexts.Add(SynchronizationContext.Current);
                     return new HttpResponseMessage(HttpStatusCode.OK);
-                }).ConfigureAwait(false);
+                });
         }
         finally
         {
