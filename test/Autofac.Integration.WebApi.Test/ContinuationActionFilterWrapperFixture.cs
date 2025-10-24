@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
 using System.Transactions;
@@ -269,6 +270,95 @@ public class ContinuationActionFilterWrapperFixture
                 Assert.NotNull(Transaction.Current);
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             }).Wait();
+    }
+
+    /// <summary>
+    /// Verifies that a custom synchronization context flows through Autofac action filter execution
+    /// including the action continuation invoked by <see cref="Autofac.Integration.WebApi.ContinuationActionFilterWrapper"/>.
+    /// </summary>
+    [Fact]
+    [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "We're managing the SynchronizationContext in this test")]
+
+    public async Task SynchronizationContextPreservedAcrossFilterExecutionAsync()
+    {
+        // Issue #72 - HttpContext.Current becomes null when an async OnActionExecutingAsync Web API filter runs.
+        var builder = new ContainerBuilder();
+
+        TestSynchronizationContextActionFilter filterInstance = null;
+        TestSynchronizationContextActionFilter2 filterInstance2 = null;
+
+        builder.RegisterType<TestSynchronizationContextActionFilter>()
+            .AsWebApiActionFilterFor<TestController>(c => c.GetAsync(default))
+            .InstancePerRequest()
+            .OnActivated(e => filterInstance = (TestSynchronizationContextActionFilter)e.Instance)
+            .GetMetadata(out var filterMetadata);
+
+        builder.RegisterType<TestSynchronizationContextActionFilter2>()
+            .AsWebApiActionFilterFor<TestController>(c => c.GetAsync(default))
+            .InstancePerRequest()
+            .OnActivated(e => filterInstance2 = (TestSynchronizationContextActionFilter2)e.Instance)
+            .GetMetadata(out var filterMetadata2);
+
+        using var configuration = new HttpConfiguration();
+
+        builder.RegisterWebApiFilterProvider(configuration);
+
+        var container = builder.Build();
+
+        var resolver = new AutofacWebApiDependencyResolver(container);
+        var controllerContext = CreateControllerContext(resolver);
+        var methodInfo = typeof(TestController).GetMethod(nameof(TestController.GetAsync));
+        var actionDescriptor = CreateActionDescriptor(methodInfo);
+        var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
+        var wrapper = new ContinuationActionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
+        var wrapper2 = new ContinuationActionFilterWrapper(filterMetadata2.ToSingleFilterHashSet());
+
+        var recordedContinuationContexts = new List<SynchronizationContext>();
+        var customContext = new RecordingSynchronizationContext();
+        var originalContext = SynchronizationContext.Current;
+
+        // Install the custom synchronization context so both the filter and the continuation can observe it.
+        SynchronizationContext.SetSynchronizationContext(customContext);
+
+        try
+        {
+            // TestSynchronizationContextActionFilter doesn't use ConfigureAwait(false)
+            await wrapper.ExecuteActionFilterAsync(
+                actionContext,
+                CancellationToken.None,
+                async () =>
+                {
+                    // Record the context before and after an asynchronous boundary inside the continuation.
+                    recordedContinuationContexts.Add(SynchronizationContext.Current);
+                    await Task.Delay(1);
+                    recordedContinuationContexts.Add(SynchronizationContext.Current);
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                });
+
+            // TestSynchronizationContextActionFilter2 uses ConfigureAwait(false), but the context should still flow.
+            await wrapper2.ExecuteActionFilterAsync(
+                actionContext,
+                CancellationToken.None,
+                async () =>
+                {
+                    // Record the context before and after an asynchronous boundary inside the continuation.
+                    recordedContinuationContexts.Add(SynchronizationContext.Current);
+                    await Task.Delay(1);
+                    recordedContinuationContexts.Add(SynchronizationContext.Current);
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }).ConfigureAwait(false);
+        }
+        finally
+        {
+            // Always restore the original context to avoid polluting later tests.
+            SynchronizationContext.SetSynchronizationContext(originalContext);
+        }
+
+        Assert.NotNull(filterInstance);
+        Assert.NotNull(filterInstance2);
+        Assert.All(
+            filterInstance.Records.Concat(filterInstance2.Records).Concat(recordedContinuationContexts),
+            context => Assert.Same(customContext, context));
     }
 
     private static HttpActionDescriptor CreateActionDescriptor(MethodInfo methodInfo)
