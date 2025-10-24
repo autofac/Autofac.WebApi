@@ -14,36 +14,13 @@ namespace Autofac.Integration.WebApi;
 /// </summary>
 public class AutofacWebApiFilterProvider : IFilterProvider
 {
-    private class FilterContext
-    {
-        public FilterContext(
-            ILifetimeScope lifetimeScope,
-            Type controllerType,
-            List<FilterInfo> filters,
-            Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> addedFilters)
-        {
-            LifetimeScope = lifetimeScope;
-            ControllerType = controllerType;
-            Filters = filters;
-            AddedFilters = addedFilters;
-        }
-
-        public ILifetimeScope LifetimeScope { get; }
-
-        public Type ControllerType { get; }
-
-        public List<FilterInfo> Filters { get; }
-
-        public Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> AddedFilters { get; }
-    }
-
-    private readonly ILifetimeScope _rootLifetimeScope;
-    private readonly ActionDescriptorFilterProvider _filterProvider = new();
-
     /// <summary>
     /// Metadata key that holds Autofac filter data.
     /// </summary>
     internal const string FilterMetadataKey = "AutofacFilterData";
+
+    private readonly ILifetimeScope _rootLifetimeScope;
+    private readonly ActionDescriptorFilterProvider _filterProvider = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AutofacWebApiFilterProvider"/> class.
@@ -290,5 +267,28 @@ public class AutofacWebApiFilterProvider : IFilterProvider
     {
         return FilterMatches(scope, filterCategory, lifeTimeScope, descriptor, metadata) &&
                !MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, metadata);
+    }
+
+    private class FilterContext
+    {
+        public FilterContext(
+            ILifetimeScope lifetimeScope,
+            Type controllerType,
+            List<FilterInfo> filters,
+            Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> addedFilters)
+        {
+            LifetimeScope = lifetimeScope;
+            ControllerType = controllerType;
+            Filters = filters;
+            AddedFilters = addedFilters;
+        }
+
+        public ILifetimeScope LifetimeScope { get; }
+
+        public Type ControllerType { get; }
+
+        public List<FilterInfo> Filters { get; }
+
+        public Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> AddedFilters { get; }
     }
 }

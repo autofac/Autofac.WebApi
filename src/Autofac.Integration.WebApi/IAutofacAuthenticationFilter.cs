@@ -15,6 +15,7 @@ public interface IAutofacAuthenticationFilter
     /// </summary>
     /// <param name="context">The context for the authentication.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+    /// <returns>A <see cref="Task"/> to await completion.</returns>
     Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken);
 
     /// <summary>
@@ -22,5 +23,6 @@ public interface IAutofacAuthenticationFilter
     /// </summary>
     /// <param name="context">The context for the authentication challenge.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+    /// <returns>A <see cref="Task"/> to await completion.</returns>
     Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken);
 }

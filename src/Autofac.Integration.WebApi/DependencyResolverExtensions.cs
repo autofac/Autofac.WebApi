@@ -16,6 +16,7 @@ public static class DependencyResolverExtensions
     /// <param name="dependencyResolver">
     /// The dependency resolver from which the root lifetime scope should be retrieved.
     /// </param>
+    /// <returns>The root lifetime scope; or <see langword="null"/> if not found.</returns>
     public static ILifetimeScope? GetRootLifetimeScope(this IDependencyResolver dependencyResolver)
     {
         var resolver = dependencyResolver as AutofacWebApiDependencyResolver;
@@ -28,6 +29,7 @@ public static class DependencyResolverExtensions
     /// <param name="dependencyScope">
     /// The dependency scope from which the request lifetime scope should be retrieved.
     /// </param>
+    /// <returns>The request lifetime scope; or <see langword="null"/> if not found.</returns>
     public static ILifetimeScope? GetRequestLifetimeScope(this IDependencyScope dependencyScope)
     {
         var scope = dependencyScope as AutofacWebApiDependencyScope;

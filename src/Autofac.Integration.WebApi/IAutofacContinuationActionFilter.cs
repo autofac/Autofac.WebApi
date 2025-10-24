@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 using System.Web.Http.Controllers;
 
 namespace Autofac.Integration.WebApi;
@@ -19,6 +20,7 @@ public interface IAutofacContinuationActionFilter
     /// <param name="actionContext">The context of the current action.</param>
     /// <param name="cancellationToken">A cancellation token for the request.</param>
     /// <param name="next">The function to call that invokes the next filter in the chain.</param>
+    /// <returns>The result of the pipeline on the request message.</returns>
     [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in IActionFilter.")]
     Task<HttpResponseMessage> ExecuteActionFilterAsync(
         HttpActionContext actionContext,
