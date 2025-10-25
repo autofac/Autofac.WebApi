@@ -51,7 +51,11 @@
         "/consoleloggerparameters:NoSummary",
         "--results-directory",
         "artifacts/logs",
-        "--logger:trx"
+        "--logger:trx",
+        "--collect:\"XPlat Code Coverage\"",
+        "--settings:build/Coverage.runsettings",
+        "--",
+        "RunConfiguration.DisableAppDomain=true"
       ],
       "command": "dotnet",
       "dependsOn": [

@@ -25,9 +25,8 @@ jobs:
   # Build and test
   build:
     uses: ./.github/workflows/build.yml
-    # If we figure out how to get coverage working again, we can re-enable this step.
-    # secrets:
-    #   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   # Publish beta and release packages.
   publish:
     uses: ./.github/workflows/publish.yml

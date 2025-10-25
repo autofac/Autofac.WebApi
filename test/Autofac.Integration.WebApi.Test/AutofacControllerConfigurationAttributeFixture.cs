@@ -125,7 +125,7 @@ public class AutofacControllerConfigurationAttributeFixture
 
         attribute.Initialize(settings, descriptor);
 
-        Assert.Equal(service, settings.Services.GetActionSelector());
+        Assert.Same(service, settings.Services.GetActionSelector());
     }
 
     [Fact]
