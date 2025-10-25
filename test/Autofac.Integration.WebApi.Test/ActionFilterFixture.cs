@@ -32,7 +32,7 @@ public class ActionFilterFixture : AutofacFilterBaseFixture<TestActionFilter, Te
 
     protected override Action<IRegistrationBuilder<TestActionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureAsyncActionRegistration()
     {
-      return r => r.AsWebApiActionFilterFor<TestController>(c => c.GetAsync(default));
+        return r => r.AsWebApiActionFilterFor<TestController>(c => c.GetAsync(default));
     }
 
     protected override Action<IRegistrationBuilder<TestActionFilter, SimpleActivatorData, SingleRegistrationStyle>> ConfigureFirstAllControllersRegistration()
