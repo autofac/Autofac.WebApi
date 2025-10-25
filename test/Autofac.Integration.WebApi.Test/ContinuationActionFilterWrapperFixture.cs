@@ -165,7 +165,7 @@ public class ContinuationActionFilterWrapperFixture
     }
 
     [Fact]
-    public void TransactionScopePreservedBetweenStandardFilters()
+    public async Task TransactionScopePreservedBetweenStandardFilters()
     {
         // Issue #34 - Async/await context lost between filters.
         var builder = new ContainerBuilder();
@@ -212,18 +212,18 @@ public class ContinuationActionFilterWrapperFixture
             testFilter2Meta,
         });
 
-        wrapper.ExecuteActionFilterAsync(
+        await wrapper.ExecuteActionFilterAsync(
             actionContext,
             CancellationToken.None,
             () =>
             {
                 Assert.NotNull(Transaction.Current);
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
-            }).Wait();
+            });
     }
 
     [Fact]
-    public void TransactionScopePreservedBetweenContinuationFilters()
+    public async Task TransactionScopePreservedBetweenContinuationFilters()
     {
         // Issue #34 - Async/await context lost between filters.
         var builder = new ContainerBuilder();
@@ -263,14 +263,14 @@ public class ContinuationActionFilterWrapperFixture
             testFilter2Meta,
         });
 
-        wrapper.ExecuteActionFilterAsync(
+        await wrapper.ExecuteActionFilterAsync(
             actionContext,
             CancellationToken.None,
             () =>
             {
                 Assert.NotNull(Transaction.Current);
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
-            }).Wait();
+            });
     }
 
     /// <summary>
