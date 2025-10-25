@@ -15,5 +15,6 @@ public interface IAutofacAuthorizationFilter
     /// </summary>
     /// <param name="actionContext">The context for the action.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+    /// <returns>A <see cref="Task"/> to await completion.</returns>
     Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken);
 }

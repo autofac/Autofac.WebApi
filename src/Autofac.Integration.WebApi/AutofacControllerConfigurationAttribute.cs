@@ -20,12 +20,12 @@ namespace Autofac.Integration.WebApi;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 public sealed class AutofacControllerConfigurationAttribute : Attribute, IControllerConfiguration
 {
-    private const string InitializedKey = "InjectControllerServicesAttributeInitialized";
-
     /// <summary>
     /// Metadata key that signifies existing controller services should be cleared.
     /// </summary>
     internal const string ClearServiceListKey = "ClearServiceList";
+
+    private const string InitializedKey = "InjectControllerServicesAttributeInitialized";
 
     /// <summary>
     /// Callback invoked to set per-controller overrides for this controllerDescriptor.

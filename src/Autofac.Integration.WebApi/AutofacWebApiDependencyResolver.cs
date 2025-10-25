@@ -11,9 +11,9 @@ namespace Autofac.Integration.WebApi;
 /// </summary>
 public class AutofacWebApiDependencyResolver : IDependencyResolver
 {
-    private bool _disposed;
     private readonly IDependencyScope _rootDependencyScope;
     private readonly Action<ContainerBuilder>? _configurationAction;
+    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AutofacWebApiDependencyResolver"/> class.

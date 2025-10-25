@@ -4,6 +4,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -223,8 +224,8 @@ public static class RegistrationExtensions
     /// <summary>
     /// Registers the <see cref="AutofacWebApiFilterProvider"/>.
     /// </summary>
-    /// <param name="configuration">Configuration of HttpServer instances.</param>
     /// <param name="builder">The container builder.</param>
+    /// <param name="configuration">Configuration of HttpServer instances.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="builder" /> or <paramref name="configuration" /> is <see langword="null" />.
     /// </exception>
@@ -936,6 +937,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller action.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     /// <param name="actionSelector">The action selector.</param>
     public static void OverrideWebApiActionFilterFor<TController>(this ContainerBuilder builder, Expression<Action<TController>> actionSelector)
@@ -947,6 +949,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     public static void OverrideWebApiActionFilterFor<TController>(this ContainerBuilder builder)
             where TController : IHttpController
@@ -957,6 +960,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller action.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     /// <param name="actionSelector">The action selector.</param>
     public static void OverrideWebApiAuthorizationFilterFor<TController>(this ContainerBuilder builder, Expression<Action<TController>> actionSelector)
@@ -968,6 +972,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     public static void OverrideWebApiAuthorizationFilterFor<TController>(this ContainerBuilder builder)
             where TController : IHttpController
@@ -978,6 +983,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller action.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     /// <param name="actionSelector">The action selector.</param>
     public static void OverrideWebApiExceptionFilterFor<TController>(this ContainerBuilder builder, Expression<Action<TController>> actionSelector)
@@ -989,6 +995,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     public static void OverrideWebApiExceptionFilterFor<TController>(this ContainerBuilder builder)
             where TController : IHttpController
@@ -999,6 +1006,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller action.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     /// <param name="actionSelector">The action selector.</param>
     public static void OverrideWebApiAuthenticationFilterFor<TController>(this ContainerBuilder builder, Expression<Action<TController>> actionSelector)
@@ -1010,6 +1018,7 @@ public static class RegistrationExtensions
     /// <summary>
     /// Sets the provided registration to act as an <see cref="IOverrideFilter"/> for the specified controller.
     /// </summary>
+    /// <typeparam name="TController">The type of the controller.</typeparam>
     /// <param name="builder">The container builder.</param>
     public static void OverrideWebApiAuthenticationFilterFor<TController>(this ContainerBuilder builder)
             where TController : IHttpController

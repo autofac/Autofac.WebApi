@@ -9,11 +9,6 @@ namespace Autofac.Integration.WebApi;
 internal class ControllerTypeKey : IEquatable<ControllerTypeKey>
 {
     /// <summary>
-    /// Gets the type of the controller.
-    /// </summary>
-    public Type ControllerType { get; private set; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="ControllerTypeKey"/> class.
     /// </summary>
     /// <param name="controllerType">Type of the controller.</param>
@@ -21,6 +16,11 @@ internal class ControllerTypeKey : IEquatable<ControllerTypeKey>
     {
         ControllerType = controllerType ?? throw new ArgumentNullException(nameof(controllerType));
     }
+
+    /// <summary>
+    /// Gets the type of the controller.
+    /// </summary>
+    public Type ControllerType { get; private set; }
 
     /// <summary>
     /// Determines whether the specified <see cref="object" /> is equal to the current <see cref="object" />.

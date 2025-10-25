@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace Autofac.Integration.WebApi;

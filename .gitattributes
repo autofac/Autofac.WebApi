@@ -14,7 +14,6 @@
 *.gif 	binary
 
 *.cs text=auto diff=csharp
-*.nuspec text=auto
 *.vb text=auto
 *.resx text=auto
 *.c text=auto

@@ -1,4 +1,4 @@
-// Copyright (c) Autofac Project. All rights reserved.
+﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Web.Http.Controllers;
@@ -16,6 +16,7 @@ public interface IAutofacActionFilter
     /// </summary>
     /// <param name="actionExecutedContext">The context for the action.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+    /// <returns>A <see cref="Task"/> to await completion.</returns>
     Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken);
 
     /// <summary>
@@ -23,5 +24,6 @@ public interface IAutofacActionFilter
     /// </summary>
     /// <param name="actionContext">The context for the action.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+    /// <returns>A <see cref="Task"/> to await completion.</returns>
     Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken);
 }

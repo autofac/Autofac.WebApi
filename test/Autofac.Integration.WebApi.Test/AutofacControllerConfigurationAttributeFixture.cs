@@ -38,7 +38,7 @@ public class AutofacControllerConfigurationAttributeFixture
     public void InitializationRunOncePerControllerType()
     {
         var builder = new ContainerBuilder();
-        var service = new Mock<IHttpActionSelector>().Object;
+        var service = Mock.Of<IHttpActionSelector>();
         int callCount = 0;
         builder.Register(c => service)
             .As<IHttpActionSelector>()
@@ -60,7 +60,7 @@ public class AutofacControllerConfigurationAttributeFixture
     public void PerControllerServiceDoesNotOverrideDefault()
     {
         var builder = new ContainerBuilder();
-        var service = new Mock<IHttpActionSelector>().Object;
+        var service = Mock.Of<IHttpActionSelector>();
         builder.Register(c => service)
             .As<IHttpActionSelector>()
             .InstancePerApiControllerType(typeof(TestController));
@@ -95,7 +95,7 @@ public class AutofacControllerConfigurationAttributeFixture
     public void UsesRootServiceWhenNoKeyedServiceRegistered()
     {
         var builder = new ContainerBuilder();
-        var service = new Mock<IHttpActionSelector>().Object;
+        var service = Mock.Of<IHttpActionSelector>();
         builder.RegisterInstance(service);
         var container = builder.Build();
         using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
@@ -112,7 +112,7 @@ public class AutofacControllerConfigurationAttributeFixture
     public void RegistrationForBaseControllerAppliesForDerived()
     {
         var builder = new ContainerBuilder();
-        var service = new Mock<IHttpActionSelector>().Object;
+        var service = Mock.Of<IHttpActionSelector>();
         builder.Register(c => service)
             .As<IHttpActionSelector>()
             .InstancePerApiControllerType(typeof(TestController));
@@ -125,15 +125,15 @@ public class AutofacControllerConfigurationAttributeFixture
 
         attribute.Initialize(settings, descriptor);
 
-        Assert.Equal(service, settings.Services.GetActionSelector());
+        Assert.Same(service, settings.Services.GetActionSelector());
     }
 
     [Fact]
     public void FormattersCanBeResolvedPerControllerType()
     {
         var builder = new ContainerBuilder();
-        var formatter1 = new Mock<MediaTypeFormatter>().Object;
-        var formatter2 = new Mock<MediaTypeFormatter>().Object;
+        var formatter1 = Mock.Of<MediaTypeFormatter>();
+        var formatter2 = Mock.Of<MediaTypeFormatter>();
         builder.RegisterInstance(formatter1).InstancePerApiControllerType(typeof(TestController));
         builder.RegisterInstance(formatter2).InstancePerApiControllerType(typeof(TestController));
         var container = builder.Build();
@@ -153,8 +153,8 @@ public class AutofacControllerConfigurationAttributeFixture
     public void ExistingFormattersCanBeCleared()
     {
         var builder = new ContainerBuilder();
-        var formatter1 = new Mock<MediaTypeFormatter>().Object;
-        var formatter2 = new Mock<MediaTypeFormatter>().Object;
+        var formatter1 = Mock.Of<MediaTypeFormatter>();
+        var formatter2 = Mock.Of<MediaTypeFormatter>();
         builder.RegisterInstance(formatter1).InstancePerApiControllerType(typeof(TestController), true);
         builder.RegisterInstance(formatter2).InstancePerApiControllerType(typeof(TestController), true);
         var container = builder.Build();
@@ -174,8 +174,8 @@ public class AutofacControllerConfigurationAttributeFixture
     public void ExistingListServicesCanBeCleared()
     {
         var builder = new ContainerBuilder();
-        var provider1 = new Mock<ModelBinderProvider>().Object;
-        var provider2 = new Mock<ModelBinderProvider>().Object;
+        var provider1 = Mock.Of<ModelBinderProvider>();
+        var provider2 = Mock.Of<ModelBinderProvider>();
         builder.RegisterInstance(provider1).InstancePerApiControllerType(typeof(TestController), true);
         builder.RegisterInstance(provider2).InstancePerApiControllerType(typeof(TestController), true);
         var container = builder.Build();
@@ -257,7 +257,7 @@ public class AutofacControllerConfigurationAttributeFixture
         where TLimit : class
     {
         var builder = new ContainerBuilder();
-        var service = new Mock<TLimit>().Object;
+        var service = Mock.Of<TLimit>();
         builder.RegisterInstance(service).As<TLimit>().InstancePerApiControllerType(typeof(TestController));
         var container = builder.Build();
         using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };
@@ -274,7 +274,7 @@ public class AutofacControllerConfigurationAttributeFixture
         where TLimit : class
     {
         var builder = new ContainerBuilder();
-        var service = new Mock<TLimit>().Object;
+        var service = Mock.Of<TLimit>();
         builder.RegisterInstance(service).As<TLimit>().InstancePerApiControllerType(typeof(TestController));
         var container = builder.Build();
         using var configuration = new HttpConfiguration { DependencyResolver = new AutofacWebApiDependencyResolver(container) };

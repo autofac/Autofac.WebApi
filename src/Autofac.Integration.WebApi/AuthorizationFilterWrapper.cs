@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using Autofac.Features.Metadata;
@@ -43,6 +44,7 @@ internal class AuthorizationFilterWrapper : AuthorizationFilterAttribute, IAutof
     /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="actionContext" /> is <see langword="null" />.
     /// </exception>
+    /// <returns>A <see cref="Task"/> to await completion.</returns>
     public override async Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
     {
         if (actionContext == null)

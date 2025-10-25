@@ -15,5 +15,6 @@ public interface IAutofacExceptionFilter
     /// </summary>
     /// <param name="actionExecutedContext">The context for the action.</param>
     /// <param name="cancellationToken">A cancellation token for signaling task ending.</param>
+    /// <returns>A <see cref="Task"/> to await completion.</returns>
     Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken);
 }
