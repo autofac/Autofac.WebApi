@@ -1,8 +1,0 @@
-codecov:
-  branch: develop
-  require_ci_to_pass: true
-coverage:
-  status:
-    project:
-      default:
-        threshold: 1%

@@ -62,6 +62,12 @@
   </Target>
   <Target Name="Test">
     <MakeDir Directories="$(LogDirectory)" />
-    <Exec Command="dotnet test &quot;%(SolutionFile.FullPath)&quot; -c $(Configuration) --results-directory &quot;$(LogDirectory)&quot; --logger:trx /p:Version=$(Version) --collect:&quot;XPlat Code Coverage&quot; --settings &quot;$(CoverageRunSettings)&quot;" />
+
+    <!--
+    There's a problem where Coverlet doesn't sign the instrumented assembly, and
+    while this is fine for .NET Core, it breaks the build for .NET Framework.
+    Since this project is largely maintenance, we can skip coverage.
+    -->
+    <Exec Command="dotnet test &quot;%(SolutionFile.FullPath)&quot; -c $(Configuration) --results-directory &quot;$(LogDirectory)&quot; --logger:trx /p:Version=$(Version)" />
   </Target>
 </Project>
