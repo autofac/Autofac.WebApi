@@ -2,7 +2,7 @@
 <Project DefaultTargets="All" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
   <PropertyGroup>
     <!-- Increment the overall semantic version here. -->
-    <Version>6.1.1</Version>
+    <Version>6.2.0</Version>
     <SolutionName>Autofac.WebApi</SolutionName>
     <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
     <ArtifactDirectory>$([System.IO.Path]::Combine($(MSBuildProjectDirectory),"artifacts"))</ArtifactDirectory>
