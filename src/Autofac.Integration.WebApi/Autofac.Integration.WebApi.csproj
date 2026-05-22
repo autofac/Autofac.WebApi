@@ -12,7 +12,7 @@
     <SignAssembly>true</SignAssembly>
     <NeutralLanguage>en-US</NeutralLanguage>
     <!-- Frameworks and language features -->
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
