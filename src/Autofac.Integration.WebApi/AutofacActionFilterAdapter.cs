@@ -63,7 +63,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
             exceptionInfo = ExceptionDispatchInfo.Capture(e);
         }
 
-        Exception? exception = exceptionInfo?.SourceException;
+        var exception = exceptionInfo?.SourceException;
         HttpActionExecutedContext executedContext = new(actionContext, exception)
         {
             Response = response,
@@ -86,7 +86,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
             return executedContext.Response;
         }
 
-        Exception newException = executedContext.Exception;
+        var newException = executedContext.Exception;
 
         if (newException != null)
         {

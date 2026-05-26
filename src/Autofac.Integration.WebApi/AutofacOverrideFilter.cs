@@ -24,7 +24,10 @@ internal class AutofacOverrideFilter : IOverrideFilter
     /// <inheritdoc/>
     public bool AllowMultiple
     {
-        get { return false; }
+        get
+        {
+            return false;
+        }
     }
 
     /// <summary>

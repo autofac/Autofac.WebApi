@@ -47,7 +47,10 @@ public class AutofacWebApiDependencyResolver : IDependencyResolver
     /// <summary>
     /// Gets the root container provided to the dependency resolver.
     /// </summary>
-    public ILifetimeScope Container { get; }
+    public ILifetimeScope Container
+    {
+        get;
+    }
 
     /// <summary>
     /// Try to get a service of the given type.
@@ -106,10 +109,7 @@ public class AutofacWebApiDependencyResolver : IDependencyResolver
         {
             if (disposing)
             {
-                if (_rootDependencyScope != null)
-                {
-                    _rootDependencyScope.Dispose();
-                }
+                _rootDependencyScope?.Dispose();
             }
 
             _disposed = true;

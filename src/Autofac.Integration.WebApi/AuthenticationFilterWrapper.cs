@@ -26,7 +26,10 @@ internal class AuthenticationFilterWrapper : IAuthenticationFilter, IAutofacAuth
     /// <inheritdoc/>
     bool IFilter.AllowMultiple
     {
-        get { return true; }
+        get
+        {
+            return true;
+        }
     }
 
     /// <inheritdoc/>

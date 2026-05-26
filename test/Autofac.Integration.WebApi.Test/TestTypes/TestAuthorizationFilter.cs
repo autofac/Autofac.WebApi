@@ -7,7 +7,10 @@ namespace Autofac.Integration.WebApi.Test.TestTypes;
 
 public class TestAuthorizationFilter : IAutofacAuthorizationFilter
 {
-    public ILogger Logger { get; private set; }
+    public ILogger Logger
+    {
+        get; private set;
+    }
 
     public TestAuthorizationFilter(ILogger logger)
     {

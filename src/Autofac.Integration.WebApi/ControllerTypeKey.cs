@@ -20,7 +20,10 @@ internal class ControllerTypeKey : IEquatable<ControllerTypeKey>
     /// <summary>
     /// Gets the type of the controller.
     /// </summary>
-    public Type ControllerType { get; private set; }
+    public Type ControllerType
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Determines whether the specified <see cref="object" /> is equal to the current <see cref="object" />.

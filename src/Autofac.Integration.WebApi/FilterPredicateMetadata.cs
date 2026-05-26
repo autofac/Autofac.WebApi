@@ -15,7 +15,10 @@ internal class FilterPredicateMetadata
     /// Gets or sets the callback that determines if a filter matches the action descriptor.
     /// Returns true/false to include the filter or not.
     /// </summary>
-    public Func<ILifetimeScope, HttpActionDescriptor, bool>? Predicate { get; set; }
+    public Func<ILifetimeScope, HttpActionDescriptor, bool>? Predicate
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets the scope of the filter.
@@ -23,10 +26,16 @@ internal class FilterPredicateMetadata
     /// <remarks>
     /// We need the scope of this filter registration so we can create the FilterInfo later.
     /// </remarks>
-    public FilterScope Scope { get; set; }
+    public FilterScope Scope
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets the filter category, used to group filters and control execution order.
     /// </summary>
-    public AutofacFilterCategory FilterCategory { get; set; }
+    public AutofacFilterCategory FilterCategory
+    {
+        get; set;
+    }
 }

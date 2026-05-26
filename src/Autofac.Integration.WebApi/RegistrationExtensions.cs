@@ -1076,7 +1076,7 @@ public static class RegistrationExtensions
         registration.ValidateFilterType<TFilter>();
 
         // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
 
         var registrationMetadata = new FilterPredicateMetadata
         {
@@ -1116,7 +1116,7 @@ public static class RegistrationExtensions
         registration.ValidateActionFilterType(out var isLegacyFilterType);
 
         // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
 
         var registrationMetadata = new FilterPredicateMetadata
         {
@@ -1143,7 +1143,7 @@ public static class RegistrationExtensions
         registration.ValidateFilterType<TFilter>();
 
         // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
 
         var registrationMetadata = new FilterPredicateMetadata
         {
@@ -1169,7 +1169,7 @@ public static class RegistrationExtensions
         registration.ValidateActionFilterType(out var isLegacyFilterType);
 
         // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
 
         var registrationMetadata = new FilterPredicateMetadata
         {
@@ -1250,7 +1250,7 @@ public static class RegistrationExtensions
         registration.ValidateFilterType<TFilter>();
 
         // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
 
         var registrationMetadata = new FilterPredicateMetadata
         {
@@ -1329,7 +1329,7 @@ public static class RegistrationExtensions
         registration.ValidateActionFilterType(out var isLegacyFilterType);
 
         // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out FilterMetadata filterMeta);
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
 
         var registrationMetadata = new FilterPredicateMetadata
         {

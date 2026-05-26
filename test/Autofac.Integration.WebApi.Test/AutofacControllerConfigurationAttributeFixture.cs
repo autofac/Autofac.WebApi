@@ -40,7 +40,7 @@ public class AutofacControllerConfigurationAttributeFixture
     {
         var builder = new ContainerBuilder();
         var service = Substitute.For<IHttpActionSelector>();
-        int callCount = 0;
+        var callCount = 0;
         builder.Register(c => service)
             .As<IHttpActionSelector>()
             .InstancePerApiControllerType(typeof(TestController))

@@ -60,16 +60,12 @@ public sealed class AutofacControllerConfigurationAttribute : Attribute, IContro
             return;
         }
 
-        var container = controllerDescriptor.Configuration.DependencyResolver.GetRootLifetimeScope();
-        if (container == null)
-        {
-            throw new InvalidOperationException(
+        var container = controllerDescriptor.Configuration.DependencyResolver.GetRootLifetimeScope() ?? throw new InvalidOperationException(
                 string.Format(
                     CultureInfo.CurrentCulture,
                     AutofacControllerConfigurationAttributeResources.DependencyResolverMissing,
                     nameof(AutofacWebApiDependencyResolver),
                     nameof(AutofacControllerConfigurationAttribute)));
-        }
 
         var controllerServices = controllerSettings.Services;
         var serviceKey = new ControllerTypeKey(controllerDescriptor.ControllerType);
