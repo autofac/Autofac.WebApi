@@ -9,7 +9,10 @@ namespace Autofac.Integration.WebApi.Test.TestTypes;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
 public sealed class CustomActionFilterAttribute : ActionFilterAttribute
 {
-    public ILogger Logger { get; set; }
+    public ILogger Logger
+    {
+        get; set;
+    }
 
     public override void OnActionExecuting(HttpActionContext actionContext)
     {

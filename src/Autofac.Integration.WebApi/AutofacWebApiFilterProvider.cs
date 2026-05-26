@@ -283,12 +283,24 @@ public class AutofacWebApiFilterProvider : IFilterProvider
             AddedFilters = addedFilters;
         }
 
-        public ILifetimeScope LifetimeScope { get; }
+        public ILifetimeScope LifetimeScope
+        {
+            get;
+        }
 
-        public Type ControllerType { get; }
+        public Type ControllerType
+        {
+            get;
+        }
 
-        public List<FilterInfo> Filters { get; }
+        public List<FilterInfo> Filters
+        {
+            get;
+        }
 
-        public Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> AddedFilters { get; }
+        public Dictionary<AutofacFilterCategory, List<FilterPredicateMetadata>> AddedFilters
+        {
+            get;
+        }
     }
 }

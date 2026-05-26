@@ -11,7 +11,7 @@ namespace Autofac.Integration.WebApi;
 /// </summary>
 internal static class HttpRequestMessageProvider
 {
-    private static readonly AsyncLocal<HttpRequestMessageHolder> CurrentRequest = new();
+    private static readonly AsyncLocal<HttpRequestMessageHolder> _currentRequest = new();
 
     /// <summary>
     /// Gets or sets the current request message.
@@ -23,23 +23,21 @@ internal static class HttpRequestMessageProvider
     {
         get
         {
-            return CurrentRequest.Value?.Message;
+            return _currentRequest.Value?._message;
         }
 
         set
         {
-            var holder = CurrentRequest.Value;
-            if (holder != null)
-            {
-                // Clear current HttpRequestMessage trapped in the AsyncLocals, as its done.
-                holder.Message = null;
-            }
+            var holder = _currentRequest.Value;
+
+            // Clear current HttpRequestMessage trapped in the AsyncLocals, as its done.
+            holder?._message = null;
 
             if (value != null)
             {
                 // Use an object indirection to hold the HttpRequestMessage in the AsyncLocal,
                 // so it can be cleared in all ExecutionContexts when its cleared.
-                CurrentRequest.Value = new HttpRequestMessageHolder { Message = value };
+                _currentRequest.Value = new HttpRequestMessageHolder { _message = value };
             }
         }
     }
@@ -47,6 +45,6 @@ internal static class HttpRequestMessageProvider
     private sealed class HttpRequestMessageHolder
     {
         [SuppressMessage("SA1401", "SA1401", Justification = "Field is only used during testing.")]
-        public HttpRequestMessage? Message;
+        public HttpRequestMessage? _message;
     }
 }

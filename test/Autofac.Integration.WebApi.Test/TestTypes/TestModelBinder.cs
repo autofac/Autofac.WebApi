@@ -8,7 +8,10 @@ namespace Autofac.Integration.WebApi.Test.TestTypes;
 
 public class TestModelBinder : IModelBinder
 {
-    public Dependency Dependency { get; private set; }
+    public Dependency Dependency
+    {
+        get; private set;
+    }
 
     public TestModelBinder(Dependency dependency)
     {

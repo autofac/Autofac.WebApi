@@ -24,6 +24,9 @@ internal sealed class AuthenticationFilterOverrideWrapper : AuthenticationFilter
     /// </summary>
     public Type FiltersToOverride
     {
-        get { return typeof(IAuthenticationFilter); }
+        get
+        {
+            return typeof(IAuthenticationFilter);
+        }
     }
 }

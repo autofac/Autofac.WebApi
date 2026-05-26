@@ -25,6 +25,9 @@ internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWr
     /// </summary>
     public Type FiltersToOverride
     {
-        get { return typeof(IAuthorizationFilter); }
+        get
+        {
+            return typeof(IAuthorizationFilter);
+        }
     }
 }

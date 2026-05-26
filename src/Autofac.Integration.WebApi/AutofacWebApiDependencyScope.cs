@@ -24,7 +24,10 @@ public class AutofacWebApiDependencyScope : IDependencyScope
     /// <summary>
     /// Gets the lifetime scope for the current dependency scope.
     /// </summary>
-    public ILifetimeScope LifetimeScope { get; }
+    public ILifetimeScope LifetimeScope
+    {
+        get;
+    }
 
     /// <summary>
     /// Try to get a service of the given type.
@@ -75,10 +78,7 @@ public class AutofacWebApiDependencyScope : IDependencyScope
         {
             if (disposing)
             {
-                if (LifetimeScope != null)
-                {
-                    LifetimeScope.Dispose();
-                }
+                LifetimeScope?.Dispose();
             }
 
             _disposed = true;

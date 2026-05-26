@@ -10,7 +10,10 @@ namespace Autofac.Integration.WebApi.Test.TestTypes;
 
 public class TestActionFilterWithResponse : IAutofacActionFilter
 {
-    public ILogger Logger { get; private set; }
+    public ILogger Logger
+    {
+        get; private set;
+    }
 
     public TestActionFilterWithResponse(ILogger logger)
     {

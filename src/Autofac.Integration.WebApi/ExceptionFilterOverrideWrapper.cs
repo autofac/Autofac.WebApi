@@ -25,6 +25,9 @@ internal sealed class ExceptionFilterOverrideWrapper : ExceptionFilterWrapper, I
     /// </summary>
     public Type FiltersToOverride
     {
-        get { return typeof(IExceptionFilter); }
+        get
+        {
+            return typeof(IExceptionFilter);
+        }
     }
 }

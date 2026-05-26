@@ -24,6 +24,9 @@ internal sealed class ContinuationActionFilterOverrideWrapper : ContinuationActi
     /// </summary>
     public Type FiltersToOverride
     {
-        get { return typeof(IActionFilter); }
+        get
+        {
+            return typeof(IActionFilter);
+        }
     }
 }

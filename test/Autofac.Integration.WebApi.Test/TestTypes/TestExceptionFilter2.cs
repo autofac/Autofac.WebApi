@@ -7,7 +7,10 @@ namespace Autofac.Integration.WebApi.Test.TestTypes;
 
 public class TestExceptionFilter2 : IAutofacExceptionFilter
 {
-    public ILogger Logger { get; private set; }
+    public ILogger Logger
+    {
+        get; private set;
+    }
 
     public TestExceptionFilter2(ILogger logger)
     {
