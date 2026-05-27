@@ -13,7 +13,6 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <!-- Frameworks and language features -->
     <TargetFramework>net481</TargetFramework>
-    <NoWarn>$(NoWarn);NU1900</NoWarn>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
