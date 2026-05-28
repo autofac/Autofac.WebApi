@@ -1039,17 +1039,6 @@ public static class RegistrationExtensions
     }
 
     private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
-        AsActionFilterFor(
-            IRegistrationBuilder<object, IConcreteActivatorData,
-                SingleRegistrationStyle> registration,
-            AutofacFilterCategory filterCategory,
-            Func<HttpActionDescriptor, bool> predicate,
-            FilterScope filterScope)
-    {
-        return AsActionFilterFor(registration, filterCategory, (lifetime, action) => predicate(action), filterScope);
-    }
-
-    private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
         AsFilterFor<TFilter>(
             IRegistrationBuilder<object, IConcreteActivatorData,
             SingleRegistrationStyle> registration,
@@ -1091,46 +1080,6 @@ public static class RegistrationExtensions
     }
 
     private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
-        AsActionFilterFor(
-            IRegistrationBuilder<object, IConcreteActivatorData,
-                SingleRegistrationStyle> registration,
-            AutofacFilterCategory filterCategory,
-            Func<ILifetimeScope, HttpActionDescriptor, bool> predicate,
-            FilterScope filterScope)
-    {
-        if (registration == null)
-        {
-            throw new ArgumentNullException(nameof(registration));
-        }
-
-        if (predicate == null)
-        {
-            throw new ArgumentNullException(nameof(predicate));
-        }
-
-        if (filterScope is not FilterScope.Action and not FilterScope.Controller)
-        {
-            throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
-        }
-
-        registration.ValidateActionFilterType(out var isLegacyFilterType);
-
-        // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out var filterMeta);
-
-        var registrationMetadata = new FilterPredicateMetadata
-        {
-            Scope = filterScope,
-            FilterCategory = filterCategory,
-            Predicate = predicate,
-        };
-
-        filterMeta.PredicateSet.Add(registrationMetadata);
-
-        return isLegacyFilterType ? registration.As<IAutofacActionFilter>() : registration.As<IAutofacContinuationActionFilter>();
-    }
-
-    private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
         AsFilterFor<TFilter, TController>(IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration, AutofacFilterCategory filterCategory)
             where TController : IHttpController
             where TFilter : notnull
@@ -1155,32 +1104,6 @@ public static class RegistrationExtensions
         filterMeta.PredicateSet.Add(registrationMetadata);
 
         return registration.As<TFilter>();
-    }
-
-    private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
-        AsActionFilterFor<TController>(IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration, AutofacFilterCategory filterCategory)
-        where TController : IHttpController
-    {
-        if (registration == null)
-        {
-            throw new ArgumentNullException(nameof(registration));
-        }
-
-        registration.ValidateActionFilterType(out var isLegacyFilterType);
-
-        // Get the filter metadata set.
-        registration = registration.GetOrCreateMetadata(out var filterMeta);
-
-        var registrationMetadata = new FilterPredicateMetadata
-        {
-            Scope = FilterScope.Controller,
-            FilterCategory = filterCategory,
-            Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType),
-        };
-
-        filterMeta.PredicateSet.Add(registrationMetadata);
-
-        return isLegacyFilterType ? registration.As<IAutofacActionFilter>() : registration.As<IAutofacContinuationActionFilter>();
     }
 
     private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
@@ -1263,6 +1186,83 @@ public static class RegistrationExtensions
         filterMeta.PredicateSet.Add(registrationMetadata);
 
         return registration.As<TFilter>();
+    }
+
+    private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
+        AsActionFilterFor(
+            IRegistrationBuilder<object, IConcreteActivatorData,
+                SingleRegistrationStyle> registration,
+            AutofacFilterCategory filterCategory,
+            Func<HttpActionDescriptor, bool> predicate,
+            FilterScope filterScope)
+    {
+        return AsActionFilterFor(registration, filterCategory, (lifetime, action) => predicate(action), filterScope);
+    }
+
+    private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
+        AsActionFilterFor(
+            IRegistrationBuilder<object, IConcreteActivatorData,
+                SingleRegistrationStyle> registration,
+            AutofacFilterCategory filterCategory,
+            Func<ILifetimeScope, HttpActionDescriptor, bool> predicate,
+            FilterScope filterScope)
+    {
+        if (registration == null)
+        {
+            throw new ArgumentNullException(nameof(registration));
+        }
+
+        if (predicate == null)
+        {
+            throw new ArgumentNullException(nameof(predicate));
+        }
+
+        if (filterScope is not FilterScope.Action and not FilterScope.Controller)
+        {
+            throw new InvalidEnumArgumentException(nameof(filterScope), (int)filterScope, typeof(FilterScope));
+        }
+
+        registration.ValidateActionFilterType(out var isLegacyFilterType);
+
+        // Get the filter metadata set.
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
+
+        var registrationMetadata = new FilterPredicateMetadata
+        {
+            Scope = filterScope,
+            FilterCategory = filterCategory,
+            Predicate = predicate,
+        };
+
+        filterMeta.PredicateSet.Add(registrationMetadata);
+
+        return isLegacyFilterType ? registration.As<IAutofacActionFilter>() : registration.As<IAutofacContinuationActionFilter>();
+    }
+
+    private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
+        AsActionFilterFor<TController>(IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle> registration, AutofacFilterCategory filterCategory)
+        where TController : IHttpController
+    {
+        if (registration == null)
+        {
+            throw new ArgumentNullException(nameof(registration));
+        }
+
+        registration.ValidateActionFilterType(out var isLegacyFilterType);
+
+        // Get the filter metadata set.
+        registration = registration.GetOrCreateMetadata(out var filterMeta);
+
+        var registrationMetadata = new FilterPredicateMetadata
+        {
+            Scope = FilterScope.Controller,
+            FilterCategory = filterCategory,
+            Predicate = (scope, descriptor) => typeof(TController).IsAssignableFrom(descriptor.ControllerDescriptor.ControllerType),
+        };
+
+        filterMeta.PredicateSet.Add(registrationMetadata);
+
+        return isLegacyFilterType ? registration.As<IAutofacActionFilter>() : registration.As<IAutofacContinuationActionFilter>();
     }
 
     private static IRegistrationBuilder<object, IConcreteActivatorData, SingleRegistrationStyle>
