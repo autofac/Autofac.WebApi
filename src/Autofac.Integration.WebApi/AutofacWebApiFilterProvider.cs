@@ -269,7 +269,7 @@ public class AutofacWebApiFilterProvider : IFilterProvider
                !MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, metadata);
     }
 
-    private class FilterContext
+    private sealed class FilterContext
     {
         public FilterContext(
             ILifetimeScope lifetimeScope,
