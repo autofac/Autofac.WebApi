@@ -33,11 +33,11 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
 
     /// <inheritdoc/>
     [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "SynchronizationContext should be preserved")]
-    public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+    public async Task<HttpResponseMessage> ExecuteActionFilterAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> next)
     {
         await _legacyFilter.OnActionExecutingAsync(actionContext, cancellationToken);
 
-        return actionContext.Response ?? await CallOnActionExecutedAsync(actionContext, cancellationToken, continuation).ConfigureAwait(false);
+        return actionContext.Response ?? await CallOnActionExecutedAsync(actionContext, cancellationToken, next).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
     [SuppressMessage("Microsoft.CodeQuality", "CA1068", Justification = "Matching parameter order in original implementation.")]
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Need to capture any exception that occurs.")]
     [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Need to preserve the SynchronizationContext for the action execution")]
-    private async Task<HttpResponseMessage> CallOnActionExecutedAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> continuation)
+    private async Task<HttpResponseMessage> CallOnActionExecutedAsync(HttpActionContext actionContext, CancellationToken cancellationToken, Func<Task<HttpResponseMessage>> next)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -56,7 +56,7 @@ internal class AutofacActionFilterAdapter : IAutofacContinuationActionFilter
 
         try
         {
-            response = await continuation();
+            response = await next();
         }
         catch (Exception e)
         {
