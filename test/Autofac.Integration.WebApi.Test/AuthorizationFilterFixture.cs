@@ -79,12 +79,12 @@ public class AuthorizationFilterFixture : AutofacFilterBaseFixture<TestAuthoriza
 
     protected override Type GetWrapperType()
     {
-        return typeof(AuthorizationFilterWrapper);
+        return typeof(AuthorizationFilterWrapperAttribute);
     }
 
     protected override Type GetOverrideWrapperType()
     {
-        return typeof(AuthorizationFilterOverrideWrapper);
+        return typeof(AuthorizationFilterOverrideWrapperAttribute);
     }
 
     protected override Action<ContainerBuilder> ConfigureControllerFilterOverride()

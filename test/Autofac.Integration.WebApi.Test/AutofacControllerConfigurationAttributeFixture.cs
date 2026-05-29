@@ -31,8 +31,8 @@ public class AutofacControllerConfigurationAttributeFixture
         var settings = new HttpControllerSettings(config);
         var descriptor = new HttpControllerDescriptor();
 
-        // XUnit doesn't have Assert.DoesNotThrow
-        attribute.Initialize(settings, descriptor);
+        var exception = Record.Exception(() => attribute.Initialize(settings, descriptor));
+        Assert.Null(exception);
     }
 
     [Fact]

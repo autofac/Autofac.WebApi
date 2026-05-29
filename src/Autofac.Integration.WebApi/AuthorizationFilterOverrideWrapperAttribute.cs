@@ -9,13 +9,13 @@ namespace Autofac.Integration.WebApi;
 /// Resolves a filter override for the specified metadata for each controller request.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-internal sealed class AuthorizationFilterOverrideWrapper : AuthorizationFilterWrapper, IOverrideFilter
+internal sealed class AuthorizationFilterOverrideWrapperAttribute : AuthorizationFilterWrapperAttribute, IOverrideFilter
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapper"/> class.
+    /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapperAttribute"/> class.
     /// </summary>
     /// <param name="filterMetadata">The filter metadata.</param>
-    public AuthorizationFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
+    public AuthorizationFilterOverrideWrapperAttribute(HashSet<FilterMetadata> filterMetadata)
         : base(filterMetadata)
     {
     }

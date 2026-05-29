@@ -48,7 +48,7 @@ public class AutofacWebApiModelBinderProviderFixture
 
         var modelBinders = container.Resolve<IEnumerable<IModelBinder>>().ToList();
         Assert.Single(modelBinders);
-        Assert.IsType<TestModelBinder>(modelBinders.First());
+        Assert.IsType<TestModelBinder>(modelBinders[0]);
 
         var provider = container.Resolve<ModelBinderProvider>();
         using var config = new HttpConfiguration();

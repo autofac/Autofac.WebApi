@@ -89,8 +89,8 @@ public class AutofacWebApiFilterProviderFixture
         var filters = filterInfos.Select(info => info.Instance).ToArray();
 
         Assert.Single(filters.OfType<AuthenticationFilterWrapper>());
-        Assert.Single(filters.OfType<AuthorizationFilterWrapper>());
-        Assert.Single(filters.OfType<ExceptionFilterWrapper>());
+        Assert.Single(filters.OfType<AuthorizationFilterWrapperAttribute>());
+        Assert.Single(filters.OfType<ExceptionFilterWrapperAttribute>());
         Assert.Single(filters.OfType<ContinuationActionFilterWrapper>());
     }
 

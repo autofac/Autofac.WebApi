@@ -131,10 +131,10 @@ public class AutofacWebApiFilterProvider : IFilterProvider
             filterContext, scope, lifeTimeScope, descriptor, hs => new ContinuationActionFilterOverrideWrapper(hs), AutofacFilterCategory.ActionFilterOverride);
         ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterOverrideWrapper>(
             filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthenticationFilterOverride);
-        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterOverrideWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthorizationFilterOverride);
-        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterOverrideWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterOverrideWrapper(hs), AutofacFilterCategory.ExceptionFilterOverride);
+        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterOverrideWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterOverrideWrapperAttribute(hs), AutofacFilterCategory.AuthorizationFilterOverride);
+        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterOverrideWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterOverrideWrapperAttribute(hs), AutofacFilterCategory.ExceptionFilterOverride);
     }
 
     private static void ResolveAllScopedFilters(FilterContext filterContext, FilterScope scope, ILifetimeScope lifeTimeScope, HttpActionDescriptor descriptor)
@@ -143,10 +143,10 @@ public class AutofacWebApiFilterProvider : IFilterProvider
             filterContext, scope, lifeTimeScope, descriptor, hs => new ContinuationActionFilterWrapper(hs), AutofacFilterCategory.ActionFilter);
         ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterWrapper>(
             filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterWrapper(hs), AutofacFilterCategory.AuthenticationFilter);
-        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterWrapper(hs), AutofacFilterCategory.AuthorizationFilter);
-        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterWrapper(hs), AutofacFilterCategory.ExceptionFilter);
+        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterWrapperAttribute(hs), AutofacFilterCategory.AuthorizationFilter);
+        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterWrapperAttribute(hs), AutofacFilterCategory.ExceptionFilter);
     }
 
     private static void ResolveScopedFilter<TFilter, TWrapper>(
@@ -159,47 +159,12 @@ public class AutofacWebApiFilterProvider : IFilterProvider
         where TFilter : class
         where TWrapper : class, IFilter
     {
-        var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<Lazy<TFilter>>>>();
-
-        // We'll store the unique filter registrations here until we create the wrapper.
-        HashSet<FilterMetadata>? metadataSet = null;
-
-        foreach (var filter in filters)
-        {
-            var metadata = filter.Metadata.TryGetValue(FilterMetadataKey, out var metadataAsObject)
-                ? metadataAsObject as FilterMetadata
-                : null;
-
-            // Match the filter category (action filter, authentication, the overrides, etc).
-            if (metadata != null)
-            {
-                // Each individual predicate of the filter 'could' match the action descriptor.
-                // The HashSet makes sure the same filter doesn't go in twice.
-                foreach (var filterRegistration in metadata.PredicateSet)
-                {
-                    if (FilterMatches(scope, filterCategory, lifeTimeScope, descriptor, filterRegistration))
-                    {
-                        if (metadataSet == null)
-                        {
-                            // Don't define a hash set if something has already been registered (should just be the IOverrideFilters).
-                            if (!MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, filterRegistration))
-                            {
-                                metadataSet = new HashSet<FilterMetadata>
-                                {
-                                    metadata,
-                                };
-
-                                filterContext.AddedFilters[filterCategory].Add(filterRegistration);
-                            }
-                        }
-                        else
-                        {
-                            metadataSet.Add(metadata);
-                        }
-                    }
-                }
-            }
-        }
+        var metadataSet = ResolveScopedFilterMetadataSet<TFilter>(
+            filterContext,
+            scope,
+            lifeTimeScope,
+            descriptor,
+            filterCategory);
 
         if (metadataSet != null)
         {
@@ -207,6 +172,98 @@ public class AutofacWebApiFilterProvider : IFilterProvider
             var wrapper = wrapperFactory(metadataSet);
             filterContext.Filters.Add(new FilterInfo(wrapper, scope));
         }
+    }
+
+    private static HashSet<FilterMetadata>? ResolveScopedFilterMetadataSet<TFilter>(
+        FilterContext filterContext,
+        FilterScope scope,
+        ILifetimeScope lifeTimeScope,
+        HttpActionDescriptor descriptor,
+        AutofacFilterCategory filterCategory)
+        where TFilter : class
+    {
+        var filters = filterContext.LifetimeScope.Resolve<IEnumerable<Meta<Lazy<TFilter>>>>();
+
+        // We'll store the unique filter registrations here until we create the wrapper.
+        HashSet<FilterMetadata>? metadataSet = null;
+
+        foreach (var filter in filters)
+        {
+            if (!TryGetFilterMetadata(filter.Metadata, out var metadata))
+            {
+                continue;
+            }
+
+            metadataSet = AddMatchingScopedFilters(
+                filterContext,
+                scope,
+                lifeTimeScope,
+                descriptor,
+                filterCategory,
+                metadata,
+                metadataSet);
+        }
+
+        return metadataSet;
+    }
+
+    private static bool TryGetFilterMetadata(IDictionary<string, object?> metadataDictionary, out FilterMetadata metadata)
+    {
+        metadata = default!;
+
+        if (!metadataDictionary.TryGetValue(FilterMetadataKey, out var metadataAsObject))
+        {
+            return false;
+        }
+
+        if (metadataAsObject is not FilterMetadata filterMetadata)
+        {
+            return false;
+        }
+
+        metadata = filterMetadata;
+        return true;
+    }
+
+    private static HashSet<FilterMetadata>? AddMatchingScopedFilters(
+        FilterContext filterContext,
+        FilterScope scope,
+        ILifetimeScope lifeTimeScope,
+        HttpActionDescriptor descriptor,
+        AutofacFilterCategory filterCategory,
+        FilterMetadata metadata,
+        HashSet<FilterMetadata>? metadataSet)
+    {
+        // Each individual predicate of the filter 'could' match the action descriptor.
+        // The HashSet makes sure the same filter doesn't go in twice.
+        foreach (var filterRegistration in metadata.PredicateSet)
+        {
+            if (!FilterMatches(scope, filterCategory, lifeTimeScope, descriptor, filterRegistration))
+            {
+                continue;
+            }
+
+            if (metadataSet != null)
+            {
+                metadataSet.Add(metadata);
+                continue;
+            }
+
+            // Don't define a hash set if something has already been registered (should just be the IOverrideFilters).
+            if (MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, filterRegistration))
+            {
+                continue;
+            }
+
+            metadataSet = new HashSet<FilterMetadata>
+            {
+                metadata,
+            };
+
+            filterContext.AddedFilters[filterCategory].Add(filterRegistration);
+        }
+
+        return metadataSet;
     }
 
     private static void ResolveScopedOverrideFilter(
@@ -269,7 +326,7 @@ public class AutofacWebApiFilterProvider : IFilterProvider
                !MatchingFilterAlreadyAdded(filterContext, filterCategory, lifeTimeScope, descriptor, metadata);
     }
 
-    private class FilterContext
+    private sealed class FilterContext
     {
         public FilterContext(
             ILifetimeScope lifetimeScope,

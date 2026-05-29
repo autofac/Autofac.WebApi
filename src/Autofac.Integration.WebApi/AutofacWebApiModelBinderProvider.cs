@@ -39,12 +39,9 @@ public class AutofacWebApiModelBinderProvider : ModelBinderProvider
 
         foreach (var binder in modelBinders)
         {
-            if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject) && metadataAsObject != null)
+            if (binder.Metadata.TryGetValue(MetadataKey, out var metadataAsObject) && metadataAsObject != null && ((List<Type>)metadataAsObject).Contains(modelType))
             {
-                if (((List<Type>)metadataAsObject).Contains(modelType))
-                {
-                    return binder.Value.Value;
-                }
+                return binder.Value.Value;
             }
         }
 

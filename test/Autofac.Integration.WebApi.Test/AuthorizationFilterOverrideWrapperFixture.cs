@@ -10,7 +10,7 @@ public class AuthorizationFilterOverrideWrapperFixture
     [Fact]
     public void FiltersToOverrideReturnsCorrectType()
     {
-        var wrapper = new AuthorizationFilterOverrideWrapper(new HashSet<FilterMetadata>());
+        var wrapper = new AuthorizationFilterOverrideWrapperAttribute(new HashSet<FilterMetadata>());
         Assert.Equal(typeof(IAuthorizationFilter), wrapper.FiltersToOverride);
     }
 }

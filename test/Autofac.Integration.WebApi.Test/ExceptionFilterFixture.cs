@@ -79,12 +79,12 @@ public class ExceptionFilterFixture : AutofacFilterBaseFixture<TestExceptionFilt
 
     protected override Type GetWrapperType()
     {
-        return typeof(ExceptionFilterWrapper);
+        return typeof(ExceptionFilterWrapperAttribute);
     }
 
     protected override Type GetOverrideWrapperType()
     {
-        return typeof(ExceptionFilterOverrideWrapper);
+        return typeof(ExceptionFilterOverrideWrapperAttribute);
     }
 
     protected override Action<ContainerBuilder> ConfigureControllerFilterOverride()
