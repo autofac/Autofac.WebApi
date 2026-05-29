@@ -1,4 +1,4 @@
-﻿// Copyright (c) Autofac Project. All rights reserved.
+// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -13,15 +13,15 @@ namespace Autofac.Integration.WebApi;
 /// </summary>
 [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-internal class ExceptionFilterWrapper : ExceptionFilterAttribute, IAutofacExceptionFilter
+internal class ExceptionFilterWrapperAttribute : ExceptionFilterAttribute, IAutofacExceptionFilter
 {
     private readonly HashSet<FilterMetadata> _allFilters;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExceptionFilterWrapper"/> class.
+    /// Initializes a new instance of the <see cref="ExceptionFilterWrapperAttribute"/> class.
     /// </summary>
     /// <param name="filterMetadata">The filter metadata.</param>
-    public ExceptionFilterWrapper(HashSet<FilterMetadata> filterMetadata)
+    public ExceptionFilterWrapperAttribute(HashSet<FilterMetadata> filterMetadata)
     {
         _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
     }

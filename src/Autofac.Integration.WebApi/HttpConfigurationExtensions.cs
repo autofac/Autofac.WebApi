@@ -23,6 +23,7 @@ public static class HttpConfigurationExtensions
     [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Method marked as obsolete to point to correct method.")]
     public static void RegisterHttpRequestMessage(this HttpConfiguration config)
     {
+        // This method is intentionally left blank. It is marked as obsolete to point users to the correct method for registering HttpRequestMessage.
     }
 
     /// <summary>

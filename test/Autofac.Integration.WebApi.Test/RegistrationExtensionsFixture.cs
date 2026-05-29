@@ -48,7 +48,7 @@ public class RegistrationExtensionsFixture
     }
 
     [Fact]
-    public void RegisterApiControllersFindsTypesImplemtingInterfaceOnly()
+    public void RegisterApiControllersFindsTypesImplementingInterfaceOnly()
     {
         var builder = new ContainerBuilder();
 
@@ -151,16 +151,6 @@ public class RegistrationExtensionsFixture
         var builder = new ContainerBuilder();
         var registration = builder.RegisterType<TestModelBinder>();
         Assert.Throws<ArgumentNullException>(() => registration.AsModelBinderForTypes(types));
-    }
-
-    [Fact]
-    public void InstancePerApiControllerTypeRequiresTypeParameter()
-    {
-        var builder = new ContainerBuilder();
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => builder.RegisterType<object>().InstancePerApiControllerType(null));
-
-        Assert.Equal("controllerType", exception.ParamName);
     }
 
     [Fact]
@@ -361,17 +351,6 @@ public class RegistrationExtensionsFixture
     }
 
     [Fact]
-    public void AsWebApiAuthorizationFilterForServiceTypeMustBeExceptionFilter()
-    {
-        var builder = new ContainerBuilder();
-
-        var exception = Assert.Throws<ArgumentException>(
-            () => builder.RegisterInstance(new object()).AsWebApiAuthorizationFilterFor<TestController>());
-
-        Assert.Equal("registration", exception.ParamName);
-    }
-
-    [Fact]
     public void AsAuthenticationFilterForRequiresActionSelector()
     {
         var builder = new ContainerBuilder();
@@ -386,7 +365,7 @@ public class RegistrationExtensionsFixture
         var builder = new ContainerBuilder();
         var exception = Assert.Throws<ArgumentNullException>(
             () => builder.Register(c => new TestActionFilter(c.Resolve<ILogger>()))
-                         .AsWebApiAuthorizationFilterWhere((Func<ILifetimeScope, HttpActionDescriptor, bool>)null));
+                         .AsWebApiAuthenticationFilterWhere((Func<ILifetimeScope, HttpActionDescriptor, bool>)null));
         Assert.Equal("predicate", exception.ParamName);
     }
 

@@ -14,7 +14,7 @@ public class AuthorizationFilterWrapperFixture
     [Fact]
     public void RequiresFilterMetadata()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() => new AuthorizationFilterWrapper(null));
+        var exception = Assert.Throws<ArgumentNullException>(() => new AuthorizationFilterWrapperAttribute(null));
         Assert.Equal("filterMetadata", exception.ParamName);
     }
 
@@ -41,7 +41,7 @@ public class AuthorizationFilterWrapperFixture
         var actionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
         var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
 
-        var wrapper = new AuthorizationFilterWrapper(filterMetadata.ToSingleFilterHashSet());
+        var wrapper = new AuthorizationFilterWrapperAttribute(filterMetadata.ToSingleFilterHashSet());
 
         await wrapper.OnAuthorizationAsync(actionContext, CancellationToken.None);
         Assert.Equal(1, activationCount);

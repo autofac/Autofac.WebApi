@@ -15,7 +15,7 @@ public class ExceptionFilterWrapperFixture
     [Fact]
     public void RequiresFilterMetadata()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() => new ExceptionFilterWrapper(null));
+        var exception = Assert.Throws<ArgumentNullException>(() => new ExceptionFilterWrapperAttribute(null));
         Assert.Equal("filterMetadata", exception.ParamName);
     }
 
@@ -42,7 +42,7 @@ public class ExceptionFilterWrapperFixture
         var actionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
         var actionContext = new HttpActionContext(controllerContext, actionDescriptor);
         var actionExecutedContext = new HttpActionExecutedContext(actionContext, null);
-        var wrapper = new ExceptionFilterWrapper(filterMetadata.ToSingleFilterHashSet());
+        var wrapper = new ExceptionFilterWrapperAttribute(filterMetadata.ToSingleFilterHashSet());
 
         await wrapper.OnExceptionAsync(actionExecutedContext, CancellationToken.None);
         Assert.Equal(1, activationCount);

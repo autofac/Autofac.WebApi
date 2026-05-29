@@ -43,20 +43,6 @@ public class RecordingSynchronizationContext : SynchronizationContext
     /// <param name="state">The optional state to provide to the callback.</param>
     public override void Send(SendOrPostCallback d, object state)
     {
-        if (d is null)
-        {
-            throw new ArgumentNullException(nameof(d));
-        }
-
-        var previous = Current;
-        try
-        {
-            SetSynchronizationContext(this);
-            d(state);
-        }
-        finally
-        {
-            SetSynchronizationContext(previous);
-        }
+        Post(d, state);
     }
 }

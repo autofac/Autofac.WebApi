@@ -131,10 +131,10 @@ public class AutofacWebApiFilterProvider : IFilterProvider
             filterContext, scope, lifeTimeScope, descriptor, hs => new ContinuationActionFilterOverrideWrapper(hs), AutofacFilterCategory.ActionFilterOverride);
         ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterOverrideWrapper>(
             filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthenticationFilterOverride);
-        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterOverrideWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterOverrideWrapper(hs), AutofacFilterCategory.AuthorizationFilterOverride);
-        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterOverrideWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterOverrideWrapper(hs), AutofacFilterCategory.ExceptionFilterOverride);
+        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterOverrideWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterOverrideWrapperAttribute(hs), AutofacFilterCategory.AuthorizationFilterOverride);
+        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterOverrideWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterOverrideWrapperAttribute(hs), AutofacFilterCategory.ExceptionFilterOverride);
     }
 
     private static void ResolveAllScopedFilters(FilterContext filterContext, FilterScope scope, ILifetimeScope lifeTimeScope, HttpActionDescriptor descriptor)
@@ -143,10 +143,10 @@ public class AutofacWebApiFilterProvider : IFilterProvider
             filterContext, scope, lifeTimeScope, descriptor, hs => new ContinuationActionFilterWrapper(hs), AutofacFilterCategory.ActionFilter);
         ResolveScopedFilter<IAutofacAuthenticationFilter, AuthenticationFilterWrapper>(
             filterContext, scope, lifeTimeScope, descriptor, hs => new AuthenticationFilterWrapper(hs), AutofacFilterCategory.AuthenticationFilter);
-        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterWrapper(hs), AutofacFilterCategory.AuthorizationFilter);
-        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterWrapper>(
-            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterWrapper(hs), AutofacFilterCategory.ExceptionFilter);
+        ResolveScopedFilter<IAutofacAuthorizationFilter, AuthorizationFilterWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new AuthorizationFilterWrapperAttribute(hs), AutofacFilterCategory.AuthorizationFilter);
+        ResolveScopedFilter<IAutofacExceptionFilter, ExceptionFilterWrapperAttribute>(
+            filterContext, scope, lifeTimeScope, descriptor, hs => new ExceptionFilterWrapperAttribute(hs), AutofacFilterCategory.ExceptionFilter);
     }
 
     private static void ResolveScopedFilter<TFilter, TWrapper>(

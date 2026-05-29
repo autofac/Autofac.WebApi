@@ -1451,7 +1451,7 @@ public static class RegistrationExtensions
     /// Retrieve or create filter metadata for override filters. We want to maintain the fluent flow when we change
     /// registration metadata so we'll do that here.
     /// </summary>
-    private static IRegistrationBuilder<AutofacOverrideFilter, SimpleActivatorData, SingleRegistrationStyle> GetOrCreateOverrideMetadata(
+    private static void GetOrCreateOverrideMetadata(
         this IRegistrationBuilder<AutofacOverrideFilter, SimpleActivatorData, SingleRegistrationStyle> registration,
         out FilterMetadata filterMeta)
     {
@@ -1462,10 +1462,8 @@ public static class RegistrationExtensions
         else
         {
             filterMeta = new FilterMetadata();
-            registration = registration.WithMetadata(AutofacWebApiFilterProvider.FilterMetadataKey, filterMeta);
+            registration.WithMetadata(AutofacWebApiFilterProvider.FilterMetadataKey, filterMeta);
         }
-
-        return registration;
     }
 
     private static bool ActionMethodMatches(HttpActionDescriptor action, MethodInfo knownMethod)

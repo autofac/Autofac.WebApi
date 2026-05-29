@@ -10,7 +10,7 @@ public class ExceptionFilterOverrideWrapperFixture
     [Fact]
     public void FiltersToOverrideReturnsCorrectType()
     {
-        var wrapper = new ExceptionFilterOverrideWrapper(new HashSet<FilterMetadata>());
+        var wrapper = new ExceptionFilterOverrideWrapperAttribute(new HashSet<FilterMetadata>());
         Assert.Equal(typeof(IExceptionFilter), wrapper.FiltersToOverride);
     }
 }

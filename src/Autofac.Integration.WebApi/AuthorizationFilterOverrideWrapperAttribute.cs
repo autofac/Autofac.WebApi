@@ -1,4 +1,4 @@
-﻿// Copyright (c) Autofac Project. All rights reserved.
+// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Web.Http.Filters;
@@ -9,13 +9,13 @@ namespace Autofac.Integration.WebApi;
 /// Resolves a filter override for the specified metadata for each controller request.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-internal sealed class ExceptionFilterOverrideWrapper : ExceptionFilterWrapper, IOverrideFilter
+internal sealed class AuthorizationFilterOverrideWrapperAttribute : AuthorizationFilterWrapperAttribute, IOverrideFilter
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExceptionFilterOverrideWrapper"/> class.
+    /// Initializes a new instance of the <see cref="AuthorizationFilterOverrideWrapperAttribute"/> class.
     /// </summary>
     /// <param name="filterMetadata">The filter metadata.</param>
-    public ExceptionFilterOverrideWrapper(HashSet<FilterMetadata> filterMetadata)
+    public AuthorizationFilterOverrideWrapperAttribute(HashSet<FilterMetadata> filterMetadata)
         : base(filterMetadata)
     {
     }
@@ -27,7 +27,7 @@ internal sealed class ExceptionFilterOverrideWrapper : ExceptionFilterWrapper, I
     {
         get
         {
-            return typeof(IExceptionFilter);
+            return typeof(IAuthorizationFilter);
         }
     }
 }

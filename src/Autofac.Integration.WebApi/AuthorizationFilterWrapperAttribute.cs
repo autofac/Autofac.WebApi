@@ -14,15 +14,15 @@ namespace Autofac.Integration.WebApi;
 /// </summary>
 [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Justification = "Derived attribute adds filter override support")]
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-internal class AuthorizationFilterWrapper : AuthorizationFilterAttribute, IAutofacAuthorizationFilter
+internal class AuthorizationFilterWrapperAttribute : AuthorizationFilterAttribute, IAutofacAuthorizationFilter
 {
     private readonly HashSet<FilterMetadata> _allFilters;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AuthorizationFilterWrapper"/> class.
+    /// Initializes a new instance of the <see cref="AuthorizationFilterWrapperAttribute"/> class.
     /// </summary>
     /// <param name="filterMetadata">The filter metadata.</param>
-    public AuthorizationFilterWrapper(HashSet<FilterMetadata> filterMetadata)
+    public AuthorizationFilterWrapperAttribute(HashSet<FilterMetadata> filterMetadata)
     {
         _allFilters = filterMetadata ?? throw new ArgumentNullException(nameof(filterMetadata));
     }
