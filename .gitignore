@@ -3,6 +3,7 @@
 
 # Project specific files
 artifacts/
+BenchmarkDotNet.Artifacts/
 
 # User-specific files
 *.suo
@@ -132,7 +133,6 @@ node_modules/
 bower_components/
 wwwroot/
 project.lock.json
-*.Designer.cs
 
 # RIA/Silverlight projects
 Generated_Code/

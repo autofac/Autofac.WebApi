@@ -2,7 +2,7 @@
 
 ASP.NET Web API integration for [Autofac](https://autofac.org).
 
-[![Build status](https://ci.appveyor.com/api/projects/status/i7fjrapyswrvy73r?svg=true)](https://ci.appveyor.com/project/Autofac/autofac-webapi)
+[![Build status](https://github.com/autofac/Autofac.WebApi/actions/workflows/main.yml/badge.svg)](https://github.com/autofac/Autofac.WebApi/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/Autofac/Autofac.WebApi/branch/develop/graph/badge.svg)](https://codecov.io/gh/Autofac/Autofac.WebApi) [![NuGet](https://img.shields.io/nuget/v/Autofac.WebApi2.svg)](https://nuget.org/packages/Autofac.WebApi2)
 
 Please file issues and pull requests for this package in this repository rather than in the Autofac core repo.
 
@@ -15,7 +15,7 @@ Please file issues and pull requests for this package in this repository rather 
 
 To get Autofac integrated with Web API you need to reference the Web API integration NuGet package, register your controllers, and set the dependency resolver. You can optionally enable other features as well.
 
-```c#
+```csharp
 protected void Application_Start()
 {
   var builder = new ContainerBuilder();
